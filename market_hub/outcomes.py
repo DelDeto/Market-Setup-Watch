@@ -30,7 +30,7 @@ def _signal_id(item, generated_at):
         str(item.get("direction")),
         str(round(float(entry.get("lower") or 0), 8)),
         str(round(float(entry.get("upper") or 0), 8)),
-        str(generated_at)[:16],
+        str(round(float(plan.get("stop_loss") or 0), 8)),
     ])
 
 
@@ -91,6 +91,11 @@ def register_candidates(records, results, generated_at):
             "outcome": None,
             "mfe_r": None,
             "mae_r": None,
+            "checkpoints_r": {
+                "1h": None,
+                "4h": None,
+                "24h": None,
+            },
             "correlation_suppressed": bool(
                 item.get("correlation_suppressed")
             ),
@@ -127,7 +132,10 @@ def update_outcomes(records, frames_by_symbol):
         if created is None:
             continue
 
-        candles = frame.loc[frame.index >= created]
+        import pandas as pd
+
+        candle_close_times = frame.index + pd.Timedelta(minutes=15)
+        candles = frame.loc[candle_close_times > created]
         if candles.empty:
             continue
 
@@ -205,5 +213,30 @@ def update_outcomes(records, frames_by_symbol):
 
         row["mfe_r"] = round(best_r, 3)
         row["mae_r"] = round(worst_r, 3)
+
+        if entry_time is not None:
+            checkpoints = row.setdefault(
+                "checkpoints_r",
+                {"1h": None, "4h": None, "24h": None},
+            )
+
+            for label, hours in (("1h", 1), ("4h", 4), ("24h", 24)):
+                if checkpoints.get(label) is not None:
+                    continue
+
+                target_time = entry_time + pd.Timedelta(hours=hours)
+                close_times = active_candles.index + pd.Timedelta(minutes=15)
+                eligible = active_candles.loc[close_times >= target_time]
+
+                if eligible.empty:
+                    continue
+
+                close_price = float(eligible.iloc[0]["close"])
+                if direction == "long":
+                    checkpoint_r = (close_price - entry_mid) / risk
+                else:
+                    checkpoint_r = (entry_mid - close_price) / risk
+
+                checkpoints[label] = round(checkpoint_r, 3)
 
     return records
