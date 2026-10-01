@@ -24,8 +24,15 @@ def _fmt_signed(value):
 
 
 def build_text(report):
-    rows = report.get("setups", [])[:MAX_TELEGRAM_SETUPS]
-    counts = report.get("counts", {})
+    rows = [
+        item
+        for item in report.get("setups", [])
+        if not item.get("correlation_suppressed", False)
+    ][:MAX_TELEGRAM_SETUPS]
+    counts = report.get("alert_counts") or report.get("counts", {})
+    market_context = report.get("market_context", {})
+    calibration = report.get("calibration", {})
+    outcomes = report.get("outcome_summary", {})
 
     lines = [
         "🔥 MARKET SETUP WATCH",
@@ -44,6 +51,20 @@ def build_text(report):
             f"{counts.get('DEVELOPING', 0)} | "
             "WATCH "
             f"{counts.get('WATCHLIST', 0)}"
+        ),
+        (
+            f"Market: {market_context.get('regime', 'MIXED')} | "
+            f"BTC {market_context.get('btc_bias', 'UNKNOWN')} | "
+            f"ETH {market_context.get('eth_bias', 'UNKNOWN')}"
+        ),
+        (
+            f"Adaptive: {'ON' if calibration.get('active') else 'OFF'} "
+            f"({calibration.get('closed_samples', 0)} closed) | "
+            f"Tracked outcomes: {outcomes.get('tracked', 0)}"
+        ),
+        (
+            f"Correlation suppressed: "
+            f"{report.get('correlation_suppressed_count', 0)}"
         ),
     ]
 
@@ -127,9 +148,19 @@ def build_text(report):
                 f"Zone {_fmt_signed(breakdown.get('zone_quality'))}, "
                 f"MTF {_fmt_signed(breakdown.get('mtf_alignment'))}, "
                 f"RR {_fmt_signed(breakdown.get('first_target_rr'))}, "
-                f"HTF {_fmt_signed(breakdown.get('htf_location'))}"
+                f"HTF {_fmt_signed(breakdown.get('htf_location'))}, "
+                f"OI {_fmt_signed(breakdown.get('participation'))}, "
+                f"Mkt {_fmt_signed(breakdown.get('market_context'))}, "
+                f"Adapt {_fmt_signed(breakdown.get('adaptive'))}"
             ),
         ]
+
+        participation = filters.get("participation") or {}
+        lines.append(
+            f"Participation: {participation.get('regime', 'N/A')} | "
+            f"HoldVol Δ "
+            f"{_fmt(participation.get('hold_vol_change_pct'))}%"
+        )
 
         blockers = list(plan.get("blockers") or [])
         if filters.get("volatility_ok") is False:
