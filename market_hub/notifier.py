@@ -1,6 +1,4 @@
-import json
 import os
-from pathlib import Path
 
 import requests
 
@@ -18,16 +16,25 @@ def _fmt(value):
     return f"{value:.6f}".rstrip("0").rstrip(".")
 
 
+def _fmt_signed(value):
+    if value is None:
+        return "-"
+    value = int(value)
+    return f"{value:+d}"
+
+
 def build_text(report):
     rows = report.get("setups", [])[:MAX_TELEGRAM_SETUPS]
     counts = report.get("counts", {})
 
     lines = [
-        "🔥 CRYPTO MARKET SETUP HUB",
-        "=" * 34,
+        "🔥 MARKET SETUP WATCH",
+        "=" * 30,
         f"Scan UTC: {report.get('generated_at_utc')}",
         (
             f"Universe: {report.get('universe_count', 0)} | "
+            f"Quality+Liquid: "
+            f"{report.get('quality_liquid_universe_count', 0)} | "
             f"Full PA/SMC: {report.get('full_scan_count', 0)}"
         ),
         (
@@ -43,7 +50,7 @@ def build_text(report):
     if not rows:
         lines += [
             "",
-            "Hiện chưa có setup đạt ngưỡng gửi cảnh báo.",
+            "Hiện chưa có setup đạt ngưỡng giữ lại.",
         ]
         return "\n".join(lines)
 
@@ -58,12 +65,17 @@ def build_text(report):
         entry = plan.get("entry_zone", {})
         targets = plan.get("targets", [])
         setup = item.get("analysis_15m", {}).get("setup", {})
+        breakdown = item.get("score_breakdown", {})
+        filters = item.get("filters", {})
+        htf = filters.get("htf_location", {})
+
+        direction = (item.get("direction") or "-").upper()
 
         lines += [
             "",
             (
                 f"{icons.get(item['bucket'], '•')} {index}. "
-                f"{item['symbol']} · {item['direction'].upper()} · "
+                f"{item['symbol']} · {direction} · "
                 f"{item['score']}/100"
             ),
             (
@@ -91,8 +103,44 @@ def build_text(report):
                 f"[{target.get('source')}, {rr_text}]"
             )
 
-        if plan.get("blockers"):
-            lines.append("Blocker: " + "; ".join(plan["blockers"][:2]))
+        atr_pct = filters.get("atr_pct")
+        atr_text = f"{atr_pct:.2f}%" if atr_pct is not None else "-"
+        distance = item.get("entry_distance_atr")
+        distance_text = f"{distance:.2f} ATR" if distance is not None else "-"
+
+        lines += [
+            (
+                f"Filters: RRdev={'Y' if filters.get('rr_developing_ok') else 'N'} | "
+                f"RRready={'Y' if filters.get('rr_ready_ok') else 'N'} | "
+                f"Vol={'Y' if filters.get('volatility_ok') else 'N'} "
+                f"({atr_text}) | HTF={htf.get('label', '-')}"
+            ),
+            f"Entry distance: {distance_text}",
+            (
+                "Score: "
+                f"Setup {_fmt_signed(breakdown.get('setup_completeness'))}, "
+                f"Conf {_fmt_signed(breakdown.get('confirmed'))}, "
+                f"Disp {_fmt_signed(breakdown.get('displacement'))}, "
+                f"Struct {_fmt_signed(breakdown.get('structure'))}, "
+                f"Retest {_fmt_signed(breakdown.get('retest'))}, "
+                f"Sweep {_fmt_signed(breakdown.get('sweep'))}, "
+                f"Zone {_fmt_signed(breakdown.get('zone_quality'))}, "
+                f"MTF {_fmt_signed(breakdown.get('mtf_alignment'))}, "
+                f"RR {_fmt_signed(breakdown.get('first_target_rr'))}, "
+                f"HTF {_fmt_signed(breakdown.get('htf_location'))}"
+            ),
+        ]
+
+        blockers = list(plan.get("blockers") or [])
+        if filters.get("volatility_ok") is False:
+            blockers.append("15M volatility outside allowed ATR% band")
+        if htf.get("blocked"):
+            blockers.append("Entry too close to opposing 1H/4H zone")
+        if filters.get("rr_developing_ok") is False:
+            blockers.append("First target RR below developing threshold")
+
+        if blockers:
+            lines.append("Blocker: " + "; ".join(blockers[:3]))
 
     return "\n".join(lines)
 
@@ -125,5 +173,5 @@ def send_telegram(report):
             f"{response.text[:500]}"
         )
 
-    print("Market Hub Telegram sent.")
+    print("Market Setup Watch Telegram sent.")
     return True
