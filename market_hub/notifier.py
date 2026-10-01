@@ -145,6 +145,37 @@ def build_text(report):
     return "\n".join(lines)
 
 
+def _split_text(text, max_chars=3800):
+    if len(text) <= max_chars:
+        return [text]
+
+    chunks = []
+    current = []
+
+    for block in text.split("\n\n"):
+        candidate = "\n\n".join(current + [block])
+        if len(candidate) <= max_chars:
+            current.append(block)
+            continue
+
+        if current:
+            chunks.append("\n\n".join(current))
+            current = []
+
+        if len(block) <= max_chars:
+            current = [block]
+        else:
+            start = 0
+            while start < len(block):
+                chunks.append(block[start:start + max_chars])
+                start += max_chars
+
+    if current:
+        chunks.append("\n\n".join(current))
+
+    return chunks
+
+
 def send_telegram(report):
     text = build_text(report)
     TEXT_PATH.parent.mkdir(parents=True, exist_ok=True)
@@ -157,21 +188,30 @@ def send_telegram(report):
         print("Telegram skipped: missing secrets.")
         return False
 
-    response = requests.post(
-        f"https://api.telegram.org/bot{token}/sendMessage",
-        json={
-            "chat_id": chat_id,
-            "text": text,
-            "disable_web_page_preview": True,
-        },
-        timeout=20,
-    )
+    chunks = _split_text(text)
 
-    if response.status_code != 200:
-        raise RuntimeError(
-            f"Telegram send failed: HTTP {response.status_code} "
-            f"{response.text[:500]}"
+    for index, chunk in enumerate(chunks, start=1):
+        if len(chunks) > 1:
+            chunk = f"[{index}/{len(chunks)}]\n" + chunk
+
+        response = requests.post(
+            f"https://api.telegram.org/bot{token}/sendMessage",
+            json={
+                "chat_id": chat_id,
+                "text": chunk,
+                "disable_web_page_preview": True,
+            },
+            timeout=20,
         )
 
-    print("Market Setup Watch Telegram sent.")
+        if response.status_code != 200:
+            raise RuntimeError(
+                f"Telegram send failed: HTTP {response.status_code} "
+                f"{response.text[:500]}"
+            )
+
+    print(
+        f"Market Setup Watch Telegram sent "
+        f"({len(chunks)} message(s))."
+    )
     return True
