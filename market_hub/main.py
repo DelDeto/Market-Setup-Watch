@@ -3,6 +3,7 @@ from datetime import datetime, timezone
 
 from .config import (
     MAX_FULL_SCAN_SYMBOLS,
+    MAX_SPREAD_BPS,
     MIN_24H_TURNOVER_USDT,
     REPORT_PATH,
     STATE_PATH,
@@ -30,6 +31,17 @@ def _liquidity_value(ticker):
         return max(0.0, float(volume) * float(price))
 
     return 0.0
+
+
+def _passes_market_quality(ticker):
+    if not ticker:
+        return False, "missing_ticker"
+
+    spread_bps = ticker.get("spread_bps")
+    if spread_bps is not None and spread_bps > MAX_SPREAD_BPS:
+        return False, f"spread>{MAX_SPREAD_BPS:.0f}bps"
+
+    return True, None
 
 
 def _load_state():
@@ -62,8 +74,6 @@ def _signature(item):
 
 
 def _should_notify(previous, setups):
-    # Market Hub is event-driven: no Telegram spam when only watchlist
-    # context exists and nothing actionable/developing changed.
     important = [
         item
         for item in setups
@@ -76,7 +86,6 @@ def _should_notify(previous, setups):
     previous_signatures = set(previous.get("signatures", []))
     current_signatures = {_signature(item) for item in important}
 
-    # Always notify a newly READY setup.
     if any(
         item.get("bucket") == "ENTRY_READY"
         and _signature(item) not in previous_signatures
@@ -84,7 +93,6 @@ def _should_notify(previous, setups):
     ):
         return True
 
-    # Notify meaningful candidate-set changes.
     return current_signatures != previous_signatures
 
 
@@ -103,14 +111,23 @@ def main():
     tickers = get_all_tickers()
 
     ranked_universe = []
+    prefilter_rejections = {}
+
     for symbol in universe:
         ticker = tickers.get(symbol)
         liquidity = _liquidity_value(ticker)
 
         if ticker is None or ticker.get("last_price") is None:
+            prefilter_rejections[symbol] = "missing_live_price"
             continue
 
         if liquidity < MIN_24H_TURNOVER_USDT:
+            prefilter_rejections[symbol] = "low_turnover"
+            continue
+
+        quality_ok, quality_reason = _passes_market_quality(ticker)
+        if not quality_ok:
+            prefilter_rejections[symbol] = quality_reason
             continue
 
         ranked_universe.append((symbol, liquidity))
@@ -127,7 +144,7 @@ def main():
 
     print(
         f"Universe={len(universe)} | "
-        f"liquid={len(ranked_universe)} | "
+        f"quality_liquid={len(ranked_universe)} | "
         f"full_scan={len(scan_symbols)}"
     )
 
@@ -181,10 +198,12 @@ def main():
         "market": "USDT perpetual futures",
         "engine": "PA-MTF Hybrid V2 deterministic scanner",
         "universe_count": len(universe),
-        "liquid_universe_count": len(ranked_universe),
+        "quality_liquid_universe_count": len(ranked_universe),
         "full_scan_count": len(scan_symbols),
         "counts": counts,
         "setups": results,
+        "prefilter_rejection_count": len(prefilter_rejections),
+        "prefilter_rejections": prefilter_rejections,
         "fetch_error_count": len(fetch_errors),
         "analysis_error_count": len(analysis_errors),
         "fetch_errors": fetch_errors,
@@ -208,7 +227,7 @@ def main():
         send_telegram(report)
     else:
         print(
-            "Market Hub: no new READY/DEVELOPING setup change; "
+            "Market Setup Watch: no new READY/DEVELOPING setup change; "
             "Telegram suppressed."
         )
 
@@ -226,7 +245,7 @@ def main():
     )
 
     print(
-        f"Market Hub completed: "
+        f"Market Setup Watch completed: "
         f"READY={counts['ENTRY_READY']} "
         f"DEVELOPING={counts['DEVELOPING']} "
         f"WATCH={counts['WATCHLIST']}"
