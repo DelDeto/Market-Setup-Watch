@@ -8,7 +8,13 @@ from trade_plan import build_trade_plan
 from .ranker import score_setup
 
 
-def analyze_symbol(symbol, frames, ticker):
+def analyze_symbol(
+    symbol,
+    frames,
+    ticker,
+    market_context=None,
+    calibration=None,
+):
     analysis_4h = analyze_smc(
         frames["4H"],
         timeframe="4H",
@@ -49,6 +55,9 @@ def analyze_symbol(symbol, frames, ticker):
         alignment,
         plan,
         ticker,
+        market_context=market_context,
+        calibration=calibration,
+        symbol=symbol,
     )
 
     direction = plan.get("direction")
