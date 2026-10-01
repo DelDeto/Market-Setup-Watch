@@ -35,7 +35,7 @@ jobs:
 
       - name: Compile scanner
         run: |
-          python -m py_compile             smc_analysis.py             trade_plan.py             market_hub/config.py             market_hub/mexc_market.py             market_hub/ranker.py             market_hub/scanner.py             market_hub/notifier.py             market_hub/main.py
+          python -m py_compile             smc_analysis.py             trade_plan.py             market_hub/config.py             market_hub/mexc_market.py             market_hub/ranker.py             market_hub/scanner.py             market_hub/chart.py             market_hub/notifier.py             market_hub/main.py
 
       - name: Scan MEXC USDT perpetual market
         env:
@@ -51,6 +51,7 @@ jobs:
           path: |
             output/market_hub_report.json
             output/market_hub_update.txt
+            output/charts/*.png
           if-no-files-found: ignore
           retention-days: 30
 
