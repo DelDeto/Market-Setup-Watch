@@ -251,6 +251,26 @@ def score_setup(
         alignment_label,
         zone_grade,
     )
+    participation_regime = (
+        ((ticker or {}).get("participation_context") or {}).get("regime")
+    )
+    market_regime = (market_context or {}).get("regime")
+    calibration_features.update({
+        "rr_1_5_plus": (
+            first_rr is not None and float(first_rr) >= 1.5
+        ),
+        "participation_aligned": (
+            (direction == "long" and participation_regime == "LONG_BUILD")
+            or (
+                direction == "short"
+                and participation_regime == "SHORT_BUILD"
+            )
+        ),
+        "market_context_aligned": (
+            (direction == "long" and market_regime == "BULLISH")
+            or (direction == "short" and market_regime == "BEARISH")
+        ),
+    })
     breakdown["adaptive"] = adaptive_points(
         calibration_features,
         calibration,
