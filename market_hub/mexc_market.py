@@ -1,4 +1,5 @@
 import time
+import threading
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 import pandas as pd
@@ -23,22 +24,66 @@ INTERVAL_SECONDS = {
     "4h": 4 * 60 * 60,
 }
 
+# MEXC futures kline endpoints are sensitive to burst traffic. All workers
+# share this limiter so concurrent symbol fetches do not create a request
+# storm. ~4 requests/sec keeps the scan well within the workflow timeout.
+_REQUEST_LOCK = threading.Lock()
+_LAST_REQUEST_AT = 0.0
+_MIN_REQUEST_INTERVAL = 0.25
 
-def _get_json(path, params=None, timeout=15):
-    response = requests.get(
-        BASE_URL + path,
-        params=params,
-        timeout=timeout,
+
+def _throttle():
+    global _LAST_REQUEST_AT
+    with _REQUEST_LOCK:
+        now = time.monotonic()
+        wait = _MIN_REQUEST_INTERVAL - (now - _LAST_REQUEST_AT)
+        if wait > 0:
+            time.sleep(wait)
+        _LAST_REQUEST_AT = time.monotonic()
+
+
+def _get_json(path, params=None, timeout=15, retries=4):
+    last_error = None
+
+    for attempt in range(retries + 1):
+        _throttle()
+
+        try:
+            response = requests.get(
+                BASE_URL + path,
+                params=params,
+                timeout=timeout,
+            )
+            response.raise_for_status()
+            payload = response.json()
+
+            if isinstance(payload, dict) and payload.get("success") is False:
+                code = payload.get("code")
+                message = str(payload.get("message") or "")
+
+                # MEXC commonly returns code 510 for burst/rate-limit events.
+                if (
+                    code == 510
+                    or "too frequent" in message.lower()
+                ) and attempt < retries:
+                    time.sleep(1.0 * (2 ** attempt))
+                    continue
+
+                raise RuntimeError(
+                    f"MEXC API error for {path}: {payload}"
+                )
+
+            return payload
+
+        except requests.RequestException as exc:
+            last_error = exc
+            if attempt >= retries:
+                raise
+            time.sleep(1.0 * (2 ** attempt))
+
+    raise RuntimeError(
+        f"MEXC request failed for {path}: {last_error}"
     )
-    response.raise_for_status()
-    payload = response.json()
-
-    if isinstance(payload, dict) and payload.get("success") is False:
-        raise RuntimeError(
-            f"MEXC API error for {path}: {payload}"
-        )
-
-    return payload
 
 
 def get_contract_universe():
