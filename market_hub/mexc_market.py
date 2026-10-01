@@ -58,9 +58,6 @@ def get_contract_universe():
         if not symbol or str(quote).upper() != QUOTE_COIN:
             continue
 
-        # MEXC has used different state/status encodings over time.
-        # Only reject explicit disabled/closed states; otherwise let the
-        # live ticker + kline checks decide whether the contract is usable.
         state = row.get("state")
         if state in (2, 3, 4, "2", "3", "4"):
             continue
@@ -92,16 +89,27 @@ def get_all_tickers():
                         pass
             return None
 
+        bid = f("bid1", "bid1Price", "bidPrice")
+        ask = f("ask1", "ask1Price", "askPrice")
+        last = f("lastPrice", "last_price")
+
+        spread_bps = None
+        if bid is not None and ask is not None and bid > 0 and ask >= bid:
+            mid = (bid + ask) / 2
+            if mid > 0:
+                spread_bps = (ask - bid) / mid * 10_000
+
         output[symbol] = {
             "symbol": symbol,
-            "last_price": f("lastPrice", "last_price"),
+            "last_price": last,
+            "bid": bid,
+            "ask": ask,
+            "spread_bps": spread_bps,
             "high_24h": f("high24Price", "high24h"),
             "low_24h": f("lower24Price", "low24h"),
             "change_rate_24h": f("riseFallRate", "changeRate"),
             "hold_vol": f("holdVol", "hold_volume"),
             "funding_rate": f("fundingRate", "funding_rate"),
-            # Prefer notional/amount fields. Fall back to volume when
-            # MEXC does not expose notional in this response shape.
             "turnover_24h": f(
                 "amount24",
                 "turnover24",
@@ -118,7 +126,6 @@ def _parse_kline(payload):
     data = payload.get("data", {}) if isinstance(payload, dict) else {}
 
     if isinstance(data, list):
-        # Defensive support for list-of-lists / list-of-dicts responses.
         rows = []
         for item in data:
             if isinstance(item, dict):
@@ -175,8 +182,6 @@ def get_closed_klines(symbol, interval, limit=HISTORY_LIMIT):
         raise ValueError(f"Unsupported interval: {interval}")
 
     now_seconds = int(time.time())
-    # Ask for a few extra candles so filtering the forming candle still
-    # leaves the requested closed history depth.
     request_limit = limit + 5
     end = now_seconds
     start = end - INTERVAL_SECONDS[interval] * (request_limit + 4)
