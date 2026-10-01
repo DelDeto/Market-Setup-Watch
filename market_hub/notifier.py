@@ -176,7 +176,36 @@ def _split_text(text, max_chars=3800):
     return chunks
 
 
-def send_telegram(report):
+def _send_photo(token, chat_id, chart):
+    path = chart.get("path")
+    if not path:
+        return
+
+    symbol = chart.get("symbol", "-")
+    bucket = chart.get("bucket", "-")
+    score = chart.get("score", "-")
+    direction = (chart.get("direction") or "-").upper()
+    caption = f"{symbol} | {bucket} | {direction} | Score {score}/100 | 15M"
+
+    with open(path, "rb") as handle:
+        response = requests.post(
+            f"https://api.telegram.org/bot{token}/sendPhoto",
+            data={
+                "chat_id": chat_id,
+                "caption": caption,
+            },
+            files={"photo": handle},
+            timeout=30,
+        )
+
+    if response.status_code != 200:
+        raise RuntimeError(
+            f"Telegram chart send failed for {symbol}: "
+            f"HTTP {response.status_code} {response.text[:500]}"
+        )
+
+
+def send_telegram(report, chart_paths=None):
     text = build_text(report)
     TEXT_PATH.parent.mkdir(parents=True, exist_ok=True)
     TEXT_PATH.write_text(text, encoding="utf-8")
@@ -210,8 +239,13 @@ def send_telegram(report):
                 f"{response.text[:500]}"
             )
 
+    chart_paths = chart_paths or []
+    for chart in chart_paths:
+        _send_photo(token, chat_id, chart)
+
     print(
         f"Market Setup Watch Telegram sent "
-        f"({len(chunks)} message(s))."
+        f"({len(chunks)} text message(s), "
+        f"{len(chart_paths)} chart(s))."
     )
     return True
