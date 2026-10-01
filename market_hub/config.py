@@ -37,6 +37,18 @@ MAX_ATR_PCT = 4.00
 HTF_1H_BLOCK_DISTANCE_ATR = 0.75
 HTF_4H_BLOCK_DISTANCE_ATR = 0.50
 
+# Correlation suppression: keep at most two similar same-direction theses.
+CORRELATION_LOOKBACK_BARS = 96
+MAX_RETURN_CORRELATION = 0.80
+MAX_CORRELATED_SETUPS = 2
+
+# Adaptive calibration guardrails. Until enough WIN/LOSS outcomes exist,
+# adaptive scoring stays OFF and base deterministic weights are preserved.
+MIN_CALIBRATION_OUTCOMES = 40
+MIN_CALIBRATION_FEATURE_SAMPLES = 15
+
 STATE_PATH = Path("market_hub/state.json")
+OUTCOME_PATH = Path("market_hub/outcomes.json")
+CALIBRATION_PATH = Path("market_hub/calibration.json")
 REPORT_PATH = Path("output/market_hub_report.json")
 TEXT_PATH = Path("output/market_hub_update.txt")
