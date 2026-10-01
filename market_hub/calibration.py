@@ -16,6 +16,9 @@ FEATURES = (
     "sweep",
     "mtf_aligned",
     "zone_a_or_better",
+    "rr_1_5_plus",
+    "participation_aligned",
+    "market_context_aligned",
 )
 
 
