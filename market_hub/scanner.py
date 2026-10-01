@@ -68,6 +68,8 @@ def analyze_symbol(symbol, frames, ticker):
         "score": ranked["score"],
         "bucket": ranked["bucket"],
         "entry_distance_atr": ranked["entry_distance_atr"],
+        "score_breakdown": ranked.get("score_breakdown", {}),
+        "filters": ranked.get("filters", {}),
         "mtf_alignment": alignment.get("label", "NEUTRAL"),
         "regime_4h": analysis_4h.get("regime"),
         "regime_1h": analysis_1h.get("regime"),
