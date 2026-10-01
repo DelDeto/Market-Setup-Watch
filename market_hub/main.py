@@ -13,6 +13,7 @@ from .mexc_market import (
     get_all_tickers,
     get_contract_universe,
 )
+from .chart import render_setup_chart
 from .notifier import send_telegram
 from .scanner import analyze_symbol
 
@@ -223,8 +224,56 @@ def main():
     previous = _load_state()
     should_notify = _should_notify(previous, results)
 
+    chart_paths = []
+    important = [
+        item
+        for item in results
+        if item.get("bucket") in ("ENTRY_READY", "DEVELOPING")
+    ]
+
+    for item in important:
+        symbol = item.get("symbol")
+        frames = frames_by_symbol.get(symbol)
+        if not frames:
+            continue
+        try:
+            path = render_setup_chart(
+                symbol,
+                frames["15M"],
+                item,
+            )
+            chart_paths.append(
+                {
+                    "symbol": symbol,
+                    "bucket": item.get("bucket"),
+                    "score": item.get("score"),
+                    "direction": item.get("direction"),
+                    "path": str(path),
+                }
+            )
+        except Exception as exc:
+            analysis_errors[f"{symbol}:chart"] = str(exc)
+
+    report["charts"] = [
+        {
+            key: value
+            for key, value in chart.items()
+            if key != "path"
+        }
+        for chart in chart_paths
+    ]
+
+    REPORT_PATH.write_text(
+        json.dumps(
+            report,
+            ensure_ascii=False,
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
+
     if should_notify:
-        send_telegram(report)
+        send_telegram(report, chart_paths=chart_paths)
     else:
         print(
             "Market Setup Watch: no new READY/DEVELOPING setup change; "
