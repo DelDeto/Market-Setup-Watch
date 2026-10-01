@@ -1,3 +1,6 @@
+from .calibration import adaptive_points
+from .market_context import market_context_points
+
 from .config import (
     DEVELOPING_MIN_SCORE,
     HTF_1H_BLOCK_DISTANCE_ATR,
@@ -130,7 +133,42 @@ def _htf_location(analysis_4h, analysis_1h, direction, plan):
     }
 
 
-def score_setup(analysis_4h, analysis_1h, analysis_15m, alignment, plan, ticker):
+def _participation_points(ticker, direction):
+    context = (ticker or {}).get("participation_context") or {}
+    regime = context.get("regime")
+
+    if regime == "LONG_BUILD":
+        return 4 if direction == "long" else -4
+    if regime == "SHORT_BUILD":
+        return 4 if direction == "short" else -4
+    if regime == "DELEVERAGING":
+        return -2
+    return 0
+
+
+def _calibration_features(setup, alignment_label, zone_grade):
+    return {
+        "confirmed": bool(setup.get("confirmed")),
+        "displacement": bool(setup.get("displacement")),
+        "structure": bool(setup.get("structure")),
+        "retest": bool(setup.get("retest")),
+        "sweep": bool(setup.get("sweep")),
+        "mtf_aligned": alignment_label == "ALIGNED",
+        "zone_a_or_better": zone_grade in ("A+", "A", "B"),
+    }
+
+
+def score_setup(
+    analysis_4h,
+    analysis_1h,
+    analysis_15m,
+    alignment,
+    plan,
+    ticker,
+    market_context=None,
+    calibration=None,
+    symbol=None,
+):
     setup = analysis_15m.get("setup", {})
     direction = plan.get("direction") if plan.get("active") else None
     setup_score = int(setup.get("score", 0) or 0)
@@ -143,6 +181,13 @@ def score_setup(analysis_4h, analysis_1h, analysis_15m, alignment, plan, ticker)
     breakdown["structure"] = 10 if setup.get("structure") else -8
     breakdown["retest"] = 8 if setup.get("retest") else 0
     breakdown["sweep"] = 8 if setup.get("sweep") else 0
+    zone = (
+        analysis_15m.get("nearest_demand")
+        if direction == "long"
+        else analysis_15m.get("nearest_supply")
+    ) or {}
+    zone_grade = zone.get("grade")
+
     breakdown["zone_quality"] = (
         _zone_grade_points(analysis_15m, direction)
         if direction
@@ -191,6 +236,26 @@ def score_setup(analysis_4h, analysis_1h, analysis_15m, alignment, plan, ticker)
     )
     breakdown["htf_location"] = -18 if htf_location["blocked"] else 0
 
+    breakdown["participation"] = _participation_points(
+        ticker,
+        direction,
+    )
+    breakdown["market_context"] = market_context_points(
+        direction,
+        market_context,
+        symbol=symbol,
+    )
+
+    calibration_features = _calibration_features(
+        setup,
+        alignment_label,
+        zone_grade,
+    )
+    breakdown["adaptive"] = adaptive_points(
+        calibration_features,
+        calibration,
+    )
+
     score = max(0, min(100, sum(breakdown.values())))
 
     rr_developing_ok = (
@@ -236,6 +301,11 @@ def score_setup(analysis_4h, analysis_1h, analysis_15m, alignment, plan, ticker)
         "volatility_ok": volatility_ok,
         "atr_pct": atr_pct,
         "htf_location": htf_location,
+        "participation": (ticker or {}).get("participation_context"),
+        "market_context": market_context or {},
+        "calibration_active": bool(
+            calibration and calibration.get("active")
+        ),
     }
 
     return {
