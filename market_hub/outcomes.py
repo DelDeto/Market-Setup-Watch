@@ -44,6 +44,13 @@ def _features(item):
         else (item.get("analysis_15m") or {}).get("nearest_supply")
     ) or {}
 
+    filters = item.get("filters") or {}
+    participation = filters.get("participation") or {}
+    market_context = filters.get("market_context") or {}
+    direction = item.get("direction")
+    part_regime = participation.get("regime")
+    market_regime = market_context.get("regime")
+
     return {
         "confirmed": bool(setup.get("confirmed")),
         "displacement": bool(setup.get("displacement")),
@@ -52,6 +59,18 @@ def _features(item):
         "sweep": bool(setup.get("sweep")),
         "mtf_aligned": item.get("mtf_alignment") == "ALIGNED",
         "zone_a_or_better": zone.get("grade") in ("A+", "A", "B"),
+        "rr_1_5_plus": (
+            plan.get("first_target_rr") is not None
+            and float(plan.get("first_target_rr")) >= 1.5
+        ),
+        "participation_aligned": (
+            (direction == "long" and part_regime == "LONG_BUILD")
+            or (direction == "short" and part_regime == "SHORT_BUILD")
+        ),
+        "market_context_aligned": (
+            (direction == "long" and market_regime == "BULLISH")
+            or (direction == "short" and market_regime == "BEARISH")
+        ),
     }
 
 
