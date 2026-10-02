@@ -20,14 +20,35 @@ SCAN_CADENCE = "15M"
 # Ranking / alert policy.
 MAX_TELEGRAM_SETUPS = 8
 TELEGRAM_HEARTBEAT_MINUTES = 60
-READY_MIN_SCORE = 78
-DEVELOPING_MIN_SCORE = 68
-WATCH_MIN_SCORE = 58
-MAX_ENTRY_DISTANCE_ATR = 0.25
+
+# Quality score thresholds. Quality and execution are intentionally separated:
+# a structurally strong setup is not automatically an actionable entry.
+READY_MIN_SCORE = 70
+NEAR_ENTRY_MIN_SCORE = 66
+DEVELOPING_MIN_SCORE = 62
+WATCH_MIN_SCORE = 52
+
+# Execution score thresholds.
+READY_MIN_EXECUTION_SCORE = 70
+NEAR_ENTRY_MIN_EXECUTION_SCORE = 55
+DEVELOPING_MIN_EXECUTION_SCORE = 40
+
+# Entry timing bands. READY means price is already close to the planned zone.
+# NEAR_ENTRY / DEVELOPING are never allowed to stay actionable when price is
+# more than 0.80 ATR away from the zone.
+MAX_ENTRY_DISTANCE_ATR = 0.35
+MAX_NEAR_ENTRY_DISTANCE_ATR = 0.80
+MAX_DEVELOPING_ENTRY_DISTANCE_ATR = 0.80
 
 # Tradeability gates.
-MIN_DEVELOPING_RR = 1.0
-MIN_READY_RR = 1.5
+MIN_DEVELOPING_RR = 1.20
+MIN_READY_RR = 1.50
+
+# Forward-journal management observations. These do not place or modify orders;
+# they allow us to measure how many raw losses could have been protected.
+PROTECT_AT_R = 1.00
+PARTIAL_AT_R = 1.50
+TRAIL_AT_R = 2.00
 
 # 15M ATR as % of price. Outside this broad band we cap the setup at WATCHLIST.
 MIN_ATR_PCT = 0.10
