@@ -1,0 +1,106 @@
+name: Market Setup Watchdog
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Offset from the primary scanner. If the latest main run is stale,
+    # dispatch a recovery run. A separate scheduled workflow gives us
+    # a second chance when GitHub drops/delays the primary cron.
+    - cron: "1,16,31,46 * * * *"
+
+permissions:
+  actions: write
+  contents: read
+
+concurrency:
+  group: market-setup-watchdog
+  cancel-in-progress: true
+
+jobs:
+  watchdog:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      GH_TOKEN: ${{ github.token }}
+      MAIN_WORKFLOW: market-setup-watch.yml
+      STALE_MINUTES: "17"
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+
+    steps:
+      - name: Check scanner freshness and recover if needed
+        shell: bash
+        run: |
+          set -uo pipefail
+
+          notify_failure() {
+            local message="$1"
+            if [[ -n "${TELEGRAM_BOT_TOKEN:-}" && -n "${TELEGRAM_CHAT_ID:-}" ]]; then
+              curl -fsS                 -X POST                 "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage"                 --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}"                 --data-urlencode "text=⚠️ MARKET SETUP WATCHDOG
+${message}"                 >/dev/null || true
+            fi
+          }
+
+          dispatch_main() {
+            echo "Dispatching recovery run for ${MAIN_WORKFLOW}..."
+            if gh api               --method POST               "repos/${GITHUB_REPOSITORY}/actions/workflows/${MAIN_WORKFLOW}/dispatches"               -f ref=main
+            then
+              echo "Recovery dispatch accepted."
+              return 0
+            fi
+
+            notify_failure "Watchdog detected a stale/failed scanner but could not dispatch a recovery run."
+            echo "Recovery dispatch failed." >&2
+            return 1
+          }
+
+          if ! RUNS_JSON="$(gh api             "repos/${GITHUB_REPOSITORY}/actions/workflows/${MAIN_WORKFLOW}/runs?per_page=1")"
+          then
+            notify_failure "Watchdog could not read the latest Market Setup Watch workflow run."
+            exit 1
+          fi
+
+          STATUS="$(jq -r '.workflow_runs[0].status // "missing"' <<<"${RUNS_JSON}")"
+          CONCLUSION="$(jq -r '.workflow_runs[0].conclusion // "missing"' <<<"${RUNS_JSON}")"
+          UPDATED_AT="$(jq -r '.workflow_runs[0].updated_at // .workflow_runs[0].created_at // empty' <<<"${RUNS_JSON}")"
+          RUN_ID="$(jq -r '.workflow_runs[0].id // "missing"' <<<"${RUNS_JSON}")"
+
+          echo "Latest main run: id=${RUN_ID} status=${STATUS} conclusion=${CONCLUSION} updated=${UPDATED_AT:-missing}"
+
+          if [[ "${STATUS}" == "queued" || "${STATUS}" == "in_progress" || "${STATUS}" == "waiting" ]]; then
+            echo "Main scanner is active; no recovery needed."
+            exit 0
+          fi
+
+          if [[ "${STATUS}" == "missing" || -z "${UPDATED_AT}" ]]; then
+            echo "No main workflow run found."
+            dispatch_main
+            exit $?
+          fi
+
+          AGE_SECONDS="$(python - "${UPDATED_AT}" <<'PY'
+from datetime import datetime, timezone
+import sys
+
+value = sys.argv[1]
+dt = datetime.fromisoformat(value.replace("Z", "+00:00"))
+print(int((datetime.now(timezone.utc) - dt.astimezone(timezone.utc)).total_seconds()))
+PY
+          )"
+
+          STALE_SECONDS="$((STALE_MINUTES * 60))"
+          echo "Latest main run age: ${AGE_SECONDS}s; stale threshold: ${STALE_SECONDS}s."
+
+          if [[ "${CONCLUSION}" != "success" ]]; then
+            echo "Latest main run did not succeed."
+            dispatch_main
+            exit $?
+          fi
+
+          if (( AGE_SECONDS >= STALE_SECONDS )); then
+            echo "Latest successful scanner run is stale."
+            dispatch_main
+            exit $?
+          fi
+
+          echo "Main scanner is healthy; no recovery needed."
