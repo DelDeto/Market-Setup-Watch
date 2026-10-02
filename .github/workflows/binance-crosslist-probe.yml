@@ -36,6 +36,8 @@ jobs:
           public_data_urls = {
               "um_list_root": "https://data.binance.vision/?list-type=2&prefix=data/futures/um/daily/klines/&delimiter=%2F",
               "um_list_btc": "https://data.binance.vision/?list-type=2&prefix=data/futures/um/daily/klines/BTCUSDT/&delimiter=%2F",
+              "s3_um_symbols": "https://s3-ap-northeast-1.amazonaws.com/data.binance.vision?delimiter=/&prefix=data/futures/um/daily/klines/",
+              "s3_um_btc": "https://s3-ap-northeast-1.amazonaws.com/data.binance.vision?delimiter=/&prefix=data/futures/um/daily/klines/BTCUSDT/",
           }
 
           for name, url in public_data_urls.items():
