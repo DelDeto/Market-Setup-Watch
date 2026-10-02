@@ -63,6 +63,8 @@ def build_text(report):
         (
             "READY "
             f"{counts.get('ENTRY_READY', 0)} | "
+            "NEAR "
+            f"{counts.get('NEAR_ENTRY', 0)} | "
             "DEVELOPING "
             f"{counts.get('DEVELOPING', 0)} | "
             "WATCH "
@@ -93,6 +95,7 @@ def build_text(report):
 
     icons = {
         "ENTRY_READY": "🔥",
+        "NEAR_ENTRY": "🎯",
         "DEVELOPING": "⚡",
         "WATCHLIST": "👀",
     }
@@ -103,6 +106,7 @@ def build_text(report):
         targets = plan.get("targets", [])
         setup = item.get("analysis_15m", {}).get("setup", {})
         breakdown = item.get("score_breakdown", {})
+        execution_breakdown = item.get("execution_breakdown", {})
         filters = item.get("filters", {})
         htf = filters.get("htf_location", {})
 
@@ -113,7 +117,8 @@ def build_text(report):
             (
                 f"{icons.get(item['bucket'], '•')} {index}. "
                 f"{item['symbol']} · {direction} · "
-                f"{item['score']}/100"
+                f"Q{item.get('quality_score', item.get('score', 0))}/100 · "
+                f"E{item.get('execution_score', 0)}/100"
             ),
             (
                 f"{item['bucket']} | MTF {item['mtf_alignment']} | "
@@ -154,7 +159,7 @@ def build_text(report):
             ),
             f"Entry distance: {distance_text}",
             (
-                "Score: "
+                "Quality: "
                 f"Setup {_fmt_signed(breakdown.get('setup_completeness'))}, "
                 f"Conf {_fmt_signed(breakdown.get('confirmed'))}, "
                 f"Disp {_fmt_signed(breakdown.get('displacement'))}, "
@@ -169,6 +174,17 @@ def build_text(report):
                 f"Mkt {_fmt_signed(breakdown.get('market_context'))}, "
                 f"Adapt {_fmt_signed(breakdown.get('adaptive'))}"
             ),
+            (
+                "Execution: "
+                f"Prox {_fmt_signed(execution_breakdown.get('entry_proximity'))}, "
+                f"RR {_fmt_signed(execution_breakdown.get('first_target_rr'))}, "
+                f"Ready {_fmt_signed(execution_breakdown.get('plan_ready'))}, "
+                f"Zone {_fmt_signed(execution_breakdown.get('entry_zone'))}, "
+                f"Struct {_fmt_signed(execution_breakdown.get('structure'))}, "
+                f"Disp {_fmt_signed(execution_breakdown.get('displacement'))}, "
+                f"Retest {_fmt_signed(execution_breakdown.get('retest'))}, "
+                f"Sweep {_fmt_signed(execution_breakdown.get('sweep'))}"
+            ),
         ]
 
         participation = filters.get("participation") or {}
@@ -177,6 +193,15 @@ def build_text(report):
             f"HoldVol Δ "
             f"{_fmt(participation.get('hold_vol_change_pct'))}%"
         )
+
+        management = plan.get("management") or {}
+        if management:
+            lines.append(
+                "Manage: "
+                f"+{_fmt(management.get('protect_at_r'))}R→BE | "
+                f"+{_fmt(management.get('partial_at_r'))}R→protect/partial | "
+                f"+{_fmt(management.get('trail_at_r'))}R→trail 15M"
+            )
 
         blockers = list(plan.get("blockers") or [])
         if filters.get("volatility_ok") is False:
@@ -199,7 +224,11 @@ def build_heartbeat_text(report):
         item
         for item in report.get("setups", [])
         if (
-            item.get("bucket") in ("ENTRY_READY", "DEVELOPING")
+            item.get("bucket") in (
+                "ENTRY_READY",
+                "NEAR_ENTRY",
+                "DEVELOPING",
+            )
             and not item.get("correlation_suppressed", False)
         )
     ][:3]
@@ -215,6 +244,7 @@ def build_heartbeat_text(report):
         ),
         (
             f"🔥 READY {counts.get('ENTRY_READY', 0)} | "
+            f"🎯 NEAR {counts.get('NEAR_ENTRY', 0)} | "
             f"⚡ DEVELOPING {counts.get('DEVELOPING', 0)} | "
             f"👀 WATCH {counts.get('WATCHLIST', 0)}"
         ),
@@ -237,12 +267,13 @@ def build_heartbeat_text(report):
                 f"• {item.get('symbol')} "
                 f"{(item.get('direction') or '-').upper()} | "
                 f"{item.get('bucket')} | "
-                f"{item.get('score', 0)}/100 | TP1 {rr_text}"
+                f"Q{item.get('quality_score', item.get('score', 0))} "
+                f"E{item.get('execution_score', 0)} | TP1 {rr_text}"
             )
     else:
         lines += [
             "",
-            "Không có READY/DEVELOPING mới cần cảnh báo.",
+            "Không có READY/NEAR/DEVELOPING mới cần cảnh báo.",
         ]
 
     lines += [
@@ -327,7 +358,7 @@ def _send_photo(token, chat_id, chart):
     bucket = chart.get("bucket", "-")
     score = chart.get("score", "-")
     direction = (chart.get("direction") or "-").upper()
-    caption = f"{symbol} | {bucket} | {direction} | Score {score}/100 | 15M"
+    caption = f"{symbol} | {bucket} | {direction} | Q-score {score}/100 | 15M"
 
     with open(path, "rb") as handle:
         response = requests.post(
