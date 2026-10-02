@@ -161,7 +161,11 @@ def _sort_results(results):
             bucket_priority.get(item.get("bucket"), 9),
             -float(item.get("execution_score", 0)),
             -float(item.get("quality_score", item.get("score", 0))),
-            float(item.get("entry_distance_atr") or 99),
+            float(
+                item.get("entry_distance_atr")
+                if item.get("entry_distance_atr") is not None
+                else 99
+            ),
         )
     )
     return results
