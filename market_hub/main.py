@@ -9,6 +9,7 @@ from .config import (
     MIN_24H_TURNOVER_USDT,
     REPORT_PATH,
     STATE_PATH,
+    TELEGRAM_HEARTBEAT_MINUTES,
 )
 from .correlation import apply_correlation_suppression
 from .market_context import derive_market_context
@@ -17,7 +18,7 @@ from .mexc_market import (
     get_all_tickers,
     get_contract_universe,
 )
-from .notifier import send_telegram
+from .notifier import send_heartbeat, send_telegram
 from .outcomes import (
     load_outcomes,
     register_candidates,
@@ -71,6 +72,26 @@ def _load_state():
         return data
     except Exception:
         return {"signatures": [], "hold_vol_snapshot": {}}
+
+
+def _parse_utc(value):
+    if not value:
+        return None
+    try:
+        parsed = datetime.fromisoformat(str(value).replace("Z", "+00:00"))
+        if parsed.tzinfo is None:
+            parsed = parsed.replace(tzinfo=timezone.utc)
+        return parsed.astimezone(timezone.utc)
+    except (TypeError, ValueError):
+        return None
+
+
+def _heartbeat_due(previous, now):
+    last_notification = _parse_utc(previous.get("last_notification_utc"))
+    if last_notification is None:
+        return True
+    elapsed_seconds = (now - last_notification).total_seconds()
+    return elapsed_seconds >= TELEGRAM_HEARTBEAT_MINUTES * 60
 
 
 def _alert_eligible(item):
@@ -139,7 +160,8 @@ def _sort_results(results):
 
 
 def main():
-    generated_at = datetime.now(timezone.utc).isoformat()
+    generated_dt = datetime.now(timezone.utc)
+    generated_at = generated_dt.isoformat()
     previous = _load_state()
 
     universe = get_contract_universe()
@@ -322,6 +344,7 @@ def main():
     )
 
     should_notify = _should_notify(previous, results)
+    heartbeat_due = _heartbeat_due(previous, generated_dt)
 
     chart_paths = []
     important = [item for item in results if _alert_eligible(item)]
@@ -365,18 +388,38 @@ def main():
         encoding="utf-8",
     )
 
+    notification_sent = False
+    notification_kind = None
+
     if should_notify:
-        send_telegram(report, chart_paths=chart_paths)
+        notification_sent = send_telegram(
+            report,
+            chart_paths=chart_paths,
+        )
+        notification_kind = "setup_change"
+    elif heartbeat_due:
+        notification_sent = send_heartbeat(report)
+        notification_kind = "heartbeat"
     else:
         print(
             "Market Setup Watch: no new unsuppressed "
-            "READY/DEVELOPING setup change; Telegram suppressed."
+            "READY/DEVELOPING setup change and heartbeat not due; "
+            "Telegram suppressed."
+        )
+
+    last_notification_utc = previous.get("last_notification_utc")
+    if notification_sent:
+        last_notification_utc = generated_at
+        print(
+            f"Telegram notification recorded: "
+            f"{notification_kind} at {generated_at}"
         )
 
     STATE_PATH.write_text(
         json.dumps(
             {
                 "updated_at_utc": generated_at,
+                "last_notification_utc": last_notification_utc,
                 "signatures": _compact_for_state(results),
                 "counts": counts,
                 "alert_counts": alert_counts,
@@ -395,7 +438,8 @@ def main():
         f"DEVELOPING={counts['DEVELOPING']} "
         f"WATCH={counts['WATCHLIST']} | "
         f"correlation_suppressed={suppressed_count} | "
-        f"calibration_active={calibration.get('active', False)}"
+        f"calibration_active={calibration.get('active', False)} | "
+        f"heartbeat_due={heartbeat_due}"
     )
 
 
