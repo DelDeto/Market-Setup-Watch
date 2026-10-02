@@ -31,6 +31,7 @@ jobs:
               "fapi2": "https://fapi2.binance.com/fapi/v1/exchangeInfo",
               "fapi3": "https://fapi3.binance.com/fapi/v1/exchangeInfo",
               "fapi4": "https://fapi4.binance.com/fapi/v1/exchangeInfo",
+              "web_brackets": "https://www.binance.com/bapi/futures/v1/friendly/future/common/brackets",
           }
 
           public_data_urls = {
