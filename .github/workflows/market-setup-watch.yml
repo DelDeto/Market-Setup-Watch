@@ -76,7 +76,10 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add market_hub/state.json market_hub/outcomes.json market_hub/calibration.json market_hub/binance_crosslist_cache.json
+          git add market_hub/state.json market_hub/outcomes.json market_hub/calibration.json
+          if [ -f market_hub/binance_crosslist_cache.json ]; then
+            git add market_hub/binance_crosslist_cache.json
+          fi
 
           if git diff --cached --quiet; then
             echo "No scanner state changes to commit."
