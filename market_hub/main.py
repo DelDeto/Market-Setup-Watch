@@ -7,6 +7,7 @@ from .chart import render_setup_chart
 from .config import (
     MAX_FULL_SCAN_SYMBOLS,
     MAX_SPREAD_BPS,
+    MAX_TELEGRAM_SETUPS,
     MIN_24H_TURNOVER_USDT,
     REPORT_PATH,
     STATE_PATH,
@@ -406,7 +407,10 @@ def main():
     heartbeat_due = _heartbeat_due(previous, generated_dt)
 
     chart_paths = []
-    important = [item for item in results if _alert_eligible(item)]
+    important = [
+        item for item in results
+        if _alert_eligible(item)
+    ][:MAX_TELEGRAM_SETUPS]
 
     for item in important:
         symbol = item.get("symbol")
