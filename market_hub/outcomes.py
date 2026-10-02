@@ -1,7 +1,12 @@
 import json
 from datetime import datetime, timezone
 
-from .config import OUTCOME_PATH
+from .config import (
+    OUTCOME_PATH,
+    PARTIAL_AT_R,
+    PROTECT_AT_R,
+    TRAIL_AT_R,
+)
 
 
 def load_outcomes():
@@ -47,7 +52,6 @@ def _features(item):
     filters = item.get("filters") or {}
     participation = filters.get("participation") or {}
     market_context = filters.get("market_context") or {}
-    direction = item.get("direction")
     part_regime = participation.get("regime")
     market_regime = market_context.get("regime")
 
@@ -74,11 +78,79 @@ def _features(item):
     }
 
 
+def _management_defaults():
+    return {
+        "protect_at_r": PROTECT_AT_R,
+        "partial_at_r": PARTIAL_AT_R,
+        "trail_at_r": TRAIL_AT_R,
+        "protect_reached": False,
+        "partial_reached": False,
+        "trail_reached": False,
+        "protect_reached_at_utc": None,
+        "partial_reached_at_utc": None,
+        "trail_reached_at_utc": None,
+        "raw_loss_after_protect": False,
+        "raw_realized_r": None,
+    }
+
+
+def _ensure_management(row):
+    management = row.setdefault(
+        "management",
+        _management_defaults(),
+    )
+
+    defaults = _management_defaults()
+    for key, value in defaults.items():
+        management.setdefault(key, value)
+
+    mfe = row.get("mfe_r")
+    if mfe is not None:
+        try:
+            mfe = float(mfe)
+        except (TypeError, ValueError):
+            mfe = None
+
+    if mfe is not None:
+        management["protect_reached"] = bool(
+            management.get("protect_reached")
+            or mfe >= PROTECT_AT_R
+        )
+        management["partial_reached"] = bool(
+            management.get("partial_reached")
+            or mfe >= PARTIAL_AT_R
+        )
+        management["trail_reached"] = bool(
+            management.get("trail_reached")
+            or mfe >= TRAIL_AT_R
+        )
+
+    outcome = row.get("outcome")
+    if outcome == "LOSS":
+        management["raw_loss_after_protect"] = bool(
+            management.get("protect_reached")
+        )
+        management["raw_realized_r"] = -1.0
+    elif outcome == "WIN":
+        rr = row.get("first_target_rr")
+        if rr is not None:
+            try:
+                management["raw_realized_r"] = round(float(rr), 3)
+            except (TypeError, ValueError):
+                pass
+
+    return management
+
+
 def register_candidates(records, results, generated_at):
     existing = {row.get("signal_id") for row in records}
 
     for item in results:
-        if item.get("bucket") not in ("ENTRY_READY", "DEVELOPING"):
+        if item.get("bucket") not in (
+            "ENTRY_READY",
+            "NEAR_ENTRY",
+            "DEVELOPING",
+        ):
             continue
 
         plan = item.get("trade_plan") or {}
@@ -98,8 +170,16 @@ def register_candidates(records, results, generated_at):
             "direction": item.get("direction"),
             "bucket": item.get("bucket"),
             "score": item.get("score"),
+            "quality_score": item.get(
+                "quality_score",
+                item.get("score"),
+            ),
+            "execution_score": item.get("execution_score"),
+            "entry_distance_atr": item.get("entry_distance_atr"),
             "entry_lower": entry.get("lower"),
             "entry_upper": entry.get("upper"),
+            "entry_source": entry.get("source"),
+            "entry_selection_score": entry.get("selection_score"),
             "stop_loss": plan.get("stop_loss"),
             "tp1": targets[0].get("price") if targets else None,
             "first_target_rr": plan.get("first_target_rr"),
@@ -110,6 +190,7 @@ def register_candidates(records, results, generated_at):
             "outcome": None,
             "mfe_r": None,
             "mae_r": None,
+            "management": _management_defaults(),
             "checkpoints_r": {
                 "1h": None,
                 "4h": None,
@@ -137,7 +218,14 @@ def update_outcomes(records, frames_by_symbol):
     now = datetime.now(timezone.utc)
 
     for row in records:
-        if row.get("outcome") in ("WIN", "LOSS", "EXPIRED", "AMBIGUOUS"):
+        management = _ensure_management(row)
+
+        if row.get("outcome") in (
+            "WIN",
+            "LOSS",
+            "EXPIRED",
+            "AMBIGUOUS",
+        ):
             continue
 
         frame = (
@@ -179,7 +267,9 @@ def update_outcomes(records, frames_by_symbol):
                 & (candles["high"] >= lower)
             ]
             if touched.empty:
-                age_hours = (now - created.to_pydatetime()).total_seconds() / 3600
+                age_hours = (
+                    now - created.to_pydatetime()
+                ).total_seconds() / 3600
                 if age_hours >= 24:
                     row["status"] = "CLOSED"
                     row["outcome"] = "EXPIRED"
@@ -214,6 +304,30 @@ def update_outcomes(records, frames_by_symbol):
             best_r = max(best_r, favorable)
             worst_r = max(worst_r, adverse)
 
+            if (
+                not management.get("protect_reached")
+                and favorable >= PROTECT_AT_R
+            ):
+                management["protect_reached"] = True
+                management["protect_reached_at_utc"] = ts.isoformat()
+
+            if (
+                not management.get("partial_reached")
+                and favorable >= PARTIAL_AT_R
+            ):
+                management["partial_reached"] = True
+                management["partial_reached_at_utc"] = ts.isoformat()
+
+            if (
+                not management.get("trail_reached")
+                and favorable >= TRAIL_AT_R
+            ):
+                management["trail_reached"] = True
+                management["trail_reached_at_utc"] = ts.isoformat()
+
+            # Raw outcome is deliberately preserved. If the same 15M candle
+            # touches +1R and the original stop, intrabar ordering is unknown,
+            # so we do not pretend a breakeven stop was definitely executed.
             if hit_stop and hit_tp:
                 row["status"] = "CLOSED"
                 row["outcome"] = "AMBIGUOUS"
@@ -232,6 +346,7 @@ def update_outcomes(records, frames_by_symbol):
 
         row["mfe_r"] = round(best_r, 3)
         row["mae_r"] = round(worst_r, 3)
+        _ensure_management(row)
 
         if entry_time is not None:
             checkpoints = row.setdefault(
@@ -239,23 +354,38 @@ def update_outcomes(records, frames_by_symbol):
                 {"1h": None, "4h": None, "24h": None},
             )
 
-            for label, hours in (("1h", 1), ("4h", 4), ("24h", 24)):
+            for label, hours in (
+                ("1h", 1),
+                ("4h", 4),
+                ("24h", 24),
+            ):
                 if checkpoints.get(label) is not None:
                     continue
 
                 target_time = entry_time + pd.Timedelta(hours=hours)
                 close_times = active_candles.index + pd.Timedelta(minutes=15)
-                eligible = active_candles.loc[close_times >= target_time]
+                eligible = active_candles.loc[
+                    close_times >= target_time
+                ]
 
                 if eligible.empty:
                     continue
 
                 close_price = float(eligible.iloc[0]["close"])
                 if direction == "long":
-                    checkpoint_r = (close_price - entry_mid) / risk
+                    checkpoint_r = (
+                        close_price - entry_mid
+                    ) / risk
                 else:
-                    checkpoint_r = (entry_mid - close_price) / risk
+                    checkpoint_r = (
+                        entry_mid - close_price
+                    ) / risk
 
                 checkpoints[label] = round(checkpoint_r, 3)
+
+    # Backfill new management observations for historical rows without
+    # rewriting their original WIN/LOSS classification.
+    for row in records:
+        _ensure_management(row)
 
     return records

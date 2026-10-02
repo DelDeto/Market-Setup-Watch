@@ -1,3 +1,5 @@
+from market_hub.config import PARTIAL_AT_R, PROTECT_AT_R, TRAIL_AT_R
+
 def _price(point):
     if not point:
         return None
@@ -92,110 +94,65 @@ def _nearby_fvg(analysis, direction, current_price, atr):
 
 
 def _candidate_entry_zones(
+    analysis_4h,
+    analysis_1h,
     analysis_15m,
     direction,
 ):
     current_price = float(
-        analysis_15m[
-            "current_price"
-        ]
+        analysis_15m["current_price"]
     )
-
     atr = max(
-        float(
-            analysis_15m.get(
-                "atr",
-                0,
-            )
-        ),
+        float(analysis_15m.get("atr", 0)),
         0.001,
     )
-
-    setup = analysis_15m.get(
-        "setup",
-        {},
-    )
-
+    setup = analysis_15m.get("setup", {})
     candidates = []
 
-    retest = setup.get(
-        "retest"
-    )
+    def add_candidate(candidate):
+        distance = _zone_distance(
+            candidate,
+            current_price,
+        )
+        if distance is None:
+            return
+        # Keep contextual zones for WATCHLIST, but do not let very distant
+        # levels dominate entry selection.
+        if distance <= 2.0 * atr:
+            candidates.append(candidate)
 
-    structure = setup.get(
-        "structure"
-    )
+    retest = setup.get("retest")
+    structure = setup.get("structure")
 
     if retest:
-        center = float(
-            retest["level"]
-        )
-
+        center = float(retest["level"])
         half = max(
             atr * 0.10,
             center * 0.0005,
         )
-
-        candidates.append(
-            {
-                "lower": (
-                    center - half
-                ),
-                "upper": (
-                    center + half
-                ),
-                "source": "retest",
-                "priority": 0,
-            }
-        )
+        add_candidate({
+            "lower": center - half,
+            "upper": center + half,
+            "source": "retest",
+        })
 
     zone = (
-        analysis_15m.get(
-            "nearest_demand"
-        )
+        analysis_15m.get("nearest_demand")
         if direction == "long"
-        else analysis_15m.get(
-            "nearest_supply"
-        )
+        else analysis_15m.get("nearest_supply")
     )
-
     if zone:
-        distance = _zone_distance(
-            zone,
-            current_price,
-        )
-
-        if (
-            distance is not None
-            and distance <= 1.5 * atr
-        ):
-            candidates.append(
-                {
-                    "lower": float(
-                        zone["lower"]
-                    ),
-                    "upper": float(
-                        zone["upper"]
-                    ),
-                    "source": (
-                        "demand"
-                        if direction
-                        == "long"
-                        else "supply"
-                    ),
-                    "zone_grade": (
-                        zone.get(
-                            "grade"
-                        )
-                    ),
-                    "zone_quality": (
-                        zone.get(
-                            "quality"
-                        )
-                    ),
-                    "priority": 1,
-                }
-            )
+        add_candidate({
+            "lower": float(zone["lower"]),
+            "upper": float(zone["upper"]),
+            "source": (
+                "demand"
+                if direction == "long"
+                else "supply"
+            ),
+            "zone_grade": zone.get("grade"),
+            "zone_quality": zone.get("quality"),
+        })
 
     fvg = _nearby_fvg(
         analysis_15m,
@@ -203,93 +160,169 @@ def _candidate_entry_zones(
         current_price,
         atr,
     )
-
     if fvg:
-        fvg["priority"] = 2
-        candidates.append(
-            fvg
-        )
+        add_candidate(fvg)
 
     if structure:
-        center = float(
-            structure["level"]
-        )
-
+        center = float(structure["level"])
         half = max(
             atr * 0.08,
             center * 0.0004,
         )
-
-        candidates.append(
-            {
-                "lower": (
-                    center - half
-                ),
-                "upper": (
-                    center + half
-                ),
-                "source": (
-                    f"{structure['kind']} "
-                    "reclaim"
-                ),
-                "priority": 3,
-            }
-        )
+        add_candidate({
+            "lower": center - half,
+            "upper": center + half,
+            "source": f"{structure['kind']} reclaim",
+        })
 
     if not candidates:
         half = atr * 0.12
+        candidates.append({
+            "lower": current_price - half,
+            "upper": current_price + half,
+            "source": "ATR pullback",
+        })
 
-        candidates.append(
-            {
-                "lower": (
-                    current_price - half
-                ),
-                "upper": (
-                    current_price + half
-                ),
-                "source": (
-                    "ATR pullback"
-                ),
-                "priority": 4,
-            }
+    grade_points = {
+        "A+": 24,
+        "A": 20,
+        "B": 14,
+        "C": 2,
+    }
+    source_points = {
+        "demand": 16,
+        "supply": 16,
+        "retest": 14,
+        "bullish FVG": 10,
+        "bearish FVG": 10,
+        "ATR pullback": 0,
+    }
+
+    scored = []
+    for candidate in candidates:
+        entry_mid = (
+            float(candidate["lower"])
+            + float(candidate["upper"])
+        ) / 2.0
+
+        stop_loss = _build_stop(
+            analysis_15m,
+            candidate,
+            direction,
         )
 
-    def score(candidate):
+        risk = (
+            entry_mid - stop_loss
+            if direction == "long"
+            else stop_loss - entry_mid
+        )
+        if risk <= 0:
+            risk = atr * 0.5
+            stop_loss = (
+                entry_mid - risk
+                if direction == "long"
+                else entry_mid + risk
+            )
+
+        target_pairs = _liquidity_targets(
+            analysis_4h,
+            analysis_1h,
+            analysis_15m,
+            direction,
+            entry_mid,
+            risk,
+        )
+
+        first_rr = None
+        if target_pairs:
+            target_price = float(target_pairs[0][0])
+            reward = (
+                target_price - entry_mid
+                if direction == "long"
+                else entry_mid - target_price
+            )
+            first_rr = reward / risk if risk > 0 else None
+
         distance = _zone_distance(
             candidate,
             current_price,
         )
+        distance_atr = (
+            distance / atr
+            if distance is not None
+            else 99.0
+        )
+        risk_atr = risk / atr
 
-        # Prefer a retracement zone on the correct side of price.
         if direction == "long":
-            wrong_side = (
-                candidate["lower"]
-                > current_price
+            correct_side = (
+                float(candidate["lower"])
+                <= current_price
             )
         else:
-            wrong_side = (
-                candidate["upper"]
-                < current_price
+            correct_side = (
+                float(candidate["upper"])
+                >= current_price
             )
 
-        return (
-            1 if wrong_side else 0,
-            candidate["priority"],
-            distance,
+        source = candidate.get("source", "")
+        structural_source = source_points.get(
+            source,
+            8 if "reclaim" in source else 6,
+        )
+        zone_score = grade_points.get(
+            candidate.get("zone_grade"),
+            8,
+        )
+        rr_score = (
+            min(max(float(first_rr or 0.0), 0.0), 4.0)
+            * 5.0
+        )
+        if first_rr is not None and first_rr < 1.20:
+            rr_score -= 10.0
+
+        proximity_score = max(
+            0.0,
+            14.0 - 6.0 * distance_atr,
         )
 
-    best = min(
-        candidates,
-        key=score,
-    )
+        if 0.20 <= risk_atr <= 1.50:
+            risk_score = 6.0
+        elif risk_atr < 0.10:
+            risk_score = -12.0
+        elif risk_atr > 2.00:
+            risk_score = -8.0
+        else:
+            risk_score = 0.0
 
+        selection_score = (
+            zone_score
+            + structural_source
+            + rr_score
+            + proximity_score
+            + risk_score
+            + (16.0 if correct_side else -25.0)
+        )
+
+        enriched = dict(candidate)
+        enriched.update({
+            "selection_score": round(selection_score, 3),
+            "candidate_first_rr": first_rr,
+            "candidate_distance_atr": distance_atr,
+            "candidate_risk_atr": risk_atr,
+            "candidate_stop_loss": stop_loss,
+        })
+        scored.append(enriched)
+
+    best = max(
+        scored,
+        key=lambda item: (
+            float(item.get("selection_score", 0)),
+            -float(item.get("candidate_distance_atr", 99)),
+        ),
+    )
     best = dict(best)
-
-    best.pop(
-        "priority",
-        None,
-    )
-
+    best["candidate_count"] = len(scored)
     return best
 
 
@@ -656,6 +689,8 @@ def build_trade_plan(
 
     entry_zone = (
         _candidate_entry_zones(
+            analysis_4h,
+            analysis_1h,
             analysis_15m,
             direction,
         )
@@ -944,6 +979,31 @@ def build_trade_plan(
                     "zone_quality"
                 )
             ),
+            "selection_score": (
+                entry_zone.get(
+                    "selection_score"
+                )
+            ),
+            "candidate_first_rr": (
+                entry_zone.get(
+                    "candidate_first_rr"
+                )
+            ),
+            "candidate_distance_atr": (
+                entry_zone.get(
+                    "candidate_distance_atr"
+                )
+            ),
+            "candidate_risk_atr": (
+                entry_zone.get(
+                    "candidate_risk_atr"
+                )
+            ),
+            "candidate_count": (
+                entry_zone.get(
+                    "candidate_count"
+                )
+            ),
         },
         "entry_mid": entry_mid,
         "stop_loss": (
@@ -951,5 +1011,16 @@ def build_trade_plan(
         ),
         "risk": risk,
         "targets": targets,
+        "management": {
+            "protect_at_r": PROTECT_AT_R,
+            "protect_stop": entry_mid,
+            "partial_at_r": PARTIAL_AT_R,
+            "trail_at_r": TRAIL_AT_R,
+            "policy": (
+                "At +1R protect at breakeven; "
+                "from +1.5R consider partial protection; "
+                "from +2R trail using fresh 15M structure."
+            ),
+        },
         "trigger": trigger,
     }

@@ -7,6 +7,7 @@ from .chart import render_setup_chart
 from .config import (
     MAX_FULL_SCAN_SYMBOLS,
     MAX_SPREAD_BPS,
+    MAX_TELEGRAM_SETUPS,
     MIN_24H_TURNOVER_USDT,
     REPORT_PATH,
     STATE_PATH,
@@ -97,7 +98,11 @@ def _heartbeat_due(previous, now):
 
 def _alert_eligible(item):
     return (
-        item.get("bucket") in ("ENTRY_READY", "DEVELOPING")
+        item.get("bucket") in (
+            "ENTRY_READY",
+            "NEAR_ENTRY",
+            "DEVELOPING",
+        )
         and not item.get("correlation_suppressed", False)
     )
 
@@ -148,13 +153,20 @@ def _compact_for_state(setups):
 def _sort_results(results):
     bucket_priority = {
         "ENTRY_READY": 0,
-        "DEVELOPING": 1,
-        "WATCHLIST": 2,
+        "NEAR_ENTRY": 1,
+        "DEVELOPING": 2,
+        "WATCHLIST": 3,
     }
     results.sort(
         key=lambda item: (
             bucket_priority.get(item.get("bucket"), 9),
-            -float(item.get("score", 0)),
+            -float(item.get("execution_score", 0)),
+            -float(item.get("quality_score", item.get("score", 0))),
+            float(
+                item.get("entry_distance_atr")
+                if item.get("entry_distance_atr") is not None
+                else 99
+            ),
         )
     )
     return results
@@ -289,7 +301,12 @@ def main():
 
     counts = {
         bucket: sum(item.get("bucket") == bucket for item in results)
-        for bucket in ("ENTRY_READY", "DEVELOPING", "WATCHLIST")
+        for bucket in (
+            "ENTRY_READY",
+            "NEAR_ENTRY",
+            "DEVELOPING",
+            "WATCHLIST",
+        )
     }
 
     alert_counts = {
@@ -298,7 +315,12 @@ def main():
             and not item.get("correlation_suppressed", False)
             for item in results
         )
-        for bucket in ("ENTRY_READY", "DEVELOPING", "WATCHLIST")
+        for bucket in (
+            "ENTRY_READY",
+            "NEAR_ENTRY",
+            "DEVELOPING",
+            "WATCHLIST",
+        )
     }
 
     suppressed_count = sum(
@@ -316,6 +338,21 @@ def main():
         if row.get("outcome") in ("WIN", "LOSS")
     ]
     wins = sum(row.get("outcome") == "WIN" for row in closed_outcomes)
+    losses_after_protect = sum(
+        row.get("outcome") == "LOSS"
+        and bool(
+            (row.get("management") or {}).get(
+                "protect_reached"
+            )
+        )
+        for row in closed_outcomes
+    )
+    raw_realized_r = [
+        (row.get("management") or {}).get("raw_realized_r")
+        for row in closed_outcomes
+        if (row.get("management") or {}).get("raw_realized_r")
+        is not None
+    ]
     outcome_summary = {
         "tracked": len(outcomes),
         "closed_win_loss": len(closed_outcomes),
@@ -326,13 +363,19 @@ def main():
             if closed_outcomes
             else None
         ),
+        "losses_after_1r": losses_after_protect,
+        "raw_realized_r_sum": (
+            round(sum(float(value) for value in raw_realized_r), 3)
+            if raw_realized_r
+            else None
+        ),
     }
 
     report = {
         "generated_at_utc": generated_at,
         "exchange": "MEXC",
         "market": "USDT perpetual futures",
-        "engine": "PA-MTF Hybrid V2 deterministic scanner",
+        "engine": "PA-MTF Hybrid V3 entry-centric scanner",
         "mexc_universe_count": len(mexc_universe),
         "universe_count": len(universe),
         "binance_crosslist_rejection_count": crosslist_rejection_count,
@@ -364,7 +407,10 @@ def main():
     heartbeat_due = _heartbeat_due(previous, generated_dt)
 
     chart_paths = []
-    important = [item for item in results if _alert_eligible(item)]
+    important = [
+        item for item in results
+        if _alert_eligible(item)
+    ][:MAX_TELEGRAM_SETUPS]
 
     for item in important:
         symbol = item.get("symbol")
@@ -420,7 +466,7 @@ def main():
     else:
         print(
             "Market Setup Watch: no new unsuppressed "
-            "READY/DEVELOPING setup change and heartbeat not due; "
+            "READY/NEAR/DEVELOPING setup change and heartbeat not due; "
             "Telegram suppressed."
         )
 
@@ -452,6 +498,7 @@ def main():
     print(
         f"Market Setup Watch completed: "
         f"READY={counts['ENTRY_READY']} "
+        f"NEAR={counts['NEAR_ENTRY']} "
         f"DEVELOPING={counts['DEVELOPING']} "
         f"WATCH={counts['WATCHLIST']} | "
         f"correlation_suppressed={suppressed_count} | "
