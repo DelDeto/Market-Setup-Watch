@@ -8,9 +8,6 @@ on:
     paths:
       - ".github/workflows/market-setup-watchdog.yml"
   schedule:
-    # Offset from the primary scanner. If the latest main run is stale,
-    # dispatch a recovery run. A separate scheduled workflow gives us
-    # a second chance when GitHub drops/delays the primary cron.
     - cron: "1,16,31,46 * * * *"
 
 permissions:
@@ -41,27 +38,24 @@ jobs:
           notify_failure() {
             local message="$1"
             if [[ -n "${TELEGRAM_BOT_TOKEN:-}" && -n "${TELEGRAM_CHAT_ID:-}" ]]; then
-              curl -fsS                 -X POST                 "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage"                 --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}"                 --data-urlencode "text=⚠️ MARKET SETUP WATCHDOG
-${message}"                 >/dev/null || true
+              curl -fsS -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" --data-urlencode "chat_id=${TELEGRAM_CHAT_ID}" --data-urlencode "text=⚠️ MARKET SETUP WATCHDOG | ${message}" >/dev/null || true
             fi
           }
 
           dispatch_main() {
             echo "Dispatching recovery run for ${MAIN_WORKFLOW}..."
-            if gh api               --method POST               "repos/${GITHUB_REPOSITORY}/actions/workflows/${MAIN_WORKFLOW}/dispatches"               -f ref=main
-            then
+            if gh api --method POST "repos/${GITHUB_REPOSITORY}/actions/workflows/${MAIN_WORKFLOW}/dispatches" -f ref=main; then
               echo "Recovery dispatch accepted."
               return 0
             fi
 
-            notify_failure "Watchdog detected a stale/failed scanner but could not dispatch a recovery run."
+            notify_failure "Scanner stale/failed, but recovery dispatch failed."
             echo "Recovery dispatch failed." >&2
             return 1
           }
 
-          if ! RUNS_JSON="$(gh api             "repos/${GITHUB_REPOSITORY}/actions/workflows/${MAIN_WORKFLOW}/runs?per_page=1")"
-          then
-            notify_failure "Watchdog could not read the latest Market Setup Watch workflow run."
+          if ! RUNS_JSON="$(gh api "repos/${GITHUB_REPOSITORY}/actions/workflows/${MAIN_WORKFLOW}/runs?per_page=1")"; then
+            notify_failure "Could not read the latest Market Setup Watch run."
             exit 1
           fi
 
@@ -83,17 +77,9 @@ ${message}"                 >/dev/null || true
             exit $?
           fi
 
-          AGE_SECONDS="$(python - "${UPDATED_AT}" <<'PY'
-from datetime import datetime, timezone
-import sys
-
-value = sys.argv[1]
-dt = datetime.fromisoformat(value.replace("Z", "+00:00"))
-print(int((datetime.now(timezone.utc) - dt.astimezone(timezone.utc)).total_seconds()))
-PY
-          )"
-
+          AGE_SECONDS="$(python -c 'from datetime import datetime, timezone; import sys; dt=datetime.fromisoformat(sys.argv[1].replace("Z", "+00:00")); print(int((datetime.now(timezone.utc)-dt.astimezone(timezone.utc)).total_seconds()))' "${UPDATED_AT}")"
           STALE_SECONDS="$((STALE_MINUTES * 60))"
+
           echo "Latest main run age: ${AGE_SECONDS}s; stale threshold: ${STALE_SECONDS}s."
 
           if [[ "${CONCLUSION}" != "success" ]]; then
