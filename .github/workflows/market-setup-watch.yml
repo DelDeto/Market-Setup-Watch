@@ -3,7 +3,7 @@ name: Market Setup Watch
 on:
   workflow_dispatch:
   schedule:
-    # Four scans per hour, shortly after 15M candle closes.
+    # Primary scanner: four scans per hour, shortly after 15M candle closes.
     - cron: "8,23,38,53 * * * *"
 
 permissions:
@@ -11,7 +11,8 @@ permissions:
 
 concurrency:
   group: market-setup-watch
-  cancel-in-progress: true
+  # Do not cancel a delayed scan if a recovery dispatch arrives while it runs.
+  cancel-in-progress: false
 
 jobs:
   scan:
@@ -35,7 +36,21 @@ jobs:
 
       - name: Compile scanner
         run: |
-          python -m py_compile             smc_analysis.py             trade_plan.py             market_hub/config.py             market_hub/mexc_market.py             market_hub/participation.py             market_hub/market_context.py             market_hub/correlation.py             market_hub/calibration.py             market_hub/outcomes.py             market_hub/ranker.py             market_hub/scanner.py             market_hub/chart.py             market_hub/notifier.py             market_hub/main.py
+          python -m py_compile \
+            smc_analysis.py \
+            trade_plan.py \
+            market_hub/config.py \
+            market_hub/mexc_market.py \
+            market_hub/participation.py \
+            market_hub/market_context.py \
+            market_hub/correlation.py \
+            market_hub/calibration.py \
+            market_hub/outcomes.py \
+            market_hub/ranker.py \
+            market_hub/scanner.py \
+            market_hub/chart.py \
+            market_hub/notifier.py \
+            market_hub/main.py
 
       - name: Scan MEXC USDT perpetual market
         env:
