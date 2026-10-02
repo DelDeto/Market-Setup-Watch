@@ -1,6 +1,6 @@
 {
   "active": false,
-  "closed_samples": 20,
-  "baseline_win_rate": 0.45,
+  "closed_samples": 23,
+  "baseline_win_rate": 0.391304347826087,
   "feature_adjustments": {}
 }
