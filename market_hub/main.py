@@ -1,6 +1,7 @@
 import json
 from datetime import datetime, timezone
 
+from .binance_crosslist import get_binance_crosslisted_bases, mexc_underlying
 from .calibration import build_calibration
 from .chart import render_setup_chart
 from .config import (
@@ -164,7 +165,19 @@ def main():
     generated_at = generated_dt.isoformat()
     previous = _load_state()
 
-    universe = get_contract_universe()
+    mexc_universe = get_contract_universe()
+    crosslisted_bases, crosslist_meta = get_binance_crosslisted_bases()
+
+    if crosslisted_bases is not None:
+        universe = [
+            symbol
+            for symbol in mexc_universe
+            if mexc_underlying(symbol) in crosslisted_bases
+        ]
+    else:
+        universe = list(mexc_universe)
+
+    crosslist_rejection_count = len(mexc_universe) - len(universe)
     tickers = get_all_tickers()
 
     hold_vol_snapshot = apply_participation_context(
@@ -210,7 +223,8 @@ def main():
             scan_symbols.append(symbol)
 
     print(
-        f"Universe={len(universe)} | "
+        f"MEXC_universe={len(mexc_universe)} | "
+        f"binance_crosslisted={len(universe)} | "
         f"quality_liquid={len(ranked_universe)} | "
         f"full_scan={len(scan_symbols)}"
     )
@@ -319,7 +333,10 @@ def main():
         "exchange": "MEXC",
         "market": "USDT perpetual futures",
         "engine": "PA-MTF Hybrid V2 deterministic scanner",
+        "mexc_universe_count": len(mexc_universe),
         "universe_count": len(universe),
+        "binance_crosslist_rejection_count": crosslist_rejection_count,
+        "binance_crosslist": crosslist_meta,
         "quality_liquid_universe_count": len(ranked_universe),
         "full_scan_count": len(scan_symbols),
         "counts": counts,
