@@ -2,6 +2,11 @@ name: Market Setup Watchdog
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/market-setup-watchdog.yml"
   schedule:
     # Offset from the primary scanner. If the latest main run is stale,
     # dispatch a recovery run. A separate scheduled workflow gives us
