@@ -1,0 +1,50 @@
+name: Market Setup Code Check
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - signal-v3-entry-centric
+    paths:
+      - "**.py"
+      - ".github/workflows/market-code-check.yml"
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "**.py"
+
+permissions:
+  contents: read
+
+jobs:
+  compile:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Compile scanner
+        run: |
+          python -m py_compile             smc_analysis.py             trade_plan.py             market_hub/config.py             market_hub/binance_crosslist.py             market_hub/mexc_market.py             market_hub/participation.py             market_hub/market_context.py             market_hub/correlation.py             market_hub/calibration.py             market_hub/outcomes.py             market_hub/ranker.py             market_hub/scanner.py             market_hub/chart.py             market_hub/notifier.py             market_hub/main.py
+
+      - name: Import smoke test
+        run: |
+          python - <<'PY'
+          from trade_plan import build_trade_plan
+          from market_hub.ranker import score_setup
+          from market_hub.scanner import analyze_symbol
+          from market_hub.notifier import build_text
+          from market_hub.outcomes import update_outcomes
+          print("Market Setup V3 imports OK")
+          PY
