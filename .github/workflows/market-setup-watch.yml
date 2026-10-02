@@ -2,16 +2,10 @@ name: Market Setup Watch
 
 on:
   workflow_dispatch:
-  # Editing this production workflow on main also performs one immediate
-  # production scan. The normal automatic cadence is still controlled by cron.
-  push:
-    branches:
-      - main
-    paths:
-      - ".github/workflows/market-setup-watch.yml"
   schedule:
     # Primary scanner: four scans per hour, shortly after 15M candle closes.
-    - cron: "8,23,38,53 * * * *"
+    # Cron was refreshed on 2026-10-02 to explicitly reactivate scheduling.
+    - cron: "9,24,39,54 * * * *"
 
 permissions:
   contents: write
