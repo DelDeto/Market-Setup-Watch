@@ -21,7 +21,11 @@ def apply_correlation_suppression(results, frames_by_symbol):
 
     actionable = [
         item for item in results
-        if item.get("bucket") in ("ENTRY_READY", "DEVELOPING")
+        if item.get("bucket") in (
+            "ENTRY_READY",
+            "NEAR_ENTRY",
+            "DEVELOPING",
+        )
     ]
 
     for item in actionable:
