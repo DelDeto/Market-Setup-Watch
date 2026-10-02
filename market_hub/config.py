@@ -51,5 +51,6 @@ MIN_CALIBRATION_FEATURE_SAMPLES = 15
 STATE_PATH = Path("market_hub/state.json")
 OUTCOME_PATH = Path("market_hub/outcomes.json")
 CALIBRATION_PATH = Path("market_hub/calibration.json")
+BINANCE_CROSSLIST_CACHE_PATH = Path("market_hub/binance_crosslist_cache.json")
 REPORT_PATH = Path("output/market_hub_report.json")
 TEXT_PATH = Path("output/market_hub_update.txt")
