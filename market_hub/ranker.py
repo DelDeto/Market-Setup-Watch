@@ -340,8 +340,10 @@ def score_setup(
     )
 
     blockers = list(plan.get("blockers") or [])
+    entry_grade = ((plan.get("entry_zone") or {}).get("zone_grade"))
     hard_clear = (
         plan.get("active")
+        and entry_grade != "C"
         and alignment_label != "CONFLICT"
         and volatility_ok
         and not htf_location["blocked"]
