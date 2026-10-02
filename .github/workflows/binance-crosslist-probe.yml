@@ -55,7 +55,12 @@ jobs:
                   req = urllib.request.Request(url, headers={"User-Agent":"Mozilla/5.0"})
                   with urllib.request.urlopen(req, timeout=20) as r:
                       data=json.loads(r.read().decode("utf-8"))
-                  syms=data.get("symbols", [])
+                  if name == "web_brackets":
+                      print("web_brackets_type", type(data).__name__)
+                      if isinstance(data, dict):
+                          print("web_brackets_keys", list(data.keys())[:20])
+                          print("web_brackets_head", json.dumps(data, ensure_ascii=False)[:1500])
+                  syms=data.get("symbols", []) if isinstance(data, dict) else []
                   usdt=[x for x in syms if x.get("quoteAsset")=="USDT" and x.get("status")=="TRADING"]
                   print(name, "OK", "total", len(syms), "usdt_trading", len(usdt))
                   print(name, "sample", [x.get("symbol") for x in usdt[:10]])
