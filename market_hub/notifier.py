@@ -1,8 +1,12 @@
 import os
+from datetime import datetime, timedelta, timezone
 
 import requests
 
 from .config import MAX_TELEGRAM_SETUPS, TEXT_PATH
+
+
+VN_TZ = timezone(timedelta(hours=7))
 
 
 def _fmt(value):
@@ -23,6 +27,18 @@ def _fmt_signed(value):
     return f"{value:+d}"
 
 
+def _scan_time_vn(value):
+    if not value:
+        return "-"
+    try:
+        parsed = datetime.fromisoformat(str(value).replace("Z", "+00:00"))
+        if parsed.tzinfo is None:
+            parsed = parsed.replace(tzinfo=timezone.utc)
+        return parsed.astimezone(VN_TZ).strftime("%d/%m/%Y %H:%M")
+    except (TypeError, ValueError):
+        return str(value)
+
+
 def build_text(report):
     rows = [
         item
@@ -37,7 +53,7 @@ def build_text(report):
     lines = [
         "🔥 MARKET SETUP WATCH",
         "=" * 30,
-        f"Scan UTC: {report.get('generated_at_utc')}",
+        f"Scan VN: {_scan_time_vn(report.get('generated_at_utc'))}",
         (
             f"Universe: {report.get('universe_count', 0)} | "
             f"Quality+Liquid: "
@@ -176,6 +192,66 @@ def build_text(report):
     return "\n".join(lines)
 
 
+def build_heartbeat_text(report):
+    counts = report.get("alert_counts") or report.get("counts", {})
+    market_context = report.get("market_context", {})
+    actionable = [
+        item
+        for item in report.get("setups", [])
+        if (
+            item.get("bucket") in ("ENTRY_READY", "DEVELOPING")
+            and not item.get("correlation_suppressed", False)
+        )
+    ][:3]
+
+    lines = [
+        "🛰 MARKET SETUP WATCH — HEARTBEAT",
+        "Scanner: ✅ ONLINE",
+        f"Scan VN: {_scan_time_vn(report.get('generated_at_utc'))}",
+        (
+            f"Universe {report.get('universe_count', 0)} | "
+            f"Quality+Liquid {report.get('quality_liquid_universe_count', 0)} | "
+            f"Deep scan {report.get('full_scan_count', 0)}"
+        ),
+        (
+            f"🔥 READY {counts.get('ENTRY_READY', 0)} | "
+            f"⚡ DEVELOPING {counts.get('DEVELOPING', 0)} | "
+            f"👀 WATCH {counts.get('WATCHLIST', 0)}"
+        ),
+        (
+            f"Market {market_context.get('regime', 'MIXED')} | "
+            f"BTC {market_context.get('btc_bias', 'UNKNOWN')} | "
+            f"ETH {market_context.get('eth_bias', 'UNKNOWN')}"
+        ),
+    ]
+
+    if actionable:
+        lines.append("")
+        lines.append("Top actionable hiện tại:")
+        for item in actionable:
+            plan = item.get("trade_plan", {})
+            targets = plan.get("targets") or []
+            first_rr = targets[0].get("rr") if targets else None
+            rr_text = f"{first_rr:.2f}R" if first_rr is not None else "-"
+            lines.append(
+                f"• {item.get('symbol')} "
+                f"{(item.get('direction') or '-').upper()} | "
+                f"{item.get('bucket')} | "
+                f"{item.get('score', 0)}/100 | TP1 {rr_text}"
+            )
+    else:
+        lines += [
+            "",
+            "Không có READY/DEVELOPING mới cần cảnh báo.",
+        ]
+
+    lines += [
+        "",
+        "Heartbeat này xác nhận scanner vẫn đang hoạt động.",
+    ]
+    return "\n".join(lines)
+
+
 def _split_text(text, max_chars=3800):
     if len(text) <= max_chars:
         return [text]
@@ -207,6 +283,41 @@ def _split_text(text, max_chars=3800):
     return chunks
 
 
+def _credentials():
+    token = os.getenv("TELEGRAM_BOT_TOKEN")
+    chat_id = os.getenv("TELEGRAM_CHAT_ID")
+    if not token or not chat_id:
+        print("Telegram skipped: missing secrets.")
+        return None, None
+    return token, chat_id
+
+
+def _send_text(token, chat_id, text):
+    chunks = _split_text(text)
+
+    for index, chunk in enumerate(chunks, start=1):
+        if len(chunks) > 1:
+            chunk = f"[{index}/{len(chunks)}]\n" + chunk
+
+        response = requests.post(
+            f"https://api.telegram.org/bot{token}/sendMessage",
+            json={
+                "chat_id": chat_id,
+                "text": chunk,
+                "disable_web_page_preview": True,
+            },
+            timeout=20,
+        )
+
+        if response.status_code != 200:
+            raise RuntimeError(
+                f"Telegram send failed: HTTP {response.status_code} "
+                f"{response.text[:500]}"
+            )
+
+    return len(chunks)
+
+
 def _send_photo(token, chat_id, chart):
     path = chart.get("path")
     if not path:
@@ -236,39 +347,30 @@ def _send_photo(token, chat_id, chart):
         )
 
 
+def send_heartbeat(report):
+    token, chat_id = _credentials()
+    if not token or not chat_id:
+        return False
+
+    text = build_heartbeat_text(report)
+    chunk_count = _send_text(token, chat_id, text)
+    print(
+        f"Market Setup Watch heartbeat sent "
+        f"({chunk_count} text message(s), 0 chart(s))."
+    )
+    return True
+
+
 def send_telegram(report, chart_paths=None):
     text = build_text(report)
     TEXT_PATH.parent.mkdir(parents=True, exist_ok=True)
     TEXT_PATH.write_text(text, encoding="utf-8")
 
-    token = os.getenv("TELEGRAM_BOT_TOKEN")
-    chat_id = os.getenv("TELEGRAM_CHAT_ID")
-
+    token, chat_id = _credentials()
     if not token or not chat_id:
-        print("Telegram skipped: missing secrets.")
         return False
 
-    chunks = _split_text(text)
-
-    for index, chunk in enumerate(chunks, start=1):
-        if len(chunks) > 1:
-            chunk = f"[{index}/{len(chunks)}]\n" + chunk
-
-        response = requests.post(
-            f"https://api.telegram.org/bot{token}/sendMessage",
-            json={
-                "chat_id": chat_id,
-                "text": chunk,
-                "disable_web_page_preview": True,
-            },
-            timeout=20,
-        )
-
-        if response.status_code != 200:
-            raise RuntimeError(
-                f"Telegram send failed: HTTP {response.status_code} "
-                f"{response.text[:500]}"
-            )
+    chunk_count = _send_text(token, chat_id, text)
 
     chart_paths = chart_paths or []
     for chart in chart_paths:
@@ -276,7 +378,7 @@ def send_telegram(report, chart_paths=None):
 
     print(
         f"Market Setup Watch Telegram sent "
-        f"({len(chunks)} text message(s), "
+        f"({chunk_count} text message(s), "
         f"{len(chart_paths)} chart(s))."
     )
     return True
