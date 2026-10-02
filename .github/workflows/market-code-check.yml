@@ -2,20 +2,19 @@ name: Market Setup Code Check
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - signal-v3-entry-centric
-    paths:
-      - "**.py"
-      - ".github/workflows/market-code-check.yml"
   pull_request:
     branches:
       - main
     paths:
       - "**.py"
+      - ".github/workflows/market-code-check.yml"
 
 permissions:
   contents: read
+
+concurrency:
+  group: market-code-check-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   compile:
@@ -36,7 +35,22 @@ jobs:
 
       - name: Compile scanner
         run: |
-          python -m py_compile             smc_analysis.py             trade_plan.py             market_hub/config.py             market_hub/binance_crosslist.py             market_hub/mexc_market.py             market_hub/participation.py             market_hub/market_context.py             market_hub/correlation.py             market_hub/calibration.py             market_hub/outcomes.py             market_hub/ranker.py             market_hub/scanner.py             market_hub/chart.py             market_hub/notifier.py             market_hub/main.py
+          python -m py_compile \
+            smc_analysis.py \
+            trade_plan.py \
+            market_hub/config.py \
+            market_hub/binance_crosslist.py \
+            market_hub/mexc_market.py \
+            market_hub/participation.py \
+            market_hub/market_context.py \
+            market_hub/correlation.py \
+            market_hub/calibration.py \
+            market_hub/outcomes.py \
+            market_hub/ranker.py \
+            market_hub/scanner.py \
+            market_hub/chart.py \
+            market_hub/notifier.py \
+            market_hub/main.py
 
       - name: Import smoke test
         run: |
