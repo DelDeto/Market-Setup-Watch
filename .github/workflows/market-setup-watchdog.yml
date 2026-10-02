@@ -8,6 +8,7 @@ on:
     paths:
       - ".github/workflows/market-setup-watchdog.yml"
   schedule:
+    # Also acts as the recovery path after scanner/filter changes.
     - cron: "1,16,31,46 * * * *"
 
 permissions:
