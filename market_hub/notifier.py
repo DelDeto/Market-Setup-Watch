@@ -8,6 +8,10 @@ from .config import MAX_TELEGRAM_SETUPS, TEXT_PATH
 
 VN_TZ = timezone(timedelta(hours=7))
 
+# Shared Telegram destination for Market Scan subscribers.
+# Telegram chat IDs are routing identifiers, not bot credentials.
+DEFAULT_GROUP_CHAT_ID = "-1003984243045"
+
 
 def _fmt(value):
     if value is None:
@@ -316,11 +320,26 @@ def _split_text(text, max_chars=3800):
 
 def _credentials():
     token = os.getenv("TELEGRAM_BOT_TOKEN")
-    chat_id = os.getenv("TELEGRAM_CHAT_ID")
-    if not token or not chat_id:
-        print("Telegram skipped: missing secrets.")
-        return None, None
-    return token, chat_id
+    personal_chat_id = os.getenv("TELEGRAM_CHAT_ID")
+    group_chat_id = os.getenv("TELEGRAM_GROUP_CHAT_ID", DEFAULT_GROUP_CHAT_ID)
+
+    if not token:
+        print("Telegram skipped: missing TELEGRAM_BOT_TOKEN.")
+        return None, []
+
+    # Keep the existing personal destination as backup and also publish to
+    # the shared group. Deduplicate IDs so the same destination is never
+    # notified twice.
+    chat_ids = []
+    for chat_id in (personal_chat_id, group_chat_id):
+        if chat_id and chat_id not in chat_ids:
+            chat_ids.append(chat_id)
+
+    if not chat_ids:
+        print("Telegram skipped: no destinations configured.")
+        return None, []
+
+    return token, chat_ids
 
 
 def _send_text(token, chat_id, text):
@@ -379,14 +398,16 @@ def _send_photo(token, chat_id, chart):
 
 
 def send_heartbeat(report):
-    token, chat_id = _credentials()
-    if not token or not chat_id:
+    token, chat_ids = _credentials()
+    if not token or not chat_ids:
         return False
 
     text = build_heartbeat_text(report)
-    chunk_count = _send_text(token, chat_id, text)
+    chunk_count = 0
+    for chat_id in chat_ids:
+        chunk_count += _send_text(token, chat_id, text)
     print(
-        f"Market Setup Watch heartbeat sent "
+        f"Market Setup Watch heartbeat sent to {len(chat_ids)} destination(s) "
         f"({chunk_count} text message(s), 0 chart(s))."
     )
     return True
@@ -397,19 +418,22 @@ def send_telegram(report, chart_paths=None):
     TEXT_PATH.parent.mkdir(parents=True, exist_ok=True)
     TEXT_PATH.write_text(text, encoding="utf-8")
 
-    token, chat_id = _credentials()
-    if not token or not chat_id:
+    token, chat_ids = _credentials()
+    if not token or not chat_ids:
         return False
 
-    chunk_count = _send_text(token, chat_id, text)
-
     chart_paths = chart_paths or []
-    for chart in chart_paths:
-        _send_photo(token, chat_id, chart)
+    chunk_count = 0
+    chart_count = 0
+    for chat_id in chat_ids:
+        chunk_count += _send_text(token, chat_id, text)
+        for chart in chart_paths:
+            _send_photo(token, chat_id, chart)
+            chart_count += 1
 
     print(
-        f"Market Setup Watch Telegram sent "
+        f"Market Setup Watch Telegram sent to {len(chat_ids)} destination(s) "
         f"({chunk_count} text message(s), "
-        f"{len(chart_paths)} chart(s))."
+        f"{chart_count} chart(s))."
     )
     return True
