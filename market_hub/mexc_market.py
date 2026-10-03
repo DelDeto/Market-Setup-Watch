@@ -7,6 +7,9 @@ import requests
 
 from .config import (
     BASE_URL,
+    FAST_SCAN_HISTORY,
+    FAST_SCAN_MIN_HISTORY,
+    FAST_SCAN_WORKERS,
     HISTORY_LIMIT,
     MIN_HISTORY_REQUIRED,
     QUOTE_COIN,
@@ -222,7 +225,12 @@ def _parse_kline(payload):
     return frame
 
 
-def get_closed_klines(symbol, interval, limit=HISTORY_LIMIT):
+def get_closed_klines(
+    symbol,
+    interval,
+    limit=HISTORY_LIMIT,
+    min_required=MIN_HISTORY_REQUIRED,
+):
     if interval not in INTERVAL_MAP:
         raise ValueError(f"Unsupported interval: {interval}")
 
@@ -248,10 +256,10 @@ def get_closed_klines(symbol, interval, limit=HISTORY_LIMIT):
     delta = pd.to_timedelta(INTERVAL_SECONDS[interval], unit="s")
     frame = frame.loc[(frame.index + delta) <= now].tail(limit)
 
-    if len(frame) < MIN_HISTORY_REQUIRED:
+    if len(frame) < min_required:
         raise RuntimeError(
             f"{symbol} {interval}: only {len(frame)} closed candles; "
-            f"need {MIN_HISTORY_REQUIRED}"
+            f"need {min_required}"
         )
 
     return frame
@@ -272,6 +280,34 @@ def fetch_many_frames(symbols, workers=6):
     with ThreadPoolExecutor(max_workers=workers) as executor:
         futures = {
             executor.submit(fetch_symbol_frames, symbol): symbol
+            for symbol in symbols
+        }
+        for future in as_completed(futures):
+            symbol = futures[future]
+            try:
+                output[symbol] = future.result()
+            except Exception as exc:
+                errors[symbol] = str(exc)
+
+    return output, errors
+
+
+def fetch_fast_frame(symbol):
+    return get_closed_klines(
+        symbol,
+        "1h",
+        limit=FAST_SCAN_HISTORY,
+        min_required=FAST_SCAN_MIN_HISTORY,
+    )
+
+
+def fetch_many_fast_frames(symbols, workers=FAST_SCAN_WORKERS):
+    output = {}
+    errors = {}
+
+    with ThreadPoolExecutor(max_workers=workers) as executor:
+        futures = {
+            executor.submit(fetch_fast_frame, symbol): symbol
             for symbol in symbols
         }
         for future in as_completed(futures):
