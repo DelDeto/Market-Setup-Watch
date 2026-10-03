@@ -1,0 +1,27 @@
+name: One Shot Market Scan Dispatch
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/one-shot-market-scan.yml"
+
+permissions:
+  actions: write
+  contents: read
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Dispatch latest Market Setup Watch
+        shell: bash
+        run: |
+          gh api --method POST \
+            "repos/${GITHUB_REPOSITORY}/actions/workflows/market-setup-watch.yml/dispatches" \
+            -f ref=main
+          echo "Latest Market Setup Watch dispatch accepted."
