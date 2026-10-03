@@ -509,6 +509,8 @@ def main():
                     "bucket": item.get("bucket"),
                     "score": item.get("score"),
                     "direction": item.get("direction"),
+                    "top_pick_rank": item.get("top_pick_rank"),
+                    "selector_score": item.get("selector_score"),
                     "path": str(path),
                 }
             )
