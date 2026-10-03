@@ -160,8 +160,27 @@ def build_text(report):
         ]
 
         if top_rank:
+            position = item.get("position_plan") or {}
             lines.append(
-                f"TP1 (2R): {_fmt(item.get('selector_tp1'))}"
+                f"TP1 (2R): {_fmt(item.get('selector_tp1'))} · close 80%"
+            )
+            lines.append(
+                "Sizing: "
+                f"{position.get('grade', '-')} | "
+                f"Risk { _fmt(position.get('recommended_risk_pct')) }% equity | "
+                f"SL { _fmt(position.get('stop_distance_pct')) }% | "
+                f"Notional { _fmt(position.get('notional_equity_multiple')) }x equity"
+            )
+            lines.append(
+                "P/L target: "
+                f"+{_fmt(position.get('profit_if_runner_be_pct'))}% "
+                "if runner returns BE | "
+                f"+{_fmt(position.get('profit_if_runner_target_pct'))}% "
+                f"if runner reaches { _fmt(position.get('runner_target_r')) }R"
+            )
+            lines.append(
+                f"Runner 20%: {_fmt(position.get('runner_target_price'))} "
+                f"({ _fmt(position.get('runner_target_r')) }R)"
             )
             if targets:
                 runner = targets[0]
@@ -235,7 +254,7 @@ def build_text(report):
         management = plan.get("management") or {}
         if management:
             lines.append(
-                "Manage: +1R→BE | +2R→TP1/partial + trail runner"
+                "Manage: +1R→BE | +2R close 80% | trail 20% runner"
             )
 
         blockers = list(plan.get("blockers") or [])
@@ -304,12 +323,18 @@ def build_heartbeat_text(report):
         for item in actionable:
             rank = item.get("top_pick_rank")
             prefix = f"⭐#{rank}" if rank else "•"
+            position = item.get("position_plan") or {}
+            risk_text = (
+                f" | Risk {_fmt(position.get('recommended_risk_pct'))}%"
+                if rank else ""
+            )
             lines.append(
                 f"{prefix} {item.get('symbol')} "
                 f"{(item.get('direction') or '-').upper()} | "
                 f"{item.get('bucket')} | "
                 f"S{_fmt(item.get('selector_score'))} | "
                 f"TP1 2R {_fmt(item.get('selector_tp1'))}"
+                f"{risk_text}"
             )
     else:
         lines += [
