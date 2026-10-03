@@ -218,11 +218,53 @@ def main():
         f"deep_scan={len(scan_symbols)}"
     )
 
-    # DEEP STAGE: only the selected candidates now pay the cost of full
-    # 4H/1H/15M PA/SMC analysis.
+    # DEEP STAGE: only selected candidates pay the cost of full 4H/1H/15M
+    # PA/SMC analysis. If a selected symbol lacks enough history, automatically
+    # backfill from the remaining fast-ranked universe until we have the
+    # requested number of successful deep scans.
     frames_by_symbol, fetch_errors = fetch_many_frames(
         scan_symbols,
         workers=6,
+    )
+
+    attempted_symbols = set(scan_symbols)
+    fallback_ranked = sorted(
+        fast_rows,
+        key=lambda row: (
+            -float(row.get("fast_score", 0)),
+            -float(row.get("opportunity_strength", 0)),
+            -float(row.get("turnover_24h", 0)),
+        ),
+    )
+
+    while len(frames_by_symbol) < DEEP_SCAN_SYMBOLS:
+        needed = DEEP_SCAN_SYMBOLS - len(frames_by_symbol)
+        fallback_symbols = [
+            row["symbol"]
+            for row in fallback_ranked
+            if row["symbol"] not in attempted_symbols
+        ][:max(needed * 2, 20)]
+
+        if not fallback_symbols:
+            break
+
+        attempted_symbols.update(fallback_symbols)
+        scan_symbols.extend(fallback_symbols)
+
+        more_frames, more_errors = fetch_many_frames(
+            fallback_symbols,
+            workers=6,
+        )
+        frames_by_symbol.update(more_frames)
+        fetch_errors.update(more_errors)
+
+        if not more_frames and not fallback_symbols:
+            break
+
+    print(
+        f"Deep_attempted={len(attempted_symbols)} | "
+        f"deep_success={len(frames_by_symbol)} | "
+        f"deep_errors={len(fetch_errors)}"
     )
 
     # Outcome journal is updated before calibration so newly resolved trades
@@ -361,8 +403,9 @@ def main():
         "fast_scan_error_count": (
             len(fast_fetch_errors) + len(fast_analysis_errors)
         ),
-        "deep_scan_count": len(scan_symbols),
-        "full_scan_count": len(scan_symbols),
+        "deep_scan_attempted_count": len(attempted_symbols),
+        "deep_scan_count": len(frames_by_symbol),
+        "full_scan_count": len(frames_by_symbol),
         "fast_scan_top": sorted(
             fast_rows,
             key=lambda row: (
