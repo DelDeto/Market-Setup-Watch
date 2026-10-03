@@ -1,0 +1,35 @@
+name: Current V3 90D Fast Crosscheck
+
+on:
+  push:
+    branches:
+      - backtest-90d-current-v3
+    paths:
+      - ".github/workflows/backtest-90d-fast-crosscheck.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  backtest-fast:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Run fast 90D crosscheck
+        run: python backtest_90d.py --days 90 --symbols 20 --stride 8
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: current-v3-backtest-90d-fast
+          path: output/backtest_90d/
+          if-no-files-found: warn
+          retention-days: 30
