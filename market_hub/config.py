@@ -3,9 +3,14 @@ from pathlib import Path
 BASE_URL = "https://api.mexc.com"
 QUOTE_COIN = "USDT"
 
-# Stage 1: whole-universe liquidity / quality pre-filter.
-MAX_FULL_SCAN_SYMBOLS = 70
-MIN_24H_TURNOVER_USDT = 2_000_000.0
+# Stage 1 scans the entire MEXC USDT perpetual universe on lightweight 1H data.
+# Stage 2 deep-scans the strongest candidates with full 4H/1H/15M PA/SMC.
+FAST_SCAN_HISTORY = 72
+FAST_SCAN_MIN_HISTORY = 24
+FAST_SCAN_WORKERS = 8
+DEEP_SCAN_SYMBOLS = 150
+FAST_SCAN_LIQUIDITY_RESERVE = 40
+FAST_SCAN_VOLATILITY_RESERVE = 40
 
 # If bid/ask are available from MEXC ticker, reject clearly inefficient markets.
 # Missing bid/ask does not fail the symbol.
@@ -72,6 +77,5 @@ MIN_CALIBRATION_FEATURE_SAMPLES = 15
 STATE_PATH = Path("market_hub/state.json")
 OUTCOME_PATH = Path("market_hub/outcomes.json")
 CALIBRATION_PATH = Path("market_hub/calibration.json")
-BINANCE_CROSSLIST_CACHE_PATH = Path("market_hub/binance_crosslist_cache.json")
 REPORT_PATH = Path("output/market_hub_report.json")
 TEXT_PATH = Path("output/market_hub_update.txt")
