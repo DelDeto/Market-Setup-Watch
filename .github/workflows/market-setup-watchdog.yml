@@ -8,7 +8,7 @@ on:
     paths:
       - ".github/workflows/market-setup-watchdog.yml"
   schedule:
-    # Recovery path offset from the primary scanner cadence.
+    # Recovery path offset from the primary scanner cadence. Also self-tests scanner architecture changes.
     # Cron was refreshed on 2026-10-02 to explicitly reactivate scheduling.
     - cron: "2,17,32,47 * * * *"
 
