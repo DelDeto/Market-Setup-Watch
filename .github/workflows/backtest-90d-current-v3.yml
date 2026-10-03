@@ -1,0 +1,39 @@
+name: Current V3 90D Backtest
+
+on:
+  push:
+    branches:
+      - backtest-90d-current-v3
+    paths:
+      - "backtest_90d.py"
+      - ".github/workflows/backtest-90d-current-v3.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  backtest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Compile backtest
+        run: python -m py_compile backtest_90d.py
+      - name: Run 90D backtest
+        run: python backtest_90d.py --days 90 --symbols 30 --stride 4
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: current-v3-backtest-90d
+          path: output/backtest_90d/
+          if-no-files-found: warn
+          retention-days: 30
