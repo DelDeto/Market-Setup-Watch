@@ -35,33 +35,6 @@ from .scanner import analyze_symbol
 BENCHMARK_SYMBOLS = ("BTC_USDT", "ETH_USDT")
 
 
-def _liquidity_value(ticker):
-    if not ticker:
-        return 0.0
-
-    turnover = ticker.get("turnover_24h")
-    if turnover is not None:
-        return max(0.0, float(turnover))
-
-    volume = ticker.get("volume_24h")
-    price = ticker.get("last_price")
-    if volume is not None and price is not None:
-        return max(0.0, float(volume) * float(price))
-
-    return 0.0
-
-
-def _passes_market_quality(ticker):
-    if not ticker:
-        return False, "missing_ticker"
-
-    spread_bps = ticker.get("spread_bps")
-    if spread_bps is not None and spread_bps > MAX_SPREAD_BPS:
-        return False, f"spread>{MAX_SPREAD_BPS:.0f}bps"
-
-    return True, None
-
-
 def _load_state():
     if not STATE_PATH.exists():
         return {"signatures": [], "hold_vol_snapshot": {}}
@@ -380,7 +353,7 @@ def main():
         "generated_at_utc": generated_at,
         "exchange": "MEXC",
         "market": "USDT perpetual futures",
-        "engine": "PA-MTF Hybrid V3 entry-centric scanner",
+        "engine": "PA-MTF Hybrid V4 whole-MEXC two-stage scanner",
         "mexc_universe_count": len(mexc_universe),
         "universe_count": len(universe),
         "fast_scan_attempted_count": len(universe),
