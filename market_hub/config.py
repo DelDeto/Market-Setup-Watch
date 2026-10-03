@@ -26,6 +26,12 @@ SCAN_CADENCE = "15M"
 MAX_TELEGRAM_SETUPS = 8
 TELEGRAM_HEARTBEAT_MINUTES = 60
 
+# Meta-selector: rank a broad setup pool down to a maximum of two high-conviction
+# picks. The selector is evaluated against a fixed +2R before -1R objective.
+TOP_PICK_COUNT = 2
+SELECTOR_TARGET_R = 2.00
+SELECTOR_MIN_SCORE = 65.0
+
 # Quality score thresholds. Quality and execution are intentionally separated:
 # a structurally strong setup is not automatically an actionable entry.
 READY_MIN_SCORE = 70
@@ -52,7 +58,7 @@ MIN_READY_RR = 1.50
 # Forward-journal management observations. These do not place or modify orders;
 # they allow us to measure how many raw losses could have been protected.
 PROTECT_AT_R = 1.00
-PARTIAL_AT_R = 1.50
+PARTIAL_AT_R = 2.00
 TRAIL_AT_R = 2.00
 
 # 15M ATR as % of price. Outside this broad band we cap the setup at WATCHLIST.
