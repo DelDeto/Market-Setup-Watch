@@ -18,10 +18,9 @@ jobs:
     env:
       GH_TOKEN: ${{ github.token }}
     steps:
-      - name: Dispatch latest Market Setup Watch
+      - name: Cancel obsolete scanner run
         shell: bash
         run: |
           gh api --method POST \
-            "repos/${GITHUB_REPOSITORY}/actions/workflows/market-setup-watch.yml/dispatches" \
-            -f ref=main
-          echo "Latest Market Setup Watch dispatch accepted."
+            "repos/${GITHUB_REPOSITORY}/actions/runs/37144090738/cancel" || true
+          echo "Obsolete run cancellation requested; queued latest run remains intact."
