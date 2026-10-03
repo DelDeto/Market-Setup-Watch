@@ -46,6 +46,10 @@ def _selector_score(item, fast_by_symbol):
 
     selection = _entry_selection_score(item)
     quality = float(item.get("quality_score") or item.get("score") or 0.0)
+    adaptive_points = float(
+        (item.get("score_breakdown") or {}).get("adaptive") or 0.0
+    )
+    quality = max(0.0, min(100.0, quality - adaptive_points))
     execution = float(item.get("execution_score") or 0.0)
     fast = _fast_score(item, fast_by_symbol)
     distance = item.get("entry_distance_atr")
