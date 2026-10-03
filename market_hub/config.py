@@ -30,7 +30,7 @@ TELEGRAM_HEARTBEAT_MINUTES = 60
 # picks. The selector is evaluated against a fixed +2R before -1R objective.
 TOP_PICK_COUNT = 2
 SELECTOR_TARGET_R = 2.00
-SELECTOR_MIN_SCORE = 65.0
+SELECTOR_MIN_SCORE = 85.0
 
 # Quality score thresholds. Quality and execution are intentionally separated:
 # a structurally strong setup is not automatically an actionable entry.
