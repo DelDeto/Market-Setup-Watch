@@ -1,21 +1,22 @@
 import json
 from datetime import datetime, timezone
 
-from .binance_crosslist import get_binance_crosslisted_bases, mexc_underlying
 from .calibration import build_calibration
 from .chart import render_setup_chart
 from .config import (
-    MAX_FULL_SCAN_SYMBOLS,
-    MAX_SPREAD_BPS,
+    DEEP_SCAN_SYMBOLS,
+    FAST_SCAN_LIQUIDITY_RESERVE,
+    FAST_SCAN_VOLATILITY_RESERVE,
     MAX_TELEGRAM_SETUPS,
-    MIN_24H_TURNOVER_USDT,
     REPORT_PATH,
     STATE_PATH,
     TELEGRAM_HEARTBEAT_MINUTES,
 )
 from .correlation import apply_correlation_suppression
+from .fast_scan import score_fast_candidate, select_deep_scan_symbols
 from .market_context import derive_market_context
 from .mexc_market import (
+    fetch_many_fast_frames,
     fetch_many_frames,
     get_all_tickers,
     get_contract_universe,
@@ -178,18 +179,7 @@ def main():
     previous = _load_state()
 
     mexc_universe = get_contract_universe()
-    crosslisted_bases, crosslist_meta = get_binance_crosslisted_bases()
-
-    if crosslisted_bases is not None:
-        universe = [
-            symbol
-            for symbol in mexc_universe
-            if mexc_underlying(symbol) in crosslisted_bases
-        ]
-    else:
-        universe = list(mexc_universe)
-
-    crosslist_rejection_count = len(mexc_universe) - len(universe)
+    universe = list(mexc_universe)
     tickers = get_all_tickers()
 
     hold_vol_snapshot = apply_participation_context(
@@ -197,50 +187,66 @@ def main():
         previous_hold_vol=previous.get("hold_vol_snapshot", {}),
     )
 
-    ranked_universe = []
-    prefilter_rejections = {}
-
-    for symbol in universe:
-        ticker = tickers.get(symbol)
-        liquidity = _liquidity_value(ticker)
-
-        if ticker is None or ticker.get("last_price") is None:
-            prefilter_rejections[symbol] = "missing_live_price"
-            continue
-
-        if liquidity < MIN_24H_TURNOVER_USDT:
-            prefilter_rejections[symbol] = "low_turnover"
-            continue
-
-        quality_ok, quality_reason = _passes_market_quality(ticker)
-        if not quality_ok:
-            prefilter_rejections[symbol] = quality_reason
-            continue
-
-        ranked_universe.append((symbol, liquidity))
-
-    ranked_universe.sort(
-        key=lambda item: item[1],
-        reverse=True,
-    )
-
-    scan_symbols = [
-        symbol
-        for symbol, _ in ranked_universe[:MAX_FULL_SCAN_SYMBOLS]
+    # Load the journal before candidate selection so any still-open historical
+    # setup is forced into the deep-scan set and never loses monitoring.
+    outcomes = load_outcomes()
+    tracked_symbols = [
+        row.get("symbol")
+        for row in outcomes
+        if (
+            row.get("symbol") in universe
+            and row.get("status") in ("PENDING_ENTRY", "ACTIVE")
+        )
     ]
 
-    # Benchmarks are always fetched so altcoin scoring can use BTC/ETH regime.
-    for symbol in BENCHMARK_SYMBOLS:
+    # FAST STAGE: every tradable MEXC USDT perpetual gets a lightweight 1H
+    # structural/momentum scan. No Binance, turnover, or spread pre-filter is
+    # allowed to remove a symbol before this stage.
+    fast_frames, fast_fetch_errors = fetch_many_fast_frames(universe)
+    fast_rows = []
+    fast_analysis_errors = {}
+
+    for symbol in universe:
+        frame = fast_frames.get(symbol)
+        ticker = tickers.get(symbol)
+
+        if frame is None or not ticker or ticker.get("last_price") is None:
+            continue
+
+        try:
+            fast_rows.append(
+                score_fast_candidate(
+                    symbol,
+                    frame,
+                    ticker,
+                )
+            )
+        except Exception as exc:
+            fast_analysis_errors[symbol] = str(exc)
+
+    scan_symbols = select_deep_scan_symbols(
+        fast_rows,
+        deep_limit=DEEP_SCAN_SYMBOLS,
+        liquidity_reserve=FAST_SCAN_LIQUIDITY_RESERVE,
+        volatility_reserve=FAST_SCAN_VOLATILITY_RESERVE,
+        required_symbols=BENCHMARK_SYMBOLS + tuple(tracked_symbols),
+    )
+
+    # Required symbols are appended even if their fast-stage history was
+    # insufficient, so benchmarks and live journal entries remain observable.
+    for symbol in list(BENCHMARK_SYMBOLS) + tracked_symbols:
         if symbol in universe and symbol not in scan_symbols:
             scan_symbols.append(symbol)
 
     print(
-        f"MEXC_universe={len(mexc_universe)} | "
-        f"binance_crosslisted={len(universe)} | "
-        f"quality_liquid={len(ranked_universe)} | "
-        f"full_scan={len(scan_symbols)}"
+        f"MEXC_universe={len(universe)} | "
+        f"fast_scanned={len(fast_rows)} | "
+        f"fast_errors={len(fast_fetch_errors) + len(fast_analysis_errors)} | "
+        f"deep_scan={len(scan_symbols)}"
     )
 
+    # DEEP STAGE: only the selected candidates now pay the cost of full
+    # 4H/1H/15M PA/SMC analysis.
     frames_by_symbol, fetch_errors = fetch_many_frames(
         scan_symbols,
         workers=6,
@@ -248,7 +254,6 @@ def main():
 
     # Outcome journal is updated before calibration so newly resolved trades
     # immediately contribute to empirical statistics.
-    outcomes = load_outcomes()
     outcomes = update_outcomes(outcomes, frames_by_symbol)
     calibration = build_calibration(outcomes)
 
@@ -378,10 +383,20 @@ def main():
         "engine": "PA-MTF Hybrid V3 entry-centric scanner",
         "mexc_universe_count": len(mexc_universe),
         "universe_count": len(universe),
-        "binance_crosslist_rejection_count": crosslist_rejection_count,
-        "binance_crosslist": crosslist_meta,
-        "quality_liquid_universe_count": len(ranked_universe),
+        "fast_scan_attempted_count": len(universe),
+        "fast_scan_count": len(fast_rows),
+        "fast_scan_error_count": (
+            len(fast_fetch_errors) + len(fast_analysis_errors)
+        ),
+        "deep_scan_count": len(scan_symbols),
         "full_scan_count": len(scan_symbols),
+        "fast_scan_top": sorted(
+            fast_rows,
+            key=lambda row: (
+                -float(row.get("fast_score", 0)),
+                -float(row.get("turnover_24h", 0)),
+            ),
+        )[:100],
         "counts": counts,
         "alert_counts": alert_counts,
         "correlation_suppressed_count": suppressed_count,
@@ -389,8 +404,10 @@ def main():
         "calibration": calibration,
         "outcome_summary": outcome_summary,
         "setups": results,
-        "prefilter_rejection_count": len(prefilter_rejections),
-        "prefilter_rejections": prefilter_rejections,
+        "prefilter_rejection_count": 0,
+        "prefilter_rejections": {},
+        "fast_fetch_errors": fast_fetch_errors,
+        "fast_analysis_errors": fast_analysis_errors,
         "fetch_error_count": len(fetch_errors),
         "analysis_error_count": len(analysis_errors),
         "fetch_errors": fetch_errors,
