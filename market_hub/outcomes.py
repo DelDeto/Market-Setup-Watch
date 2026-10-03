@@ -190,6 +190,7 @@ def register_candidates(records, results, generated_at):
                 "outcome": None,
                 "closed_at_utc": None,
             },
+            "position_plan": item.get("position_plan"),
             "stop_loss": plan.get("stop_loss"),
             "tp1": targets[0].get("price") if targets else None,
             "first_target_rr": plan.get("first_target_rr"),
@@ -418,6 +419,9 @@ def update_outcomes(records, frames_by_symbol):
         row["mfe_r"] = round(best_r, 3)
         row["mae_r"] = round(worst_r, 3)
         _ensure_management(row)
+
+        if frame is not None and not frame.empty:
+            _update_selector_outcome(row, frame)
 
         if entry_time is not None:
             checkpoints = row.setdefault(
