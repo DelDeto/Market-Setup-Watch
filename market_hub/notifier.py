@@ -59,10 +59,9 @@ def build_text(report):
         "=" * 30,
         f"Scan VN: {_scan_time_vn(report.get('generated_at_utc'))}",
         (
-            f"Universe: {report.get('universe_count', 0)} | "
-            f"Quality+Liquid: "
-            f"{report.get('quality_liquid_universe_count', 0)} | "
-            f"Full PA/SMC: {report.get('full_scan_count', 0)}"
+            f"MEXC: {report.get('universe_count', 0)} | "
+            f"Fast: {report.get('fast_scan_count', 0)} | "
+            f"Deep PA/SMC: {report.get('deep_scan_count', report.get('full_scan_count', 0))}"
         ),
         (
             "READY "
@@ -242,9 +241,9 @@ def build_heartbeat_text(report):
         "Scanner: ✅ ONLINE",
         f"Scan VN: {_scan_time_vn(report.get('generated_at_utc'))}",
         (
-            f"Universe {report.get('universe_count', 0)} | "
-            f"Quality+Liquid {report.get('quality_liquid_universe_count', 0)} | "
-            f"Deep scan {report.get('full_scan_count', 0)}"
+            f"MEXC {report.get('universe_count', 0)} | "
+            f"Fast {report.get('fast_scan_count', 0)} | "
+            f"Deep {report.get('deep_scan_count', report.get('full_scan_count', 0))}"
         ),
         (
             f"🔥 READY {counts.get('ENTRY_READY', 0)} | "
