@@ -32,6 +32,26 @@ TOP_PICK_COUNT = 2
 SELECTOR_TARGET_R = 2.00
 SELECTOR_MIN_SCORE = 85.0
 
+# Precision-first position sizing for TOP PICKs.
+# Risk percentages are percentages of account equity, not margin allocation.
+A_PLUS_SELECTOR_SCORE = 90.0
+A_PLUS_BASE_RISK_PCT = 1.25
+A_BASE_RISK_PCT = 0.90
+TOP_PICK_2_MAX_RISK_PCT = 0.75
+MAX_TOTAL_TOP_PICK_RISK_PCT = 2.00
+
+# Prevent tight stops from creating unrealistic notional exposure.
+FULL_SIZE_MIN_STOP_PCT = 0.50
+REDUCED_SIZE_MIN_STOP_PCT = 0.35
+TIGHT_SIZE_MIN_STOP_PCT = 0.25
+MAX_NOTIONAL_EQUITY_MULTIPLE = 2.00
+
+# Profit-taking policy.
+TP1_CLOSE_FRACTION = 0.80
+RUNNER_FRACTION = 0.20
+RUNNER_MIN_R = 3.00
+RUNNER_MAX_R = 4.00
+
 # Quality score thresholds. Quality and execution are intentionally separated:
 # a structurally strong setup is not automatically an actionable entry.
 READY_MIN_SCORE = 70
