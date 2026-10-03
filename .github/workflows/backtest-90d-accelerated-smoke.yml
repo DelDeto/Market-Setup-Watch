@@ -1,0 +1,31 @@
+name: Current V3 Accelerated Smoke
+
+on:
+  push:
+    branches:
+      - backtest-90d-current-v3
+    paths:
+      - ".github/workflows/backtest-90d-accelerated-smoke.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  accel-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Run accelerated smoke
+        run: python -u backtest_90d_accel.py --days 90 --symbols 5 --stride 16
+      - name: Upload results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: current-v3-accelerated-smoke
+          path: output/backtest_90d_accel/
+          if-no-files-found: warn
