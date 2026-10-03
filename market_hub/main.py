@@ -13,7 +13,11 @@ from .config import (
     TELEGRAM_HEARTBEAT_MINUTES,
 )
 from .correlation import apply_correlation_suppression
-from .fast_scan import score_fast_candidate, select_deep_scan_symbols
+from .fast_scan import (
+    score_fast_candidate,
+    score_ticker_candidate,
+    select_deep_scan_symbols,
+)
 from .market_context import derive_market_context
 from .mexc_market import (
     fetch_many_fast_frames,
@@ -178,22 +182,32 @@ def main():
     fast_frames, fast_fetch_errors = fetch_many_fast_frames(universe)
     fast_rows = []
     fast_analysis_errors = {}
+    fast_fallback_count = 0
 
     for symbol in universe:
         frame = fast_frames.get(symbol)
         ticker = tickers.get(symbol)
 
-        if frame is None or not ticker or ticker.get("last_price") is None:
+        if not ticker or ticker.get("last_price") is None:
             continue
 
         try:
-            fast_rows.append(
-                score_fast_candidate(
-                    symbol,
-                    frame,
-                    ticker,
+            if frame is not None:
+                fast_rows.append(
+                    score_fast_candidate(
+                        symbol,
+                        frame,
+                        ticker,
+                    )
                 )
-            )
+            else:
+                fast_rows.append(
+                    score_ticker_candidate(
+                        symbol,
+                        ticker,
+                    )
+                )
+                fast_fallback_count += 1
         except Exception as exc:
             fast_analysis_errors[symbol] = str(exc)
 
@@ -214,6 +228,7 @@ def main():
     print(
         f"MEXC_universe={len(universe)} | "
         f"fast_scanned={len(fast_rows)} | "
+        f"fast_fallback={fast_fallback_count} | "
         f"fast_errors={len(fast_fetch_errors) + len(fast_analysis_errors)} | "
         f"deep_scan={len(scan_symbols)}"
     )
@@ -400,6 +415,8 @@ def main():
         "universe_count": len(universe),
         "fast_scan_attempted_count": len(universe),
         "fast_scan_count": len(fast_rows),
+        "fast_scan_full_history_count": len(fast_frames),
+        "fast_scan_fallback_count": fast_fallback_count,
         "fast_scan_error_count": (
             len(fast_fetch_errors) + len(fast_analysis_errors)
         ),
