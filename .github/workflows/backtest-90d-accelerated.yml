@@ -1,0 +1,34 @@
+name: Current V3 90D Accelerated Backtest
+
+on:
+  push:
+    branches:
+      - backtest-90d-current-v3
+    paths:
+      - "backtest_90d_accel.py"
+      - ".github/workflows/backtest-90d-accelerated.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  accelerated:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - run: python -m py_compile backtest_90d.py backtest_90d_accel.py
+      - name: Run accelerated 90D replay
+        run: python -u backtest_90d_accel.py --days 90 --symbols 20 --stride 8
+      - name: Upload accelerated results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: current-v3-backtest-90d-accelerated
+          path: output/backtest_90d_accel/
+          if-no-files-found: warn
+          retention-days: 30
