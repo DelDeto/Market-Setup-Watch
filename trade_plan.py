@@ -1018,8 +1018,8 @@ def build_trade_plan(
             "trail_at_r": TRAIL_AT_R,
             "policy": (
                 "At +1R protect at breakeven; "
-                "from +1.5R consider partial protection; "
-                "from +2R trail using fresh 15M structure."
+                "at +2R close 80% of the position; "
+                "trail the remaining 20% using fresh 15M structure."
             ),
         },
         "trigger": trigger,
