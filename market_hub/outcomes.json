@@ -3763,12 +3763,12 @@
       "participation_aligned": true,
       "market_context_aligned": false
     },
-    "status": "PENDING_ENTRY",
-    "entry_time_utc": null,
+    "status": "ACTIVE",
+    "entry_time_utc": "2026-10-02T21:00:00+00:00",
     "closed_at_utc": null,
     "outcome": null,
-    "mfe_r": null,
-    "mae_r": null,
+    "mfe_r": 0.16,
+    "mae_r": 0.832,
     "management": {
       "protect_at_r": 1.0,
       "partial_at_r": 1.5,
@@ -3783,7 +3783,7 @@
       "raw_realized_r": null
     },
     "checkpoints_r": {
-      "1h": null,
+      "1h": -0.375,
       "4h": null,
       "24h": null
     },
@@ -3806,6 +3806,61 @@
     "stop_loss": 0.10310821428571429,
     "tp1": 0.09647,
     "first_target_rr": 1.464792467842463,
+    "features": {
+      "confirmed": false,
+      "displacement": true,
+      "structure": true,
+      "retest": false,
+      "sweep": false,
+      "mtf_aligned": true,
+      "zone_a_or_better": true,
+      "rr_1_5_plus": false,
+      "participation_aligned": true,
+      "market_context_aligned": false
+    },
+    "status": "ACTIVE",
+    "entry_time_utc": "2026-10-02T21:00:00+00:00",
+    "closed_at_utc": null,
+    "outcome": null,
+    "mfe_r": 0.429,
+    "mae_r": 0.848,
+    "management": {
+      "protect_at_r": 1.0,
+      "partial_at_r": 1.5,
+      "trail_at_r": 2.0,
+      "protect_reached": false,
+      "partial_reached": false,
+      "trail_reached": false,
+      "protect_reached_at_utc": null,
+      "partial_reached_at_utc": null,
+      "trail_reached_at_utc": null,
+      "raw_loss_after_protect": false,
+      "raw_realized_r": null
+    },
+    "checkpoints_r": {
+      "1h": -0.091,
+      "4h": null,
+      "24h": null
+    },
+    "correlation_suppressed": false
+  },
+  {
+    "signal_id": "AXS_USDT|long|1.2234|1.2249|1.17617643",
+    "created_at_utc": "2026-10-03T00:25:38.125414+00:00",
+    "symbol": "AXS_USDT",
+    "direction": "long",
+    "bucket": "DEVELOPING",
+    "score": 68,
+    "quality_score": 68,
+    "execution_score": 57,
+    "entry_distance_atr": 0.008900190718371557,
+    "entry_lower": 1.2234,
+    "entry_upper": 1.2249,
+    "entry_source": "bullish FVG",
+    "entry_selection_score": 39.163,
+    "stop_loss": 1.1761764285714287,
+    "tp1": 1.2899,
+    "first_target_rr": 1.3705462829236341,
     "features": {
       "confirmed": false,
       "displacement": true,
