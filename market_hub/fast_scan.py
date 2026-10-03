@@ -240,3 +240,77 @@ def select_deep_scan_symbols(
             break
 
     return selected
+
+
+def score_ticker_candidate(symbol, ticker):
+    """Fallback fast score for very new symbols without enough 1H candles."""
+    last = _safe_float((ticker or {}).get("last_price"), 0.0) or 0.0
+    high = _safe_float((ticker or {}).get("high_24h"), last) or last
+    low = _safe_float((ticker or {}).get("low_24h"), last) or last
+    turnover = _safe_float((ticker or {}).get("turnover_24h"), 0.0) or 0.0
+    spread_bps = _safe_float((ticker or {}).get("spread_bps"), None)
+    change_rate = _safe_float((ticker or {}).get("change_rate_24h"), 0.0) or 0.0
+    change_pct = change_rate * 100.0 if abs(change_rate) <= 2 else change_rate
+
+    range_pct = (
+        (high - low) / max(last, 1e-12) * 100.0
+        if last > 0 and high >= low
+        else 0.0
+    )
+
+    momentum_points = min(30.0, abs(change_pct) * 2.0)
+    volatility_points = min(20.0, range_pct * 1.5)
+
+    if turnover >= 50_000_000:
+        liquidity_points = 25.0
+    elif turnover >= 10_000_000:
+        liquidity_points = 20.0
+    elif turnover >= 2_000_000:
+        liquidity_points = 15.0
+    elif turnover >= 500_000:
+        liquidity_points = 9.0
+    elif turnover > 0:
+        liquidity_points = 4.0
+    else:
+        liquidity_points = 0.0
+
+    spread_penalty = 0.0
+    if spread_bps is not None:
+        if spread_bps > 60:
+            spread_penalty = -18.0
+        elif spread_bps > 30:
+            spread_penalty = -10.0
+        elif spread_bps > 15:
+            spread_penalty = -4.0
+
+    fast_score = max(
+        0.0,
+        min(
+            100.0,
+            15.0
+            + momentum_points
+            + volatility_points
+            + liquidity_points
+            + spread_penalty,
+        ),
+    )
+
+    return {
+        "symbol": symbol,
+        "fast_score": round(fast_score, 2),
+        "direction_hint": "long" if change_pct >= 0 else "short",
+        "return_4h_pct": None,
+        "return_12h_pct": None,
+        "return_24h_pct": None,
+        "ticker_change_24h_pct": round(change_pct, 3),
+        "atr_pct_1h": None,
+        "volume_ratio_1h": None,
+        "extreme_distance_atr": None,
+        "turnover_24h": turnover,
+        "spread_bps": spread_bps,
+        "opportunity_strength": round(
+            abs(change_pct) * 0.5 + range_pct + liquidity_points * 0.1,
+            3,
+        ),
+        "fast_source": "ticker_fallback",
+    }
