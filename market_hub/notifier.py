@@ -48,7 +48,15 @@ def build_text(report):
         item
         for item in report.get("setups", [])
         if not item.get("correlation_suppressed", False)
-    ][:MAX_TELEGRAM_SETUPS]
+    ]
+    rows.sort(
+        key=lambda item: (
+            0 if item.get("top_pick_rank") else 1,
+            item.get("top_pick_rank") or 99,
+            -float(item.get("selector_score") or 0),
+        )
+    )
+    rows = rows[:MAX_TELEGRAM_SETUPS]
     counts = report.get("alert_counts") or report.get("counts", {})
     market_context = report.get("market_context", {})
     calibration = report.get("calibration", {})
@@ -84,6 +92,10 @@ def build_text(report):
             f"Tracked outcomes: {outcomes.get('tracked', 0)}"
         ),
         (
+            f"⭐ TOP PICK: {report.get('top_pick_count', 0)} | "
+            f"Objective: +2R before -1R"
+        ),
+        (
             f"Correlation suppressed: "
             f"{report.get('correlation_suppressed_count', 0)}"
         ),
@@ -114,14 +126,21 @@ def build_text(report):
         htf = filters.get("htf_location", {})
 
         direction = (item.get("direction") or "-").upper()
+        top_rank = item.get("top_pick_rank")
+        selector_score = item.get("selector_score")
+        prefix = (
+            f"⭐ TOP PICK #{top_rank}"
+            if top_rank
+            else f"{icons.get(item['bucket'], '•')} {index}."
+        )
 
         lines += [
             "",
             (
-                f"{icons.get(item['bucket'], '•')} {index}. "
-                f"{item['symbol']} · {direction} · "
+                f"{prefix} {item['symbol']} · {direction} · "
                 f"Q{item.get('quality_score', item.get('score', 0))}/100 · "
-                f"E{item.get('execution_score', 0)}/100"
+                f"E{item.get('execution_score', 0)}/100 · "
+                f"S{_fmt(selector_score)}/100"
             ),
             (
                 f"{item['bucket']} | MTF {item['mtf_alignment']} | "
@@ -140,13 +159,29 @@ def build_text(report):
             f"SL: {_fmt(plan.get('stop_loss'))}",
         ]
 
-        for target in targets[:3]:
-            rr = target.get("rr")
-            rr_text = f"{rr:.2f}R" if rr is not None else "-"
+        if top_rank:
             lines.append(
-                f"{target.get('name')}: {_fmt(target.get('price'))} "
-                f"[{target.get('source')}, {rr_text}]"
+                f"TP1 (2R): {_fmt(item.get('selector_tp1'))}"
             )
+            if targets:
+                runner = targets[0]
+                runner_rr = runner.get("rr")
+                runner_rr_text = (
+                    f"{runner_rr:.2f}R"
+                    if runner_rr is not None else "-"
+                )
+                lines.append(
+                    f"Runner structural: {_fmt(runner.get('price'))} "
+                    f"[{runner.get('source')}, {runner_rr_text}]"
+                )
+        else:
+            for target in targets[:3]:
+                rr = target.get("rr")
+                rr_text = f"{rr:.2f}R" if rr is not None else "-"
+                lines.append(
+                    f"{target.get('name')}: {_fmt(target.get('price'))} "
+                    f"[{target.get('source')}, {rr_text}]"
+                )
 
         atr_pct = filters.get("atr_pct")
         atr_text = f"{atr_pct:.2f}%" if atr_pct is not None else "-"
@@ -200,10 +235,7 @@ def build_text(report):
         management = plan.get("management") or {}
         if management:
             lines.append(
-                "Manage: "
-                f"+{_fmt(management.get('protect_at_r'))}R→BE | "
-                f"+{_fmt(management.get('partial_at_r'))}R→protect/partial | "
-                f"+{_fmt(management.get('trail_at_r'))}R→trail 15M"
+                "Manage: +1R→BE | +2R→TP1/partial + trail runner"
             )
 
         blockers = list(plan.get("blockers") or [])
@@ -234,7 +266,15 @@ def build_heartbeat_text(report):
             )
             and not item.get("correlation_suppressed", False)
         )
-    ][:3]
+    ]
+    actionable.sort(
+        key=lambda item: (
+            0 if item.get("top_pick_rank") else 1,
+            item.get("top_pick_rank") or 99,
+            -float(item.get("selector_score") or 0),
+        )
+    )
+    actionable = actionable[:3]
 
     lines = [
         "🛰 MARKET SETUP WATCH — HEARTBEAT",
@@ -262,16 +302,14 @@ def build_heartbeat_text(report):
         lines.append("")
         lines.append("Top actionable hiện tại:")
         for item in actionable:
-            plan = item.get("trade_plan", {})
-            targets = plan.get("targets") or []
-            first_rr = targets[0].get("rr") if targets else None
-            rr_text = f"{first_rr:.2f}R" if first_rr is not None else "-"
+            rank = item.get("top_pick_rank")
+            prefix = f"⭐#{rank}" if rank else "•"
             lines.append(
-                f"• {item.get('symbol')} "
+                f"{prefix} {item.get('symbol')} "
                 f"{(item.get('direction') or '-').upper()} | "
                 f"{item.get('bucket')} | "
-                f"Q{item.get('quality_score', item.get('score', 0))} "
-                f"E{item.get('execution_score', 0)} | TP1 {rr_text}"
+                f"S{_fmt(item.get('selector_score'))} | "
+                f"TP1 2R {_fmt(item.get('selector_tp1'))}"
             )
     else:
         lines += [
@@ -376,7 +414,9 @@ def _send_photo(token, chat_id, chart):
     bucket = chart.get("bucket", "-")
     score = chart.get("score", "-")
     direction = (chart.get("direction") or "-").upper()
-    caption = f"{symbol} | {bucket} | {direction} | Q-score {score}/100 | 15M"
+    top_rank = chart.get("top_pick_rank")
+    top_text = f"TOP PICK #{top_rank} | " if top_rank else ""
+    caption = f"{top_text}{symbol} | {bucket} | {direction} | Q-score {score}/100 | 15M"
 
     with open(path, "rb") as handle:
         response = requests.post(
