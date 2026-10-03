@@ -45,6 +45,7 @@ jobs:
             market_hub/mexc_market.py \
             market_hub/participation.py \
             market_hub/market_context.py \
+            market_hub/meta_selector.py \
             market_hub/correlation.py \
             market_hub/calibration.py \
             market_hub/outcomes.py \
