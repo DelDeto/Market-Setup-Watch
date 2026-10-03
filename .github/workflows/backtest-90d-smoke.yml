@@ -1,0 +1,31 @@
+name: Current V3 90D Smoke Replay
+
+on:
+  push:
+    branches:
+      - backtest-90d-current-v3
+    paths:
+      - ".github/workflows/backtest-90d-smoke.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Run smoke replay
+        run: python -u backtest_90d.py --days 90 --symbols 5 --stride 16
+      - name: Upload smoke results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: current-v3-backtest-90d-smoke
+          path: output/backtest_90d/
+          if-no-files-found: warn
