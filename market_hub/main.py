@@ -19,6 +19,7 @@ from .fast_scan import (
     select_deep_scan_symbols,
 )
 from .market_context import derive_market_context
+from .meta_selector import apply_top_pick_selector
 from .mexc_market import (
     fetch_many_fast_frames,
     fetch_many_frames,
@@ -98,6 +99,7 @@ def _signature(item):
             round(float(entry.get("lower") or 0), 8),
             round(float(entry.get("upper") or 0), 8),
             bool(plan.get("execution_ready")),
+            item.get("top_pick_rank") or 0,
         ]
     )
 
@@ -333,6 +335,7 @@ def main():
 
     _sort_results(results)
     apply_correlation_suppression(results, frames_by_symbol)
+    top_picks = apply_top_pick_selector(results, fast_rows)
 
     counts = {
         bucket: sum(item.get("bucket") == bucket for item in results)
@@ -363,8 +366,8 @@ def main():
         for item in results
     )
 
-    # Register this run after suppression so the journal records whether a
-    # valid setup was held back only because it duplicated another thesis.
+    # Register after correlation + meta selection so TOP PICK rank and the
+    # fixed 2R objective are frozen into the forward journal.
     outcomes = register_candidates(outcomes, results, generated_at)
     save_outcomes(outcomes)
 
@@ -388,6 +391,15 @@ def main():
         if (row.get("management") or {}).get("raw_realized_r")
         is not None
     ]
+    selector_closed = [
+        row for row in outcomes
+        if (row.get("selector") or {}).get("outcome") in ("WIN", "LOSS")
+    ]
+    selector_wins = sum(
+        (row.get("selector") or {}).get("outcome") == "WIN"
+        for row in selector_closed
+    )
+
     outcome_summary = {
         "tracked": len(outcomes),
         "closed_win_loss": len(closed_outcomes),
@@ -403,6 +415,13 @@ def main():
             round(sum(float(value) for value in raw_realized_r), 3)
             if raw_realized_r
             else None
+        ),
+        "selector_2r_closed": len(selector_closed),
+        "selector_2r_wins": selector_wins,
+        "selector_2r_losses": len(selector_closed) - selector_wins,
+        "selector_2r_win_rate": (
+            selector_wins / len(selector_closed)
+            if selector_closed else None
         ),
     }
 
@@ -436,6 +455,9 @@ def main():
         "market_context": market_context,
         "calibration": calibration,
         "outcome_summary": outcome_summary,
+        "top_pick_count": len(top_picks),
+        "top_pick_symbols": [item.get("symbol") for item in top_picks],
+        "selector_target_r": 2.0,
         "setups": results,
         "prefilter_rejection_count": 0,
         "prefilter_rejections": {},
@@ -460,7 +482,15 @@ def main():
     important = [
         item for item in results
         if _alert_eligible(item)
-    ][:MAX_TELEGRAM_SETUPS]
+    ]
+    important.sort(
+        key=lambda item: (
+            0 if item.get("top_pick_rank") else 1,
+            item.get("top_pick_rank") or 99,
+            -float(item.get("selector_score") or 0),
+        )
+    )
+    important = important[:MAX_TELEGRAM_SETUPS]
 
     for item in important:
         symbol = item.get("symbol")
@@ -552,6 +582,7 @@ def main():
         f"DEVELOPING={counts['DEVELOPING']} "
         f"WATCH={counts['WATCHLIST']} | "
         f"correlation_suppressed={suppressed_count} | "
+        f"top_picks={len(top_picks)} | "
         f"calibration_active={calibration.get('active', False)} | "
         f"heartbeat_due={heartbeat_due}"
     )
