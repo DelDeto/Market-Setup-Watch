@@ -145,6 +145,11 @@ def _ensure_management(row):
 
 def register_candidates(records, results, generated_at):
     existing = {row.get("signal_id") for row in records}
+    existing_by_id = {
+        row.get("signal_id"): row
+        for row in records
+        if row.get("signal_id")
+    }
 
     for item in results:
         if item.get("bucket") not in (
@@ -161,6 +166,35 @@ def register_candidates(records, results, generated_at):
 
         signal_id = _signal_id(item, generated_at)
         if signal_id in existing:
+            row = existing_by_id.get(signal_id)
+            if row is not None and item.get("top_pick_rank"):
+                history = row.setdefault("top_pick_history", [])
+                current_event = {
+                    "promoted_at_utc": generated_at,
+                    "rank": item.get("top_pick_rank"),
+                    "selector_score": item.get("selector_score"),
+                    "position_plan": item.get("position_plan"),
+                }
+                previous = history[-1] if history else {}
+                if (
+                    previous.get("rank") != current_event["rank"]
+                    or previous.get("position_plan") != current_event["position_plan"]
+                ):
+                    history.append(current_event)
+
+                row.setdefault("selector_score", item.get("selector_score"))
+                row.setdefault("top_pick_rank", item.get("top_pick_rank"))
+                if not row.get("position_plan"):
+                    row["position_plan"] = item.get("position_plan")
+                selector = row.setdefault("selector", {})
+                selector.setdefault(
+                    "target_r",
+                    item.get("selector_target_r", SELECTOR_TARGET_R),
+                )
+                selector.setdefault("tp1", item.get("selector_tp1"))
+                selector.setdefault("status", row.get("status", "PENDING_ENTRY"))
+                selector.setdefault("outcome", None)
+                selector.setdefault("closed_at_utc", None)
             continue
 
         targets = plan.get("targets") or []
@@ -209,6 +243,16 @@ def register_candidates(records, results, generated_at):
             },
             "correlation_suppressed": bool(
                 item.get("correlation_suppressed")
+            ),
+            "top_pick_history": (
+                [{
+                    "promoted_at_utc": generated_at,
+                    "rank": item.get("top_pick_rank"),
+                    "selector_score": item.get("selector_score"),
+                    "position_plan": item.get("position_plan"),
+                }]
+                if item.get("top_pick_rank")
+                else []
             ),
         })
 
