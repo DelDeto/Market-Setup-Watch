@@ -5,6 +5,7 @@ from .config import (
     OUTCOME_PATH,
     PARTIAL_AT_R,
     PROTECT_AT_R,
+    SELECTOR_TARGET_R,
     TRAIL_AT_R,
 )
 
@@ -180,6 +181,15 @@ def register_candidates(records, results, generated_at):
             "entry_upper": entry.get("upper"),
             "entry_source": entry.get("source"),
             "entry_selection_score": entry.get("selection_score"),
+            "selector_score": item.get("selector_score"),
+            "top_pick_rank": item.get("top_pick_rank"),
+            "selector": {
+                "target_r": item.get("selector_target_r", SELECTOR_TARGET_R),
+                "tp1": item.get("selector_tp1"),
+                "status": "PENDING_ENTRY",
+                "outcome": None,
+                "closed_at_utc": None,
+            },
             "stop_loss": plan.get("stop_loss"),
             "tp1": targets[0].get("price") if targets else None,
             "first_target_rr": plan.get("first_target_rr"),
@@ -214,11 +224,76 @@ def _to_timestamp(value):
         return None
 
 
+
+
+def _update_selector_outcome(row, frame):
+    selector = row.get("selector")
+    if not isinstance(selector, dict):
+        return
+
+    if selector.get("outcome") in ("WIN", "LOSS", "AMBIGUOUS", "EXPIRED"):
+        return
+
+    entry_time = _to_timestamp(row.get("entry_time_utc"))
+    if entry_time is None:
+        if row.get("outcome") == "EXPIRED":
+            selector["status"] = "CLOSED"
+            selector["outcome"] = "EXPIRED"
+            selector["closed_at_utc"] = row.get("closed_at_utc")
+        return
+
+    tp1 = selector.get("tp1")
+    if tp1 is None:
+        return
+
+    direction = row.get("direction")
+    stop = float(row.get("stop_loss"))
+    tp1 = float(tp1)
+    import pandas as pd
+    candles = frame.loc[frame.index >= entry_time]
+    if candles.empty:
+        return
+
+    selector["status"] = "ACTIVE"
+    for ts, candle in candles.iterrows():
+        high = float(candle["high"])
+        low = float(candle["low"])
+        if direction == "long":
+            hit_stop = low <= stop
+            hit_tp = high >= tp1
+        else:
+            hit_stop = high >= stop
+            hit_tp = low <= tp1
+
+        if hit_stop and hit_tp:
+            selector["status"] = "CLOSED"
+            selector["outcome"] = "AMBIGUOUS"
+            selector["closed_at_utc"] = ts.isoformat()
+            return
+        if hit_tp:
+            selector["status"] = "CLOSED"
+            selector["outcome"] = "WIN"
+            selector["closed_at_utc"] = ts.isoformat()
+            return
+        if hit_stop:
+            selector["status"] = "CLOSED"
+            selector["outcome"] = "LOSS"
+            selector["closed_at_utc"] = ts.isoformat()
+            return
+
+
 def update_outcomes(records, frames_by_symbol):
     now = datetime.now(timezone.utc)
 
     for row in records:
         management = _ensure_management(row)
+
+        frame = (
+            frames_by_symbol.get(row.get("symbol")) or {}
+        ).get("15M")
+
+        if frame is not None and not frame.empty:
+            _update_selector_outcome(row, frame)
 
         if row.get("outcome") in (
             "WIN",
@@ -227,10 +302,6 @@ def update_outcomes(records, frames_by_symbol):
             "AMBIGUOUS",
         ):
             continue
-
-        frame = (
-            frames_by_symbol.get(row.get("symbol")) or {}
-        ).get("15M")
 
         if frame is None or frame.empty:
             continue
