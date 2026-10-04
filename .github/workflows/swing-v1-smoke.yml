@@ -1,0 +1,77 @@
+name: Swing V1 Smoke Test
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/swing-v1-smoke.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Compile
+        run: |
+          python -m py_compile \
+            market_hub/config.py \
+            market_hub/mexc_market.py \
+            market_hub/swing_scan.py \
+            market_hub/swing_outcomes.py \
+            market_hub/notifier.py \
+            market_hub/main.py
+      - name: Smoke swing aggregation and selector
+        run: |
+          python - <<'PY'
+          import json
+          from market_hub.mexc_market import get_all_tickers, get_closed_klines, fetch_swing_frames
+          from market_hub.swing_scan import (
+              aggregate_1h_to_4h,
+              score_swing_fast_candidate,
+              analyze_swing_candidate,
+              select_swing_top_picks,
+          )
+
+          symbols=["STRK_USDT","CTR_USDT","PONS_USDT"]
+          tickers=get_all_tickers()
+          items=[]
+          for symbol in symbols:
+              one_h=get_closed_klines(symbol,"1h",limit=240,min_required=180)
+              four_h=aggregate_1h_to_4h(one_h)
+              if four_h is None:
+                  raise RuntimeError(f"{symbol}: failed 1H->4H aggregation")
+              fast=score_swing_fast_candidate(symbol,four_h,tickers[symbol])
+              frames=fetch_swing_frames(symbol)
+              item=analyze_swing_candidate(
+                  symbol,frames,tickers[symbol],fast,
+                  market_context={"regime":"BULLISH"},
+              )
+              items.append(item)
+              print("SWING_CANDIDATE",json.dumps({
+                  "symbol":symbol,
+                  "fast":fast,
+                  "score":item.get("swing_score"),
+                  "raw":item.get("swing_raw_score"),
+                  "runner_move_pct":item.get("runner_move_pct"),
+              },ensure_ascii=False))
+
+          picks=select_swing_top_picks(items)
+          for pick in picks:
+              print("SWING_PICK",json.dumps({
+                  "rank":pick.get("swing_top_pick_rank"),
+                  "symbol":pick.get("symbol"),
+                  "score":pick.get("swing_score"),
+                  "risk":pick.get("position_plan",{}).get("recommended_risk_pct"),
+                  "projected_account_profit_pct":pick.get("position_plan",{}).get("projected_account_profit_pct"),
+                  "runner_move_pct":pick.get("runner_move_pct"),
+              },ensure_ascii=False))
+          PY
