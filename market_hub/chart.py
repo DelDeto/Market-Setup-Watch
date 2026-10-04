@@ -1587,3 +1587,25 @@ def render_setup_chart(symbol, frame_15m, item):
     )
 
     return output_path
+
+
+def render_swing_chart(symbol, frame_1h, item):
+    output_path = os.path.join(
+        "output",
+        "charts",
+        f"{symbol.replace('/', '_').replace(':', '_')}_1H_SWING.png",
+    )
+
+    create_chart(
+        frame_1h,
+        "1H",
+        output_path,
+        candles=140,
+        exchange="MEXC",
+        analysis=item.get("analysis_1h"),
+        trade_plan=item.get("trade_plan"),
+        market_snapshot=item.get("ticker") or {},
+        symbol=symbol,
+    )
+
+    return output_path
