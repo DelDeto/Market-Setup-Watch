@@ -54,6 +54,7 @@ RUNNER_MAX_R = 4.00
 
 # Swing 1H/4H scanner. This runs alongside intraday and targets larger
 # multi-session moves rather than replacing the 15M execution engine.
+SWING_SCAN_INTERVAL_HOURS = 4
 SWING_FAST_HISTORY = 96
 SWING_FAST_MIN_HISTORY = 48
 SWING_FAST_WORKERS = 8
