@@ -104,9 +104,8 @@ def build_text(report):
     if not rows:
         lines += [
             "",
-            "Hiện chưa có setup đạt ngưỡng giữ lại.",
+            "Intraday: chưa có setup đạt ngưỡng giữ lại.",
         ]
-        return "\n".join(lines)
 
     icons = {
         "ENTRY_READY": "🔥",
@@ -268,6 +267,61 @@ def build_text(report):
         if blockers:
             lines.append("Blocker: " + "; ".join(blockers[:3]))
 
+    swing = report.get("swing") or {}
+    swing_picks = swing.get("top_picks") or []
+
+    lines += [
+        "",
+        "🌊 SWING 1H/4H",
+        (
+            f"Status: {'SCANNED' if swing.get('scanned_this_run') else 'CACHED'} | "
+            f"Fast 4H {swing.get('fast_scan_count', 0)} | "
+            f"Deep {swing.get('deep_scan_count', 0)} | "
+            f"TOP PICK {len(swing_picks)}"
+        ),
+    ]
+
+    if swing_picks:
+        for item in swing_picks:
+            entry = item.get("entry_zone") or {}
+            position = item.get("position_plan") or {}
+            lines += [
+                "",
+                (
+                    f"🌊 SWING TOP PICK #{item.get('swing_top_pick_rank')} "
+                    f"{item.get('symbol')} · "
+                    f"{(item.get('direction') or '-').upper()} · "
+                    f"S{_fmt(item.get('swing_score'))}/100 · "
+                    f"{item.get('grade', '-')}"
+                ),
+                (
+                    f"Entry 1H: {_fmt(entry.get('lower'))} - "
+                    f"{_fmt(entry.get('upper'))} "
+                    f"[{entry.get('source', '-')}]"
+                ),
+                (
+                    f"SL: {_fmt(item.get('stop_loss'))} "
+                    f"({_fmt(item.get('stop_distance_pct'))}%)"
+                ),
+                (
+                    f"TP1: {_fmt(item.get('tp1'))} (2R, close 35%) | "
+                    f"TP2: {_fmt(item.get('tp2'))} (4R, close 35%)"
+                ),
+                (
+                    f"Runner 30%: {_fmt(item.get('runner_target'))} | "
+                    f"move ~{_fmt(item.get('runner_move_pct'))}% | "
+                    f"{_fmt(item.get('runner_r'))}R"
+                ),
+                (
+                    f"Risk: {_fmt(position.get('recommended_risk_pct'))}% equity | "
+                    f"Notional {_fmt(position.get('notional_equity_multiple'))}x equity | "
+                    f"Projected account P/L ~"
+                    f"{_fmt(position.get('projected_account_profit_pct'))}%"
+                ),
+            ]
+    else:
+        lines.append("Không có SWING TOP PICK đạt ngưỡng.")
+
     return "\n".join(lines)
 
 
@@ -342,8 +396,14 @@ def build_heartbeat_text(report):
             "Không có READY/NEAR/DEVELOPING mới cần cảnh báo.",
         ]
 
+    swing = report.get("swing") or {}
+    swing_picks = swing.get("top_picks") or []
     lines += [
         "",
+        (
+            f"Swing 1H/4H: {len(swing_picks)} TOP PICK | "
+            f"last scan {_scan_time_vn(swing.get('generated_at_utc'))}"
+        ),
         "Heartbeat này xác nhận scanner vẫn đang hoạt động.",
     ]
     return "\n".join(lines)
@@ -439,9 +499,20 @@ def _send_photo(token, chat_id, chart):
     bucket = chart.get("bucket", "-")
     score = chart.get("score", "-")
     direction = (chart.get("direction") or "-").upper()
-    top_rank = chart.get("top_pick_rank")
-    top_text = f"TOP PICK #{top_rank} | " if top_rank else ""
-    caption = f"{top_text}{symbol} | {bucket} | {direction} | Q-score {score}/100 | 15M"
+    mode = chart.get("mode")
+    if mode == "SWING":
+        rank = chart.get("swing_top_pick_rank")
+        caption = (
+            f"SWING TOP PICK #{rank} | {symbol} | {direction} | "
+            f"Swing-score {score}/100 | 1H"
+        )
+    else:
+        top_rank = chart.get("top_pick_rank")
+        top_text = f"TOP PICK #{top_rank} | " if top_rank else ""
+        caption = (
+            f"{top_text}{symbol} | {bucket} | {direction} | "
+            f"Q-score {score}/100 | 15M"
+        )
 
     with open(path, "rb") as handle:
         response = requests.post(
