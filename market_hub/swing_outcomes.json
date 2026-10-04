@@ -1,1 +1,146 @@
-[]
+[
+  {
+    "signal_id": "STRK_USDT|long|2026-10-04T02:02:01.349481+00:00",
+    "created_at_utc": "2026-10-04T02:02:01.349481+00:00",
+    "symbol": "STRK_USDT",
+    "direction": "long",
+    "rank": 1,
+    "score": 100.0,
+    "grade": "A+",
+    "entry_lower": 0.04989,
+    "entry_upper": 0.05178,
+    "entry_source": "1H demand",
+    "stop_loss": 0.04957092857142857,
+    "tp1": 0.05336314285714285,
+    "tp2": 0.055891285714285706,
+    "runner_target": 0.0651958875,
+    "runner_move_pct": 28.25,
+    "position_plan": {
+      "base_risk_pct": 0.9,
+      "size_label": "FULL",
+      "risk_modifier": 1.0,
+      "recommended_risk_pct": 0.9,
+      "notional_equity_multiple": 0.362,
+      "tp1_close_fraction": 0.35,
+      "tp2_close_fraction": 0.35,
+      "runner_fraction": 0.3,
+      "projected_account_profit_pct": 4.96
+    },
+    "status": "PENDING_ENTRY",
+    "outcome": null,
+    "entry_time_utc": null,
+    "closed_at_utc": null,
+    "tp1_hit": false,
+    "tp1_hit_at_utc": null,
+    "tp2_hit": false,
+    "tp2_hit_at_utc": null,
+    "runner_hit": false,
+    "runner_hit_at_utc": null,
+    "protect_1r_hit": false,
+    "mfe_r": null,
+    "mae_r": null,
+    "promotion_history": [
+      {
+        "at_utc": "2026-10-04T02:02:01.349481+00:00",
+        "rank": 1,
+        "score": 100.0
+      }
+    ]
+  },
+  {
+    "signal_id": "CTR_USDT|long|2026-10-04T02:02:01.349481+00:00",
+    "created_at_utc": "2026-10-04T02:02:01.349481+00:00",
+    "symbol": "CTR_USDT",
+    "direction": "long",
+    "rank": 2,
+    "score": 100.0,
+    "grade": "A+",
+    "entry_lower": 0.012051,
+    "entry_upper": 0.012197,
+    "entry_source": "1H demand",
+    "stop_loss": 0.011910625,
+    "tp1": 0.01255075,
+    "tp2": 0.0129775,
+    "runner_target": 0.014662765599999999,
+    "runner_move_pct": 20.94,
+    "position_plan": {
+      "base_risk_pct": 0.9,
+      "size_label": "FULL",
+      "risk_modifier": 1.0,
+      "recommended_risk_pct": 0.85,
+      "notional_equity_multiple": 0.483,
+      "tp1_close_fraction": 0.35,
+      "tp2_close_fraction": 0.35,
+      "runner_fraction": 0.3,
+      "projected_account_profit_pct": 5.1
+    },
+    "status": "PENDING_ENTRY",
+    "outcome": null,
+    "entry_time_utc": null,
+    "closed_at_utc": null,
+    "tp1_hit": false,
+    "tp1_hit_at_utc": null,
+    "tp2_hit": false,
+    "tp2_hit_at_utc": null,
+    "runner_hit": false,
+    "runner_hit_at_utc": null,
+    "protect_1r_hit": false,
+    "mfe_r": null,
+    "mae_r": null,
+    "promotion_history": [
+      {
+        "at_utc": "2026-10-04T02:02:01.349481+00:00",
+        "rank": 2,
+        "score": 100.0
+      }
+    ]
+  },
+  {
+    "signal_id": "PONS_USDT|short|2026-10-04T02:02:01.349481+00:00",
+    "created_at_utc": "2026-10-04T02:02:01.349481+00:00",
+    "symbol": "PONS_USDT",
+    "direction": "short",
+    "rank": 3,
+    "score": 100.0,
+    "grade": "A+",
+    "entry_lower": 0.4221,
+    "entry_upper": 0.4333,
+    "entry_source": "1H supply",
+    "stop_loss": 0.43453107142857145,
+    "tp1": 0.414037857142857,
+    "tp2": 0.40037571428571406,
+    "runner_target": 0.3472,
+    "runner_move_pct": 18.82,
+    "position_plan": {
+      "base_risk_pct": 0.9,
+      "size_label": "FULL",
+      "risk_modifier": 1.0,
+      "recommended_risk_pct": 0.0,
+      "notional_equity_multiple": 0.0,
+      "tp1_close_fraction": 0.35,
+      "tp2_close_fraction": 0.35,
+      "runner_fraction": 0.3,
+      "projected_account_profit_pct": 5.07
+    },
+    "status": "PENDING_ENTRY",
+    "outcome": null,
+    "entry_time_utc": null,
+    "closed_at_utc": null,
+    "tp1_hit": false,
+    "tp1_hit_at_utc": null,
+    "tp2_hit": false,
+    "tp2_hit_at_utc": null,
+    "runner_hit": false,
+    "runner_hit_at_utc": null,
+    "protect_1r_hit": false,
+    "mfe_r": null,
+    "mae_r": null,
+    "promotion_history": [
+      {
+        "at_utc": "2026-10-04T02:02:01.349481+00:00",
+        "rank": 3,
+        "score": 100.0
+      }
+    ]
+  }
+]
