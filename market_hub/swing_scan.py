@@ -18,6 +18,8 @@ from .config import (
     SWING_MIN_SCORE,
     SWING_MIN_STOP_PCT,
     SWING_RUNNER_FRACTION,
+    SWING_TOP_PICK_2_MAX_RISK_PCT,
+    SWING_TOP_PICK_3_MAX_RISK_PCT,
     SWING_TOP_PICK_COUNT,
     SWING_TP1_CLOSE_FRACTION,
     SWING_TP1_R,
@@ -67,6 +69,36 @@ def _regime_direction(analysis):
     if regime in bearish or trend == "bearish":
         return "short"
     return None
+
+
+def aggregate_1h_to_4h(frame):
+    """Build closed UTC-anchored 4H bars from the already-fetched 1H universe."""
+    if frame is None or frame.empty:
+        return None
+
+    source = frame[["open", "high", "low", "close", "volume"]].copy()
+    counts = source["close"].resample(
+        "4h",
+        origin="start_day",
+        label="left",
+        closed="left",
+    ).count()
+    aggregated = source.resample(
+        "4h",
+        origin="start_day",
+        label="left",
+        closed="left",
+    ).agg({
+        "open": "first",
+        "high": "max",
+        "low": "min",
+        "close": "last",
+        "volume": "sum",
+    })
+    aggregated = aggregated.loc[counts >= 4].dropna()
+    if len(aggregated) < 50:
+        return None
+    return aggregated
 
 
 def score_swing_fast_candidate(symbol, frame, ticker):
@@ -501,7 +533,8 @@ def analyze_swing_candidate(symbol, frames, ticker, fast_row, market_context=Non
     if abs(float(fast_row.get("return_24h_pct") or 0.0)) > SWING_MAX_24H_CHASE_PCT:
         score -= 12.0
 
-    score = max(0.0, min(100.0, score))
+    raw_score = max(0.0, score)
+    score = min(99.0, raw_score * 0.78)
 
     if score >= SWING_A_PLUS_SCORE:
         grade_label = "A+"
@@ -539,6 +572,7 @@ def analyze_swing_candidate(symbol, frames, ticker, fast_row, market_context=Non
         "mode": "SWING",
         "direction": direction,
         "swing_score": round(score, 2),
+        "swing_raw_score": round(raw_score, 2),
         "grade": grade_label,
         "analysis_4h": analysis_4h,
         "analysis_1h": analysis_1h,
@@ -568,6 +602,7 @@ def analyze_swing_candidate(symbol, frames, ticker, fast_row, market_context=Non
             "tp1_close_fraction": SWING_TP1_CLOSE_FRACTION,
             "tp2_close_fraction": SWING_TP2_CLOSE_FRACTION,
             "runner_fraction": SWING_RUNNER_FRACTION,
+            "target_total_r": round(total_target_r, 3),
             "projected_account_profit_pct": round(
                 effective_risk_pct * total_target_r,
                 2,
@@ -634,10 +669,17 @@ def select_swing_top_picks(items):
     for rank, item in enumerate(selected, start=1):
         item["swing_top_pick_rank"] = rank
         plan = item.get("position_plan") or {}
-        risk = min(
-            float(plan.get("recommended_risk_pct") or 0.0),
-            remaining_risk,
+        rank_cap = (
+            None
+            if rank == 1
+            else SWING_TOP_PICK_2_MAX_RISK_PCT
+            if rank == 2
+            else SWING_TOP_PICK_3_MAX_RISK_PCT
         )
+        desired_risk = float(plan.get("recommended_risk_pct") or 0.0)
+        if rank_cap is not None:
+            desired_risk = min(desired_risk, rank_cap)
+        risk = min(desired_risk, remaining_risk)
         plan["recommended_risk_pct"] = round(risk, 3)
         stop_pct = float(item.get("stop_distance_pct") or 0.0)
         if stop_pct > 0:
@@ -648,6 +690,8 @@ def select_swing_top_picks(items):
                 ),
                 3,
             )
+        total_r = float(plan.get("target_total_r") or 0.0)
+        plan["projected_account_profit_pct"] = round(risk * total_r, 2)
         remaining_risk = max(0.0, remaining_risk - risk)
 
     return selected
