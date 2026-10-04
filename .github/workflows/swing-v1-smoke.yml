@@ -1,4 +1,5 @@
 name: Swing V1 Smoke Test
+# Re-run after final liquidity / anti-chase gates.
 
 on:
   push:
