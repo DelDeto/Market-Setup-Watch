@@ -138,7 +138,7 @@
     "runner_hit": false,
     "runner_hit_at_utc": null,
     "protect_1r_hit": true,
-    "mfe_r": 6.5,
+    "mfe_r": 7.51,
     "mae_r": -0.322,
     "promotion_history": [
       {
@@ -250,6 +250,11 @@
         "at_utc": "2026-10-04T15:52:40.388315+00:00",
         "rank": 1,
         "score": 78.9
+      },
+      {
+        "at_utc": "2026-10-04T20:02:16.161367+00:00",
+        "rank": 2,
+        "score": 82.59
       }
     ]
   },
@@ -299,6 +304,55 @@
         "at_utc": "2026-10-04T11:21:18.116450+00:00",
         "rank": 3,
         "score": 79.15
+      }
+    ]
+  },
+  {
+    "signal_id": "MUBARAK_USDT|long|2026-10-04T20:02:16.161367+00:00",
+    "created_at_utc": "2026-10-04T20:02:16.161367+00:00",
+    "symbol": "MUBARAK_USDT",
+    "direction": "long",
+    "rank": 1,
+    "score": 86.5,
+    "grade": "A",
+    "entry_lower": 0.06597,
+    "entry_upper": 0.06731,
+    "entry_source": "1H demand",
+    "stop_loss": 0.0645787142857143,
+    "tp1": 0.07076257142857142,
+    "tp2": 0.07488514285714284,
+    "runner_target": 0.08663200000000001,
+    "runner_move_pct": 30.0,
+    "position_plan": {
+      "base_risk_pct": 0.65,
+      "size_label": "FULL",
+      "risk_modifier": 1.0,
+      "recommended_risk_pct": 0.65,
+      "notional_equity_multiple": 0.21,
+      "tp1_close_fraction": 0.35,
+      "tp2_close_fraction": 0.35,
+      "runner_fraction": 0.3,
+      "target_total_r": 5.01,
+      "projected_account_profit_pct": 3.26
+    },
+    "status": "PENDING_ENTRY",
+    "outcome": null,
+    "entry_time_utc": null,
+    "closed_at_utc": null,
+    "tp1_hit": false,
+    "tp1_hit_at_utc": null,
+    "tp2_hit": false,
+    "tp2_hit_at_utc": null,
+    "runner_hit": false,
+    "runner_hit_at_utc": null,
+    "protect_1r_hit": false,
+    "mfe_r": null,
+    "mae_r": null,
+    "promotion_history": [
+      {
+        "at_utc": "2026-10-04T20:02:16.161367+00:00",
+        "rank": 1,
+        "score": 86.5
       }
     ]
   }
