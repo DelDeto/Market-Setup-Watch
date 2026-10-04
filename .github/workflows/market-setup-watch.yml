@@ -18,7 +18,7 @@ concurrency:
 jobs:
   scan:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 35
 
     steps:
       - name: Checkout repository
@@ -51,6 +51,8 @@ jobs:
             market_hub/participation.py \
             market_hub/market_context.py \
             market_hub/meta_selector.py \
+            market_hub/swing_scan.py \
+            market_hub/swing_outcomes.py \
             market_hub/correlation.py \
             market_hub/calibration.py \
             market_hub/outcomes.py \
@@ -90,6 +92,7 @@ jobs:
           cp market_hub/state.json /tmp/market-setup-state/state.json
           cp market_hub/outcomes.json /tmp/market-setup-state/outcomes.json
           cp market_hub/calibration.json /tmp/market-setup-state/calibration.json
+          cp market_hub/swing_outcomes.json /tmp/market-setup-state/swing_outcomes.json
 
           git fetch origin main
           git reset --hard origin/main
@@ -97,8 +100,9 @@ jobs:
           cp /tmp/market-setup-state/state.json market_hub/state.json
           cp /tmp/market-setup-state/outcomes.json market_hub/outcomes.json
           cp /tmp/market-setup-state/calibration.json market_hub/calibration.json
+          cp /tmp/market-setup-state/swing_outcomes.json market_hub/swing_outcomes.json
 
-          git add market_hub/state.json market_hub/outcomes.json market_hub/calibration.json
+          git add market_hub/state.json market_hub/outcomes.json market_hub/calibration.json market_hub/swing_outcomes.json
           if git diff --cached --quiet; then
             echo "No scanner state changes to commit."
             exit 0
