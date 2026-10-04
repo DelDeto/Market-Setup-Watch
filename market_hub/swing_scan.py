@@ -11,11 +11,13 @@ from .config import (
     SWING_IDEAL_RUNNER_MOVE_PCT,
     SWING_MAX_24H_CHASE_PCT,
     SWING_MAX_NOTIONAL_EQUITY_MULTIPLE,
+    SWING_MAX_TOP_PICK_SPREAD_BPS,
     SWING_MAX_RUNNER_MOVE_PCT,
     SWING_MAX_STOP_PCT,
     SWING_MAX_TOTAL_RISK_PCT,
     SWING_MIN_RUNNER_MOVE_PCT,
     SWING_MIN_SCORE,
+    SWING_MIN_TOP_PICK_TURNOVER_USDT,
     SWING_MIN_STOP_PCT,
     SWING_RUNNER_FRACTION,
     SWING_TOP_PICK_2_MAX_RISK_PCT,
@@ -647,13 +649,31 @@ def analyze_swing_candidate(symbol, frames, ticker, fast_row, market_context=Non
 
 
 def select_swing_top_picks(items):
-    candidates = [
-        item for item in items
-        if item
-        and float(item.get("swing_score") or 0.0) >= SWING_MIN_SCORE
-        and float(item.get("runner_move_pct") or 0.0) >= SWING_MIN_RUNNER_MOVE_PCT
-        and float(item.get("entry_distance_atr") or 99.0) <= 1.50
-    ]
+    candidates = []
+    for item in items:
+        if not item:
+            continue
+
+        fast = item.get("fast") or {}
+        turnover = float(fast.get("turnover_24h") or 0.0)
+        spread = fast.get("spread_bps")
+        spread = float(spread) if spread is not None else None
+        move_24h = abs(float(fast.get("return_24h_pct") or 0.0))
+
+        if float(item.get("swing_score") or 0.0) < SWING_MIN_SCORE:
+            continue
+        if float(item.get("runner_move_pct") or 0.0) < SWING_MIN_RUNNER_MOVE_PCT:
+            continue
+        if float(item.get("entry_distance_atr") or 99.0) > 1.50:
+            continue
+        if turnover < SWING_MIN_TOP_PICK_TURNOVER_USDT:
+            continue
+        if spread is not None and spread > SWING_MAX_TOP_PICK_SPREAD_BPS:
+            continue
+        if move_24h > SWING_MAX_24H_CHASE_PCT:
+            continue
+
+        candidates.append(item)
 
     candidates.sort(
         key=lambda item: (
