@@ -13,6 +13,11 @@ from .config import (
     HISTORY_LIMIT,
     MIN_HISTORY_REQUIRED,
     QUOTE_COIN,
+    SWING_DEEP_HISTORY,
+    SWING_DEEP_MIN_HISTORY,
+    SWING_FAST_HISTORY,
+    SWING_FAST_MIN_HISTORY,
+    SWING_FAST_WORKERS,
 )
 
 INTERVAL_MAP = {
@@ -308,6 +313,70 @@ def fetch_many_fast_frames(symbols, workers=FAST_SCAN_WORKERS):
     with ThreadPoolExecutor(max_workers=workers) as executor:
         futures = {
             executor.submit(fetch_fast_frame, symbol): symbol
+            for symbol in symbols
+        }
+        for future in as_completed(futures):
+            symbol = futures[future]
+            try:
+                output[symbol] = future.result()
+            except Exception as exc:
+                errors[symbol] = str(exc)
+
+    return output, errors
+
+
+def fetch_swing_fast_frame(symbol):
+    return get_closed_klines(
+        symbol,
+        "4h",
+        limit=SWING_FAST_HISTORY,
+        min_required=SWING_FAST_MIN_HISTORY,
+    )
+
+
+def fetch_many_swing_fast_frames(symbols, workers=SWING_FAST_WORKERS):
+    output = {}
+    errors = {}
+
+    with ThreadPoolExecutor(max_workers=workers) as executor:
+        futures = {
+            executor.submit(fetch_swing_fast_frame, symbol): symbol
+            for symbol in symbols
+        }
+        for future in as_completed(futures):
+            symbol = futures[future]
+            try:
+                output[symbol] = future.result()
+            except Exception as exc:
+                errors[symbol] = str(exc)
+
+    return output, errors
+
+
+def fetch_swing_frames(symbol):
+    return {
+        "4H": get_closed_klines(
+            symbol,
+            "4h",
+            limit=SWING_DEEP_HISTORY,
+            min_required=SWING_DEEP_MIN_HISTORY,
+        ),
+        "1H": get_closed_klines(
+            symbol,
+            "1h",
+            limit=SWING_DEEP_HISTORY,
+            min_required=SWING_DEEP_MIN_HISTORY,
+        ),
+    }
+
+
+def fetch_many_swing_frames(symbols, workers=6):
+    output = {}
+    errors = {}
+
+    with ThreadPoolExecutor(max_workers=workers) as executor:
+        futures = {
+            executor.submit(fetch_swing_frames, symbol): symbol
             for symbol in symbols
         }
         for future in as_completed(futures):
