@@ -52,6 +52,33 @@ RUNNER_FRACTION = 0.20
 RUNNER_MIN_R = 3.00
 RUNNER_MAX_R = 4.00
 
+# Swing 1H/4H scanner. This runs alongside intraday and targets larger
+# multi-session moves rather than replacing the 15M execution engine.
+SWING_FAST_HISTORY = 96
+SWING_FAST_MIN_HISTORY = 48
+SWING_FAST_WORKERS = 8
+SWING_DEEP_SYMBOLS = 80
+SWING_DEEP_HISTORY = 240
+SWING_DEEP_MIN_HISTORY = 180
+SWING_TOP_PICK_COUNT = 3
+SWING_MIN_SCORE = 78.0
+SWING_A_PLUS_SCORE = 88.0
+SWING_A_PLUS_RISK_PCT = 0.90
+SWING_A_RISK_PCT = 0.65
+SWING_MAX_TOTAL_RISK_PCT = 1.75
+SWING_TP1_R = 2.0
+SWING_TP2_R = 4.0
+SWING_TP1_CLOSE_FRACTION = 0.35
+SWING_TP2_CLOSE_FRACTION = 0.35
+SWING_RUNNER_FRACTION = 0.30
+SWING_MIN_RUNNER_MOVE_PCT = 10.0
+SWING_IDEAL_RUNNER_MOVE_PCT = 20.0
+SWING_MAX_RUNNER_MOVE_PCT = 30.0
+SWING_MAX_24H_CHASE_PCT = 18.0
+SWING_MIN_STOP_PCT = 0.75
+SWING_MAX_STOP_PCT = 5.0
+SWING_OUTCOME_PATH = Path("market_hub/swing_outcomes.json")
+
 # Quality score thresholds. Quality and execution are intentionally separated:
 # a structurally strong setup is not automatically an actionable entry.
 READY_MIN_SCORE = 70
