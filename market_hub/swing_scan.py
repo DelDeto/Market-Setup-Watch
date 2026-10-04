@@ -574,6 +574,40 @@ def analyze_swing_candidate(symbol, frames, ticker, fast_row, market_context=Non
             ),
         },
         "ticker": ticker,
+        "trade_plan": {
+            "active": True,
+            "execution_ready": score >= SWING_MIN_SCORE and entry_distance_atr <= 1.50,
+            "direction": direction,
+            "entry_zone": entry,
+            "stop_loss": stop,
+            "targets": [
+                {"name": "TP1", "price": tp1, "source": "2R", "rr": SWING_TP1_R},
+                {"name": "TP2", "price": tp2, "source": "4R", "rr": SWING_TP2_R},
+                {
+                    "name": "RUNNER",
+                    "price": runner,
+                    "source": f"{runner_move_pct:.1f}% swing move",
+                    "rr": runner_r,
+                },
+            ],
+            "mtf_alignment": {
+                "label": (
+                    "ALIGNED"
+                    if direction_4h == direction and direction_1h == direction
+                    else "PARTIAL"
+                )
+            },
+            "management": {
+                "protect_at_r": 1.0,
+                "tp1_close_fraction": SWING_TP1_CLOSE_FRACTION,
+                "tp2_close_fraction": SWING_TP2_CLOSE_FRACTION,
+                "runner_fraction": SWING_RUNNER_FRACTION,
+                "policy": (
+                    "At +1R protect at breakeven; close 35% at +2R; "
+                    "close 35% at +4R; trail 30% runner on 1H/4H structure."
+                ),
+            },
+        },
     }
 
 
