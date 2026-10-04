@@ -25,7 +25,6 @@ from .meta_selector import apply_top_pick_selector
 from .mexc_market import (
     fetch_many_fast_frames,
     fetch_many_frames,
-    fetch_many_swing_fast_frames,
     fetch_many_swing_frames,
     get_all_tickers,
     get_contract_universe,
@@ -46,6 +45,7 @@ from .swing_outcomes import (
     update_swing_outcomes,
 )
 from .swing_scan import (
+    aggregate_1h_to_4h,
     analyze_swing_candidate,
     score_swing_fast_candidate,
     select_swing_deep_symbols,
@@ -104,6 +104,7 @@ def _compact_swing_pick(item):
         "mode",
         "direction",
         "swing_score",
+        "swing_raw_score",
         "grade",
         "swing_top_pick_rank",
         "entry_zone",
@@ -388,18 +389,22 @@ def main():
 
     if swing_due:
         swing_scan_generated_at = generated_at
-        swing_fast_frames, swing_fast_errors = (
-            fetch_many_swing_fast_frames(universe)
-        )
-
+        # Reuse the already-fetched full-universe 1H history and aggregate
+        # it into closed UTC-anchored 4H bars. This preserves whole-market
+        # 4H coverage without another ~1,000 MEXC API requests.
         for symbol in universe:
-            frame = swing_fast_frames.get(symbol)
+            frame_1h = fast_frames.get(symbol)
             ticker = tickers.get(symbol)
-            if frame is None or not ticker or ticker.get("last_price") is None:
+            if frame_1h is None or not ticker or ticker.get("last_price") is None:
+                swing_fast_errors[symbol] = "missing 1H fast history"
                 continue
             try:
+                frame_4h = aggregate_1h_to_4h(frame_1h)
+                if frame_4h is None:
+                    swing_fast_errors[symbol] = "insufficient 1H history for 4H aggregation"
+                    continue
                 swing_fast_rows.append(
-                    score_swing_fast_candidate(symbol, frame, ticker)
+                    score_swing_fast_candidate(symbol, frame_4h, ticker)
                 )
             except Exception as exc:
                 swing_analysis_errors[f"{symbol}:fast"] = str(exc)
