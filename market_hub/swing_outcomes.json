@@ -37,7 +37,7 @@
     "runner_hit": false,
     "runner_hit_at_utc": null,
     "protect_1r_hit": true,
-    "mfe_r": 6.855,
+    "mfe_r": 7.867,
     "mae_r": 0.724,
     "promotion_history": [
       {
@@ -335,9 +335,9 @@
       "target_total_r": 5.01,
       "projected_account_profit_pct": 3.26
     },
-    "status": "PENDING_ENTRY",
+    "status": "ACTIVE",
     "outcome": null,
-    "entry_time_utc": null,
+    "entry_time_utc": "2026-10-04T21:00:00+00:00",
     "closed_at_utc": null,
     "tp1_hit": false,
     "tp1_hit_at_utc": null,
@@ -346,8 +346,8 @@
     "runner_hit": false,
     "runner_hit_at_utc": null,
     "protect_1r_hit": false,
-    "mfe_r": null,
-    "mae_r": null,
+    "mfe_r": 0.403,
+    "mae_r": -0.733,
     "promotion_history": [
       {
         "at_utc": "2026-10-04T20:02:16.161367+00:00",
