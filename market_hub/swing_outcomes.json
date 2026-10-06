@@ -195,7 +195,7 @@
     "runner_hit_at_utc": null,
     "protect_1r_hit": true,
     "mfe_r": 1.994,
-    "mae_r": -0.173,
+    "mae_r": -0.665,
     "promotion_history": [
       {
         "at_utc": "2026-10-04T11:21:18.116450+00:00",
@@ -732,9 +732,9 @@
       "target_total_r": 3.739,
       "projected_account_profit_pct": 2.43
     },
-    "status": "PENDING_ENTRY",
+    "status": "ACTIVE",
     "outcome": null,
-    "entry_time_utc": null,
+    "entry_time_utc": "2026-10-06T03:00:00+00:00",
     "closed_at_utc": null,
     "tp1_hit": false,
     "tp1_hit_at_utc": null,
@@ -742,9 +742,9 @@
     "tp2_hit_at_utc": null,
     "runner_hit": false,
     "runner_hit_at_utc": null,
-    "protect_1r_hit": false,
-    "mfe_r": null,
-    "mae_r": null,
+    "protect_1r_hit": true,
+    "mfe_r": 1.452,
+    "mae_r": 0.493,
     "promotion_history": [
       {
         "at_utc": "2026-10-06T02:14:53.635883+00:00",
@@ -799,6 +799,104 @@
         "at_utc": "2026-10-06T02:14:53.635883+00:00",
         "rank": 3,
         "score": 79.36
+      }
+    ]
+  },
+  {
+    "signal_id": "CHIP_USDT|long|2026-10-06T06:26:55.658122+00:00",
+    "created_at_utc": "2026-10-06T06:26:55.658122+00:00",
+    "symbol": "CHIP_USDT",
+    "direction": "long",
+    "rank": 1,
+    "score": 85.6,
+    "grade": "A",
+    "entry_lower": 0.05179,
+    "entry_upper": 0.05238,
+    "entry_source": "1H demand",
+    "stop_loss": 0.051587464285714285,
+    "tp1": 0.05308007142857145,
+    "tp2": 0.05407514285714289,
+    "runner_target": 0.05989775,
+    "runner_move_pct": 15.0,
+    "position_plan": {
+      "base_risk_pct": 0.65,
+      "size_label": "FULL",
+      "risk_modifier": 1.0,
+      "recommended_risk_pct": 0.65,
+      "notional_equity_multiple": 0.681,
+      "tp1_close_fraction": 0.35,
+      "tp2_close_fraction": 0.35,
+      "runner_fraction": 0.3,
+      "target_total_r": 6.811,
+      "projected_account_profit_pct": 4.43
+    },
+    "status": "PENDING_ENTRY",
+    "outcome": null,
+    "entry_time_utc": null,
+    "closed_at_utc": null,
+    "tp1_hit": false,
+    "tp1_hit_at_utc": null,
+    "tp2_hit": false,
+    "tp2_hit_at_utc": null,
+    "runner_hit": false,
+    "runner_hit_at_utc": null,
+    "protect_1r_hit": false,
+    "mfe_r": null,
+    "mae_r": null,
+    "promotion_history": [
+      {
+        "at_utc": "2026-10-06T06:26:55.658122+00:00",
+        "rank": 1,
+        "score": 85.6
+      }
+    ]
+  },
+  {
+    "signal_id": "NIGHT_USDT|long|2026-10-06T06:26:55.658122+00:00",
+    "created_at_utc": "2026-10-06T06:26:55.658122+00:00",
+    "symbol": "NIGHT_USDT",
+    "direction": "long",
+    "rank": 2,
+    "score": 80.6,
+    "grade": "A",
+    "entry_lower": 0.04643,
+    "entry_upper": 0.04818,
+    "entry_source": "1H demand",
+    "stop_loss": 0.04623778571428571,
+    "tp1": 0.04943942857142858,
+    "tp2": 0.05157385714285716,
+    "runner_target": 0.05440075,
+    "runner_move_pct": 15.0,
+    "position_plan": {
+      "base_risk_pct": 0.65,
+      "size_label": "FULL",
+      "risk_modifier": 1.0,
+      "recommended_risk_pct": 0.55,
+      "notional_equity_multiple": 0.244,
+      "tp1_close_fraction": 0.35,
+      "tp2_close_fraction": 0.35,
+      "runner_fraction": 0.3,
+      "target_total_r": 4.095,
+      "projected_account_profit_pct": 2.25
+    },
+    "status": "PENDING_ENTRY",
+    "outcome": null,
+    "entry_time_utc": null,
+    "closed_at_utc": null,
+    "tp1_hit": false,
+    "tp1_hit_at_utc": null,
+    "tp2_hit": false,
+    "tp2_hit_at_utc": null,
+    "runner_hit": false,
+    "runner_hit_at_utc": null,
+    "protect_1r_hit": false,
+    "mfe_r": null,
+    "mae_r": null,
+    "promotion_history": [
+      {
+        "at_utc": "2026-10-06T06:26:55.658122+00:00",
+        "rank": 2,
+        "score": 80.6
       }
     ]
   }
