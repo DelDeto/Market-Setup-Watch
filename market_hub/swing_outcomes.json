@@ -488,17 +488,17 @@
       "projected_account_profit_pct": 2.27
     },
     "status": "ACTIVE",
-    "outcome": null,
+    "outcome": "WIN",
     "entry_time_utc": "2026-10-06T06:00:00+00:00",
     "closed_at_utc": null,
-    "tp1_hit": false,
-    "tp1_hit_at_utc": null,
+    "tp1_hit": true,
+    "tp1_hit_at_utc": "2026-10-06T19:00:00+00:00",
     "tp2_hit": false,
     "tp2_hit_at_utc": null,
     "runner_hit": false,
     "runner_hit_at_utc": null,
     "protect_1r_hit": true,
-    "mfe_r": 1.409,
+    "mfe_r": 2.416,
     "mae_r": -0.687,
     "promotion_history": [
       {
@@ -684,17 +684,17 @@
       "projected_account_profit_pct": 2.18
     },
     "status": "ACTIVE",
-    "outcome": null,
+    "outcome": "WIN",
     "entry_time_utc": "2026-10-06T12:00:00+00:00",
     "closed_at_utc": null,
-    "tp1_hit": false,
-    "tp1_hit_at_utc": null,
+    "tp1_hit": true,
+    "tp1_hit_at_utc": "2026-10-06T19:00:00+00:00",
     "tp2_hit": false,
     "tp2_hit_at_utc": null,
     "runner_hit": false,
     "runner_hit_at_utc": null,
     "protect_1r_hit": true,
-    "mfe_r": 1.678,
+    "mfe_r": 2.006,
     "mae_r": -0.052,
     "promotion_history": [
       {
@@ -890,7 +890,7 @@
     "runner_hit": false,
     "runner_hit_at_utc": null,
     "protect_1r_hit": true,
-    "mfe_r": 2.994,
+    "mfe_r": 3.059,
     "mae_r": 0.67,
     "promotion_history": [
       {
@@ -946,6 +946,109 @@
         "at_utc": "2026-10-06T19:07:25.497473+00:00",
         "rank": 1,
         "score": 82.67
+      },
+      {
+        "at_utc": "2026-10-07T00:37:55.364257+00:00",
+        "rank": 2,
+        "score": 83.72
+      }
+    ]
+  },
+  {
+    "signal_id": "CHIP_USDT|long|2026-10-07T00:37:55.364257+00:00",
+    "created_at_utc": "2026-10-07T00:37:55.364257+00:00",
+    "symbol": "CHIP_USDT",
+    "direction": "long",
+    "rank": 1,
+    "score": 85.25,
+    "grade": "A",
+    "entry_lower": 0.05146,
+    "entry_upper": 0.05309,
+    "entry_source": "1H demand",
+    "stop_loss": 0.050417607142857146,
+    "tp1": 0.055989785714285714,
+    "tp2": 0.059704571428571426,
+    "runner_target": 0.060116249999999996,
+    "runner_move_pct": 15.0,
+    "position_plan": {
+      "base_risk_pct": 0.65,
+      "size_label": "FULL",
+      "risk_modifier": 1.0,
+      "recommended_risk_pct": 0.65,
+      "notional_equity_multiple": 0.183,
+      "tp1_close_fraction": 0.35,
+      "tp2_close_fraction": 0.35,
+      "runner_fraction": 0.3,
+      "target_total_r": 3.366,
+      "projected_account_profit_pct": 2.19
+    },
+    "status": "PENDING_ENTRY",
+    "outcome": null,
+    "entry_time_utc": null,
+    "closed_at_utc": null,
+    "tp1_hit": false,
+    "tp1_hit_at_utc": null,
+    "tp2_hit": false,
+    "tp2_hit_at_utc": null,
+    "runner_hit": false,
+    "runner_hit_at_utc": null,
+    "protect_1r_hit": false,
+    "mfe_r": null,
+    "mae_r": null,
+    "promotion_history": [
+      {
+        "at_utc": "2026-10-07T00:37:55.364257+00:00",
+        "rank": 1,
+        "score": 85.25
+      }
+    ]
+  },
+  {
+    "signal_id": "ETHFI_USDT|long|2026-10-07T00:37:55.364257+00:00",
+    "created_at_utc": "2026-10-07T00:37:55.364257+00:00",
+    "symbol": "ETHFI_USDT",
+    "direction": "long",
+    "rank": 3,
+    "score": 79.3,
+    "grade": "A",
+    "entry_lower": 0.7467,
+    "entry_upper": 0.7565,
+    "entry_source": "1H demand",
+    "stop_loss": 0.7414210714285714,
+    "tp1": 0.7719578571428574,
+    "tp2": 0.7923157142857147,
+    "runner_target": 0.86434,
+    "runner_move_pct": 15.0,
+    "position_plan": {
+      "base_risk_pct": 0.65,
+      "size_label": "FULL",
+      "risk_modifier": 1.0,
+      "recommended_risk_pct": 0.3,
+      "notional_equity_multiple": 0.222,
+      "tp1_close_fraction": 0.35,
+      "tp2_close_fraction": 0.35,
+      "runner_fraction": 0.3,
+      "target_total_r": 5.423,
+      "projected_account_profit_pct": 1.63
+    },
+    "status": "PENDING_ENTRY",
+    "outcome": null,
+    "entry_time_utc": null,
+    "closed_at_utc": null,
+    "tp1_hit": false,
+    "tp1_hit_at_utc": null,
+    "tp2_hit": false,
+    "tp2_hit_at_utc": null,
+    "runner_hit": false,
+    "runner_hit_at_utc": null,
+    "protect_1r_hit": false,
+    "mfe_r": null,
+    "mae_r": null,
+    "promotion_history": [
+      {
+        "at_utc": "2026-10-07T00:37:55.364257+00:00",
+        "rank": 3,
+        "score": 79.3
       }
     ]
   }
