@@ -1350,5 +1350,152 @@
         "score": 86.56
       }
     ]
+  },
+  {
+    "signal_id": "FILECOIN_USDT|short|2026-10-09T01:08:37.903037+00:00",
+    "created_at_utc": "2026-10-09T01:08:37.903037+00:00",
+    "symbol": "FILECOIN_USDT",
+    "direction": "short",
+    "rank": 1,
+    "score": 86.2,
+    "grade": "A",
+    "entry_lower": 1.0879,
+    "entry_upper": 1.103,
+    "entry_source": "1H supply",
+    "stop_loss": 1.1074142857142857,
+    "tp1": 1.0715214285714287,
+    "tp2": 1.0475928571428574,
+    "runner_target": 0.9311325,
+    "runner_move_pct": 15.0,
+    "position_plan": {
+      "base_risk_pct": 0.65,
+      "size_label": "FULL",
+      "risk_modifier": 1.0,
+      "recommended_risk_pct": 0.65,
+      "notional_equity_multiple": 0.595,
+      "tp1_close_fraction": 0.35,
+      "tp2_close_fraction": 0.35,
+      "runner_fraction": 0.3,
+      "target_total_r": 6.22,
+      "projected_account_profit_pct": 4.04
+    },
+    "status": "PENDING_ENTRY",
+    "outcome": null,
+    "entry_time_utc": null,
+    "closed_at_utc": null,
+    "tp1_hit": false,
+    "tp1_hit_at_utc": null,
+    "tp2_hit": false,
+    "tp2_hit_at_utc": null,
+    "runner_hit": false,
+    "runner_hit_at_utc": null,
+    "protect_1r_hit": false,
+    "mfe_r": null,
+    "mae_r": null,
+    "promotion_history": [
+      {
+        "at_utc": "2026-10-09T01:08:37.903037+00:00",
+        "rank": 1,
+        "score": 86.2
+      }
+    ]
+  },
+  {
+    "signal_id": "ONDO_USDT|short|2026-10-09T01:08:37.903037+00:00",
+    "created_at_utc": "2026-10-09T01:08:37.903037+00:00",
+    "symbol": "ONDO_USDT",
+    "direction": "short",
+    "rank": 2,
+    "score": 84.2,
+    "grade": "A",
+    "entry_lower": 0.4903,
+    "entry_upper": 0.5007,
+    "entry_source": "1H supply",
+    "stop_loss": 0.5031417857142857,
+    "tp1": 0.48021642857142877,
+    "tp2": 0.4649328571428575,
+    "runner_target": 0.421175,
+    "runner_move_pct": 15.0,
+    "position_plan": {
+      "base_risk_pct": 0.65,
+      "size_label": "FULL",
+      "risk_modifier": 1.0,
+      "recommended_risk_pct": 0.55,
+      "notional_equity_multiple": 0.357,
+      "tp1_close_fraction": 0.35,
+      "tp2_close_fraction": 0.35,
+      "runner_fraction": 0.3,
+      "target_total_r": 5.018,
+      "projected_account_profit_pct": 2.76
+    },
+    "status": "PENDING_ENTRY",
+    "outcome": null,
+    "entry_time_utc": null,
+    "closed_at_utc": null,
+    "tp1_hit": false,
+    "tp1_hit_at_utc": null,
+    "tp2_hit": false,
+    "tp2_hit_at_utc": null,
+    "runner_hit": false,
+    "runner_hit_at_utc": null,
+    "protect_1r_hit": false,
+    "mfe_r": null,
+    "mae_r": null,
+    "promotion_history": [
+      {
+        "at_utc": "2026-10-09T01:08:37.903037+00:00",
+        "rank": 2,
+        "score": 84.2
+      }
+    ]
+  },
+  {
+    "signal_id": "LIT_USDT|long|2026-10-09T01:08:37.903037+00:00",
+    "created_at_utc": "2026-10-09T01:08:37.903037+00:00",
+    "symbol": "LIT_USDT",
+    "direction": "long",
+    "rank": 3,
+    "score": 82.18,
+    "grade": "A",
+    "entry_lower": 3.4964,
+    "entry_upper": 3.5687,
+    "entry_source": "1H demand",
+    "stop_loss": 3.4816003571428573,
+    "tp1": 3.6344492857142856,
+    "tp2": 3.736348571428571,
+    "runner_target": 4.0624325,
+    "runner_move_pct": 15.0,
+    "position_plan": {
+      "base_risk_pct": 0.65,
+      "size_label": "FULL",
+      "risk_modifier": 1.0,
+      "recommended_risk_pct": 0.3,
+      "notional_equity_multiple": 0.208,
+      "tp1_close_fraction": 0.35,
+      "tp2_close_fraction": 0.35,
+      "runner_fraction": 0.3,
+      "target_total_r": 5.22,
+      "projected_account_profit_pct": 1.57
+    },
+    "status": "PENDING_ENTRY",
+    "outcome": null,
+    "entry_time_utc": null,
+    "closed_at_utc": null,
+    "tp1_hit": false,
+    "tp1_hit_at_utc": null,
+    "tp2_hit": false,
+    "tp2_hit_at_utc": null,
+    "runner_hit": false,
+    "runner_hit_at_utc": null,
+    "protect_1r_hit": false,
+    "mfe_r": null,
+    "mae_r": null,
+    "promotion_history": [
+      {
+        "at_utc": "2026-10-09T01:08:37.903037+00:00",
+        "rank": 3,
+        "score": 82.18
+      }
+    ]
   }
 ]
