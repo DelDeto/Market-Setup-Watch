@@ -1346,7 +1346,7 @@
     "runner_hit": false,
     "runner_hit_at_utc": null,
     "protect_1r_hit": true,
-    "mfe_r": 6.837,
+    "mfe_r": 7.181,
     "mae_r": -0.026,
     "promotion_history": [
       {
@@ -1727,10 +1727,10 @@
       "target_total_r": 8.242,
       "projected_account_profit_pct": 5.36
     },
-    "status": "PENDING_ENTRY",
-    "outcome": null,
+    "status": "EXPIRED",
+    "outcome": "EXPIRED",
     "entry_time_utc": null,
-    "closed_at_utc": null,
+    "closed_at_utc": "2026-10-13T08:38:57.902805+00:00",
     "tp1_hit": false,
     "tp1_hit_at_utc": null,
     "tp2_hit": false,
@@ -2222,9 +2222,9 @@
       "target_total_r": 7.043,
       "projected_account_profit_pct": 4.58
     },
-    "status": "PENDING_ENTRY",
+    "status": "ACTIVE",
     "outcome": null,
-    "entry_time_utc": null,
+    "entry_time_utc": "2026-10-13T05:00:00+00:00",
     "closed_at_utc": null,
     "tp1_hit": false,
     "tp1_hit_at_utc": null,
@@ -2233,8 +2233,8 @@
     "runner_hit": false,
     "runner_hit_at_utc": null,
     "protect_1r_hit": false,
-    "mfe_r": null,
-    "mae_r": null,
+    "mfe_r": 0.958,
+    "mae_r": 0.027,
     "promotion_history": [
       {
         "at_utc": "2026-10-13T03:50:24.913283+00:00",
