@@ -2228,12 +2228,12 @@
     "closed_at_utc": null,
     "tp1_hit": true,
     "tp1_hit_at_utc": "2026-10-13T11:00:00+00:00",
-    "tp2_hit": false,
-    "tp2_hit_at_utc": null,
+    "tp2_hit": true,
+    "tp2_hit_at_utc": "2026-10-14T09:00:00+00:00",
     "runner_hit": false,
     "runner_hit_at_utc": null,
     "protect_1r_hit": true,
-    "mfe_r": 3.6,
+    "mfe_r": 4.523,
     "mae_r": 0.027,
     "promotion_history": [
       {
@@ -2387,6 +2387,104 @@
         "at_utc": "2026-10-13T16:22:59.200700+00:00",
         "rank": 1,
         "score": 79.79
+      }
+    ]
+  },
+  {
+    "signal_id": "SKHYNIXSTOCK_USDT|short|2026-10-14T12:29:56.859752+00:00",
+    "created_at_utc": "2026-10-14T12:29:56.859752+00:00",
+    "symbol": "SKHYNIXSTOCK_USDT",
+    "direction": "short",
+    "rank": 1,
+    "score": 80.89,
+    "grade": "A",
+    "entry_lower": 1090.64,
+    "entry_upper": 1110.0,
+    "entry_source": "1H supply",
+    "stop_loss": 1112.1791785714286,
+    "tp1": 1076.6016428571434,
+    "tp2": 1052.8832857142866,
+    "runner_target": 856.9292160000001,
+    "runner_move_pct": 22.12,
+    "position_plan": {
+      "base_risk_pct": 0.65,
+      "size_label": "FULL",
+      "risk_modifier": 1.0,
+      "recommended_risk_pct": 0.65,
+      "notional_equity_multiple": 0.603,
+      "tp1_close_fraction": 0.35,
+      "tp2_close_fraction": 0.35,
+      "runner_fraction": 0.3,
+      "target_total_r": 8.257,
+      "projected_account_profit_pct": 5.37
+    },
+    "status": "PENDING_ENTRY",
+    "outcome": null,
+    "entry_time_utc": null,
+    "closed_at_utc": null,
+    "tp1_hit": false,
+    "tp1_hit_at_utc": null,
+    "tp2_hit": false,
+    "tp2_hit_at_utc": null,
+    "runner_hit": false,
+    "runner_hit_at_utc": null,
+    "protect_1r_hit": false,
+    "mfe_r": null,
+    "mae_r": null,
+    "promotion_history": [
+      {
+        "at_utc": "2026-10-14T12:29:56.859752+00:00",
+        "rank": 1,
+        "score": 80.89
+      }
+    ]
+  },
+  {
+    "signal_id": "KORU_USDT|short|2026-10-14T12:29:56.859752+00:00",
+    "created_at_utc": "2026-10-14T12:29:56.859752+00:00",
+    "symbol": "KORU_USDT",
+    "direction": "short",
+    "rank": 2,
+    "score": 80.73,
+    "grade": "A",
+    "entry_lower": 14.6,
+    "entry_upper": 14.95,
+    "entry_source": "1H supply",
+    "stop_loss": 15.005928571428571,
+    "tp1": 14.313142857142854,
+    "tp2": 13.851285714285709,
+    "runner_target": 12.558749999999998,
+    "runner_move_pct": 15.0,
+    "position_plan": {
+      "base_risk_pct": 0.65,
+      "size_label": "FULL",
+      "risk_modifier": 1.0,
+      "recommended_risk_pct": 0.55,
+      "notional_equity_multiple": 0.352,
+      "tp1_close_fraction": 0.35,
+      "tp2_close_fraction": 0.35,
+      "runner_fraction": 0.3,
+      "target_total_r": 4.979,
+      "projected_account_profit_pct": 2.74
+    },
+    "status": "PENDING_ENTRY",
+    "outcome": null,
+    "entry_time_utc": null,
+    "closed_at_utc": null,
+    "tp1_hit": false,
+    "tp1_hit_at_utc": null,
+    "tp2_hit": false,
+    "tp2_hit_at_utc": null,
+    "runner_hit": false,
+    "runner_hit_at_utc": null,
+    "protect_1r_hit": false,
+    "mfe_r": null,
+    "mae_r": null,
+    "promotion_history": [
+      {
+        "at_utc": "2026-10-14T12:29:56.859752+00:00",
+        "rank": 2,
+        "score": 80.73
       }
     ]
   }
