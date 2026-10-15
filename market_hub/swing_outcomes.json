@@ -2233,7 +2233,7 @@
     "runner_hit": false,
     "runner_hit_at_utc": null,
     "protect_1r_hit": true,
-    "mfe_r": 6.075,
+    "mfe_r": 7.99,
     "mae_r": 0.027,
     "promotion_history": [
       {
@@ -2271,10 +2271,10 @@
       "target_total_r": 7.85,
       "projected_account_profit_pct": 4.32
     },
-    "status": "PENDING_ENTRY",
-    "outcome": null,
+    "status": "EXPIRED",
+    "outcome": "EXPIRED",
     "entry_time_utc": null,
-    "closed_at_utc": null,
+    "closed_at_utc": "2026-10-15T05:53:29.207336+00:00",
     "tp1_hit": false,
     "tp1_hit_at_utc": null,
     "tp2_hit": false,
@@ -2320,10 +2320,10 @@
       "target_total_r": 7.813,
       "projected_account_profit_pct": 2.34
     },
-    "status": "PENDING_ENTRY",
-    "outcome": null,
+    "status": "EXPIRED",
+    "outcome": "EXPIRED",
     "entry_time_utc": null,
-    "closed_at_utc": null,
+    "closed_at_utc": "2026-10-15T05:53:29.207336+00:00",
     "tp1_hit": false,
     "tp1_hit_at_utc": null,
     "tp2_hit": false,
@@ -2517,18 +2517,18 @@
       "projected_account_profit_pct": 4.88
     },
     "status": "ACTIVE",
-    "outcome": null,
+    "outcome": "WIN",
     "entry_time_utc": "2026-10-14T21:00:00+00:00",
     "closed_at_utc": null,
-    "tp1_hit": false,
-    "tp1_hit_at_utc": null,
-    "tp2_hit": false,
-    "tp2_hit_at_utc": null,
+    "tp1_hit": true,
+    "tp1_hit_at_utc": "2026-10-15T02:00:00+00:00",
+    "tp2_hit": true,
+    "tp2_hit_at_utc": "2026-10-15T02:00:00+00:00",
     "runner_hit": false,
     "runner_hit_at_utc": null,
     "protect_1r_hit": true,
-    "mfe_r": 1.271,
-    "mae_r": 0.071,
+    "mfe_r": 5.765,
+    "mae_r": -0.234,
     "promotion_history": [
       {
         "at_utc": "2026-10-14T17:34:38.200294+00:00",
@@ -2588,6 +2588,11 @@
         "at_utc": "2026-10-14T22:41:19.951390+00:00",
         "rank": 1,
         "score": 84.87
+      },
+      {
+        "at_utc": "2026-10-15T05:45:53.937867+00:00",
+        "rank": 1,
+        "score": 91.12
       }
     ]
   },
@@ -2735,6 +2740,11 @@
         "at_utc": "2026-10-14T22:41:19.951390+00:00",
         "rank": 3,
         "score": 82.08
+      },
+      {
+        "at_utc": "2026-10-15T05:45:53.937867+00:00",
+        "rank": 2,
+        "score": 81.99
       }
     ]
   }
