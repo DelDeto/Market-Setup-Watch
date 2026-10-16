@@ -2733,7 +2733,7 @@
     "runner_hit": false,
     "runner_hit_at_utc": null,
     "protect_1r_hit": false,
-    "mfe_r": 0.313,
+    "mfe_r": 0.441,
     "mae_r": 0.038,
     "promotion_history": [
       {
