@@ -2722,9 +2722,9 @@
       "target_total_r": 3.834,
       "projected_account_profit_pct": 1.15
     },
-    "status": "PENDING_ENTRY",
+    "status": "ACTIVE",
     "outcome": null,
-    "entry_time_utc": null,
+    "entry_time_utc": "2026-10-16T04:00:00+00:00",
     "closed_at_utc": null,
     "tp1_hit": false,
     "tp1_hit_at_utc": null,
@@ -2733,8 +2733,8 @@
     "runner_hit": false,
     "runner_hit_at_utc": null,
     "protect_1r_hit": false,
-    "mfe_r": null,
-    "mae_r": null,
+    "mfe_r": 0.313,
+    "mae_r": 0.038,
     "promotion_history": [
       {
         "at_utc": "2026-10-14T22:41:19.951390+00:00",
@@ -2892,6 +2892,55 @@
         "at_utc": "2026-10-15T15:18:01.633582+00:00",
         "rank": 3,
         "score": 84.15
+      }
+    ]
+  },
+  {
+    "signal_id": "AERO_USDT|long|2026-10-16T05:43:08.719760+00:00",
+    "created_at_utc": "2026-10-16T05:43:08.719760+00:00",
+    "symbol": "AERO_USDT",
+    "direction": "long",
+    "rank": 1,
+    "score": 88.19,
+    "grade": "A+",
+    "entry_lower": 0.8996,
+    "entry_upper": 0.9069,
+    "entry_source": "1H demand",
+    "stop_loss": 0.8718532142857143,
+    "tp1": 0.9660435714285714,
+    "tp2": 1.0288371428571428,
+    "runner_target": 1.0387374999999999,
+    "runner_move_pct": 15.0,
+    "position_plan": {
+      "base_risk_pct": 0.9,
+      "size_label": "FULL",
+      "risk_modifier": 1.0,
+      "recommended_risk_pct": 0.9,
+      "notional_equity_multiple": 0.259,
+      "tp1_close_fraction": 0.35,
+      "tp2_close_fraction": 0.35,
+      "runner_fraction": 0.3,
+      "target_total_r": 3.395,
+      "projected_account_profit_pct": 3.06
+    },
+    "status": "PENDING_ENTRY",
+    "outcome": null,
+    "entry_time_utc": null,
+    "closed_at_utc": null,
+    "tp1_hit": false,
+    "tp1_hit_at_utc": null,
+    "tp2_hit": false,
+    "tp2_hit_at_utc": null,
+    "runner_hit": false,
+    "runner_hit_at_utc": null,
+    "protect_1r_hit": false,
+    "mfe_r": null,
+    "mae_r": null,
+    "promotion_history": [
+      {
+        "at_utc": "2026-10-16T05:43:08.719760+00:00",
+        "rank": 1,
+        "score": 88.19
       }
     ]
   }
