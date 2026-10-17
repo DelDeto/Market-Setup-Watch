@@ -2733,7 +2733,7 @@
     "runner_hit": false,
     "runner_hit_at_utc": null,
     "protect_1r_hit": true,
-    "mfe_r": 2.512,
+    "mfe_r": 2.657,
     "mae_r": 0.038,
     "promotion_history": [
       {
@@ -2990,6 +2990,55 @@
         "at_utc": "2026-10-16T14:54:11.246932+00:00",
         "rank": 1,
         "score": 90.14
+      }
+    ]
+  },
+  {
+    "signal_id": "XLM_USDT|short|2026-10-16T23:58:29.561525+00:00",
+    "created_at_utc": "2026-10-16T23:58:29.561525+00:00",
+    "symbol": "XLM_USDT",
+    "direction": "short",
+    "rank": 1,
+    "score": 80.39,
+    "grade": "A",
+    "entry_lower": 0.18276,
+    "entry_upper": 0.18425,
+    "entry_source": "1H supply",
+    "stop_loss": 0.18610360714285712,
+    "tp1": 0.17830778571428577,
+    "tp2": 0.17311057142857153,
+    "runner_target": 0.15597924999999999,
+    "runner_move_pct": 15.0,
+    "position_plan": {
+      "base_risk_pct": 0.65,
+      "size_label": "FULL",
+      "risk_modifier": 1.0,
+      "recommended_risk_pct": 0.65,
+      "notional_equity_multiple": 0.459,
+      "tp1_close_fraction": 0.35,
+      "tp2_close_fraction": 0.35,
+      "runner_fraction": 0.3,
+      "target_total_r": 5.278,
+      "projected_account_profit_pct": 3.43
+    },
+    "status": "PENDING_ENTRY",
+    "outcome": null,
+    "entry_time_utc": null,
+    "closed_at_utc": null,
+    "tp1_hit": false,
+    "tp1_hit_at_utc": null,
+    "tp2_hit": false,
+    "tp2_hit_at_utc": null,
+    "runner_hit": false,
+    "runner_hit_at_utc": null,
+    "protect_1r_hit": false,
+    "mfe_r": null,
+    "mae_r": null,
+    "promotion_history": [
+      {
+        "at_utc": "2026-10-16T23:58:29.561525+00:00",
+        "rank": 1,
+        "score": 80.39
       }
     ]
   }
