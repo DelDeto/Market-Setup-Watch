@@ -3046,5 +3046,103 @@
         "score": 80.27
       }
     ]
+  },
+  {
+    "signal_id": "ASTER_USDT|long|2026-10-18T09:10:31.176608+00:00",
+    "created_at_utc": "2026-10-18T09:10:31.176608+00:00",
+    "symbol": "ASTER_USDT",
+    "direction": "long",
+    "rank": 1,
+    "score": 83.86,
+    "grade": "A",
+    "entry_lower": 0.6986,
+    "entry_upper": 0.7028,
+    "entry_source": "1H demand",
+    "stop_loss": 0.6899485714285714,
+    "tp1": 0.7222028571428573,
+    "tp2": 0.7437057142857145,
+    "runner_target": 0.8058049999999999,
+    "runner_move_pct": 15.0,
+    "position_plan": {
+      "base_risk_pct": 0.65,
+      "size_label": "FULL",
+      "risk_modifier": 1.0,
+      "recommended_risk_pct": 0.65,
+      "notional_equity_multiple": 0.424,
+      "tp1_close_fraction": 0.35,
+      "tp2_close_fraction": 0.35,
+      "runner_fraction": 0.3,
+      "target_total_r": 5.033,
+      "projected_account_profit_pct": 3.27
+    },
+    "status": "PENDING_ENTRY",
+    "outcome": null,
+    "entry_time_utc": null,
+    "closed_at_utc": null,
+    "tp1_hit": false,
+    "tp1_hit_at_utc": null,
+    "tp2_hit": false,
+    "tp2_hit_at_utc": null,
+    "runner_hit": false,
+    "runner_hit_at_utc": null,
+    "protect_1r_hit": false,
+    "mfe_r": null,
+    "mae_r": null,
+    "promotion_history": [
+      {
+        "at_utc": "2026-10-18T09:10:31.176608+00:00",
+        "rank": 1,
+        "score": 83.86
+      }
+    ]
+  },
+  {
+    "signal_id": "OP_USDT|short|2026-10-18T09:10:31.176608+00:00",
+    "created_at_utc": "2026-10-18T09:10:31.176608+00:00",
+    "symbol": "OP_USDT",
+    "direction": "short",
+    "rank": 2,
+    "score": 81.62,
+    "grade": "A",
+    "entry_lower": 0.12803,
+    "entry_upper": 0.12995,
+    "entry_source": "1H supply",
+    "stop_loss": 0.13022857142857144,
+    "tp1": 0.1265128571428571,
+    "tp2": 0.1240357142857142,
+    "runner_target": 0.10964149999999999,
+    "runner_move_pct": 15.0,
+    "position_plan": {
+      "base_risk_pct": 0.65,
+      "size_label": "FULL",
+      "risk_modifier": 1.0,
+      "recommended_risk_pct": 0.55,
+      "notional_equity_multiple": 0.573,
+      "tp1_close_fraction": 0.35,
+      "tp2_close_fraction": 0.35,
+      "runner_fraction": 0.3,
+      "target_total_r": 6.786,
+      "projected_account_profit_pct": 3.73
+    },
+    "status": "PENDING_ENTRY",
+    "outcome": null,
+    "entry_time_utc": null,
+    "closed_at_utc": null,
+    "tp1_hit": false,
+    "tp1_hit_at_utc": null,
+    "tp2_hit": false,
+    "tp2_hit_at_utc": null,
+    "runner_hit": false,
+    "runner_hit_at_utc": null,
+    "protect_1r_hit": false,
+    "mfe_r": null,
+    "mae_r": null,
+    "promotion_history": [
+      {
+        "at_utc": "2026-10-18T09:10:31.176608+00:00",
+        "rank": 2,
+        "score": 81.62
+      }
+    ]
   }
 ]
