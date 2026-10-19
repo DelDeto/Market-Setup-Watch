@@ -3021,10 +3021,10 @@
       "target_total_r": 5.278,
       "projected_account_profit_pct": 3.43
     },
-    "status": "PENDING_ENTRY",
-    "outcome": null,
+    "status": "EXPIRED",
+    "outcome": "EXPIRED",
     "entry_time_utc": null,
-    "closed_at_utc": null,
+    "closed_at_utc": "2026-10-19T06:57:04.207256+00:00",
     "tp1_hit": false,
     "tp1_hit_at_utc": null,
     "tp2_hit": false,
@@ -3173,10 +3173,10 @@
       "target_total_r": 3.39,
       "projected_account_profit_pct": 2.2
     },
-    "status": "ACTIVE",
-    "outcome": null,
+    "status": "CLOSED",
+    "outcome": "BE",
     "entry_time_utc": "2026-10-18T21:00:00+00:00",
-    "closed_at_utc": null,
+    "closed_at_utc": "2026-10-19T00:00:00+00:00",
     "tp1_hit": false,
     "tp1_hit_at_utc": null,
     "tp2_hit": false,
@@ -3185,7 +3185,7 @@
     "runner_hit_at_utc": null,
     "protect_1r_hit": true,
     "mfe_r": 1.044,
-    "mae_r": -0.555,
+    "mae_r": -1.118,
     "promotion_history": [
       {
         "at_utc": "2026-10-18T18:56:35.753687+00:00",
@@ -3222,19 +3222,19 @@
       "target_total_r": 7.797,
       "projected_account_profit_pct": 7.02
     },
-    "status": "PENDING_ENTRY",
-    "outcome": null,
-    "entry_time_utc": null,
-    "closed_at_utc": null,
-    "tp1_hit": false,
-    "tp1_hit_at_utc": null,
+    "status": "CLOSED",
+    "outcome": "WIN",
+    "entry_time_utc": "2026-10-19T00:00:00+00:00",
+    "closed_at_utc": "2026-10-19T05:00:00+00:00",
+    "tp1_hit": true,
+    "tp1_hit_at_utc": "2026-10-19T00:00:00+00:00",
     "tp2_hit": false,
     "tp2_hit_at_utc": null,
     "runner_hit": false,
     "runner_hit_at_utc": null,
-    "protect_1r_hit": false,
-    "mfe_r": null,
-    "mae_r": null,
+    "protect_1r_hit": true,
+    "mfe_r": 2.192,
+    "mae_r": -1.293,
     "promotion_history": [
       {
         "at_utc": "2026-10-18T23:36:46.686700+00:00",
@@ -3271,10 +3271,10 @@
       "target_total_r": 6.112,
       "projected_account_profit_pct": 3.36
     },
-    "status": "PENDING_ENTRY",
-    "outcome": null,
-    "entry_time_utc": null,
-    "closed_at_utc": null,
+    "status": "CLOSED",
+    "outcome": "LOSS",
+    "entry_time_utc": "2026-10-19T00:00:00+00:00",
+    "closed_at_utc": "2026-10-19T00:00:00+00:00",
     "tp1_hit": false,
     "tp1_hit_at_utc": null,
     "tp2_hit": false,
@@ -3282,8 +3282,8 @@
     "runner_hit": false,
     "runner_hit_at_utc": null,
     "protect_1r_hit": false,
-    "mfe_r": null,
-    "mae_r": null,
+    "mfe_r": 0.672,
+    "mae_r": -1.754,
     "promotion_history": [
       {
         "at_utc": "2026-10-18T23:36:46.686700+00:00",
@@ -3320,6 +3320,55 @@
       "target_total_r": 15.19,
       "projected_account_profit_pct": 4.56
     },
+    "status": "CLOSED",
+    "outcome": "BE",
+    "entry_time_utc": "2026-10-19T00:00:00+00:00",
+    "closed_at_utc": "2026-10-19T01:00:00+00:00",
+    "tp1_hit": false,
+    "tp1_hit_at_utc": null,
+    "tp2_hit": false,
+    "tp2_hit_at_utc": null,
+    "runner_hit": false,
+    "runner_hit_at_utc": null,
+    "protect_1r_hit": true,
+    "mfe_r": 1.482,
+    "mae_r": -1.299,
+    "promotion_history": [
+      {
+        "at_utc": "2026-10-18T23:36:46.686700+00:00",
+        "rank": 3,
+        "score": 81.0
+      }
+    ]
+  },
+  {
+    "signal_id": "AVAX_USDT|short|2026-10-19T06:49:34.456728+00:00",
+    "created_at_utc": "2026-10-19T06:49:34.456728+00:00",
+    "symbol": "AVAX_USDT",
+    "direction": "short",
+    "rank": 1,
+    "score": 78.02,
+    "grade": "A",
+    "entry_lower": 9.765,
+    "entry_upper": 9.814,
+    "entry_source": "1H supply",
+    "stop_loss": 9.845503571428571,
+    "tp1": 9.677492857142859,
+    "tp2": 9.565485714285717,
+    "runner_target": 8.321075,
+    "runner_move_pct": 15.0,
+    "position_plan": {
+      "base_risk_pct": 0.65,
+      "size_label": "TIGHT",
+      "risk_modifier": 0.6,
+      "recommended_risk_pct": 0.39,
+      "notional_equity_multiple": 0.682,
+      "tp1_close_fraction": 0.35,
+      "tp2_close_fraction": 0.35,
+      "runner_fraction": 0.3,
+      "target_total_r": 9.966,
+      "projected_account_profit_pct": 3.89
+    },
     "status": "PENDING_ENTRY",
     "outcome": null,
     "entry_time_utc": null,
@@ -3335,9 +3384,9 @@
     "mae_r": null,
     "promotion_history": [
       {
-        "at_utc": "2026-10-18T23:36:46.686700+00:00",
-        "rank": 3,
-        "score": 81.0
+        "at_utc": "2026-10-19T06:49:34.456728+00:00",
+        "rank": 1,
+        "score": 78.02
       }
     ]
   }
