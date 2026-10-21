@@ -3586,13 +3586,18 @@
     "runner_hit": false,
     "runner_hit_at_utc": null,
     "protect_1r_hit": true,
-    "mfe_r": 4.396,
+    "mfe_r": 4.571,
     "mae_r": -0.19,
     "promotion_history": [
       {
         "at_utc": "2026-10-20T04:30:53.418889+00:00",
         "rank": 1,
         "score": 79.26
+      },
+      {
+        "at_utc": "2026-10-21T04:37:59.546070+00:00",
+        "rank": 1,
+        "score": 88.45
       }
     ]
   },
@@ -3684,7 +3689,7 @@
     "runner_hit": false,
     "runner_hit_at_utc": null,
     "protect_1r_hit": true,
-    "mfe_r": 2.913,
+    "mfe_r": 2.975,
     "mae_r": -0.396,
     "promotion_history": [
       {
@@ -3745,6 +3750,55 @@
         "at_utc": "2026-10-21T00:06:50.466519+00:00",
         "rank": 1,
         "score": 84.26
+      }
+    ]
+  },
+  {
+    "signal_id": "SKHYSTOCK_USDT|long|2026-10-21T04:37:59.546070+00:00",
+    "created_at_utc": "2026-10-21T04:37:59.546070+00:00",
+    "symbol": "SKHYSTOCK_USDT",
+    "direction": "long",
+    "rank": 2,
+    "score": 79.92,
+    "grade": "A",
+    "entry_lower": 143.05,
+    "entry_upper": 143.95,
+    "entry_source": "1H demand",
+    "stop_loss": 139.15507142857143,
+    "tp1": 152.18985714285714,
+    "tp2": 160.87971428571427,
+    "runner_target": 165.02499999999998,
+    "runner_move_pct": 15.0,
+    "position_plan": {
+      "base_risk_pct": 0.65,
+      "size_label": "FULL",
+      "risk_modifier": 1.0,
+      "recommended_risk_pct": 0.55,
+      "notional_equity_multiple": 0.182,
+      "tp1_close_fraction": 0.35,
+      "tp2_close_fraction": 0.35,
+      "runner_fraction": 0.3,
+      "target_total_r": 3.586,
+      "projected_account_profit_pct": 1.97
+    },
+    "status": "PENDING_ENTRY",
+    "outcome": null,
+    "entry_time_utc": null,
+    "closed_at_utc": null,
+    "tp1_hit": false,
+    "tp1_hit_at_utc": null,
+    "tp2_hit": false,
+    "tp2_hit_at_utc": null,
+    "runner_hit": false,
+    "runner_hit_at_utc": null,
+    "protect_1r_hit": false,
+    "mfe_r": null,
+    "mae_r": null,
+    "promotion_history": [
+      {
+        "at_utc": "2026-10-21T04:37:59.546070+00:00",
+        "rank": 2,
+        "score": 79.92
       }
     ]
   }
