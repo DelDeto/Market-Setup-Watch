@@ -3845,19 +3845,19 @@
       "target_total_r": 4.64,
       "projected_account_profit_pct": 1.39
     },
-    "status": "PENDING_ENTRY",
-    "outcome": null,
-    "entry_time_utc": null,
-    "closed_at_utc": null,
+    "status": "CLOSED",
+    "outcome": "BE",
+    "entry_time_utc": "2026-10-22T05:00:00+00:00",
+    "closed_at_utc": "2026-10-22T05:00:00+00:00",
     "tp1_hit": false,
     "tp1_hit_at_utc": null,
     "tp2_hit": false,
     "tp2_hit_at_utc": null,
     "runner_hit": false,
     "runner_hit_at_utc": null,
-    "protect_1r_hit": false,
-    "mfe_r": null,
-    "mae_r": null,
+    "protect_1r_hit": true,
+    "mfe_r": 1.605,
+    "mae_r": -1.095,
     "promotion_history": [
       {
         "at_utc": "2026-10-21T09:37:50.489858+00:00",
@@ -3894,10 +3894,10 @@
       "target_total_r": 6.339,
       "projected_account_profit_pct": 3.49
     },
-    "status": "ACTIVE",
-    "outcome": null,
+    "status": "CLOSED",
+    "outcome": "BE",
     "entry_time_utc": "2026-10-22T03:00:00+00:00",
-    "closed_at_utc": null,
+    "closed_at_utc": "2026-10-22T08:00:00+00:00",
     "tp1_hit": false,
     "tp1_hit_at_utc": null,
     "tp2_hit": false,
@@ -3906,7 +3906,7 @@
     "runner_hit_at_utc": null,
     "protect_1r_hit": true,
     "mfe_r": 1.151,
-    "mae_r": 0.147,
+    "mae_r": -1.412,
     "promotion_history": [
       {
         "at_utc": "2026-10-21T14:40:00.899130+00:00",
@@ -4004,7 +4004,7 @@
     "runner_hit_at_utc": null,
     "protect_1r_hit": false,
     "mfe_r": 0.822,
-    "mae_r": -0.456,
+    "mae_r": -0.812,
     "promotion_history": [
       {
         "at_utc": "2026-10-21T18:59:59.779634+00:00",
@@ -4041,10 +4041,10 @@
       "target_total_r": 6.938,
       "projected_account_profit_pct": 4.51
     },
-    "status": "ACTIVE",
+    "status": "CLOSED",
     "outcome": "WIN",
     "entry_time_utc": "2026-10-22T01:00:00+00:00",
-    "closed_at_utc": null,
+    "closed_at_utc": "2026-10-22T05:00:00+00:00",
     "tp1_hit": true,
     "tp1_hit_at_utc": "2026-10-22T01:00:00+00:00",
     "tp2_hit": false,
@@ -4053,7 +4053,7 @@
     "runner_hit_at_utc": null,
     "protect_1r_hit": true,
     "mfe_r": 2.22,
-    "mae_r": -0.791,
+    "mae_r": -2.393,
     "promotion_history": [
       {
         "at_utc": "2026-10-22T00:44:50.363100+00:00",
