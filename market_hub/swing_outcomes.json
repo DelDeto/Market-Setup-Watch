@@ -3943,9 +3943,9 @@
       "target_total_r": 4.055,
       "projected_account_profit_pct": 2.64
     },
-    "status": "PENDING_ENTRY",
+    "status": "ACTIVE",
     "outcome": null,
-    "entry_time_utc": null,
+    "entry_time_utc": "2026-10-21T22:00:00+00:00",
     "closed_at_utc": null,
     "tp1_hit": false,
     "tp1_hit_at_utc": null,
@@ -3954,8 +3954,8 @@
     "runner_hit": false,
     "runner_hit_at_utc": null,
     "protect_1r_hit": false,
-    "mfe_r": null,
-    "mae_r": null,
+    "mfe_r": 0.567,
+    "mae_r": -0.635,
     "promotion_history": [
       {
         "at_utc": "2026-10-21T18:59:59.779634+00:00",
@@ -3992,6 +3992,55 @@
       "target_total_r": 3.425,
       "projected_account_profit_pct": 1.88
     },
+    "status": "ACTIVE",
+    "outcome": null,
+    "entry_time_utc": "2026-10-21T19:00:00+00:00",
+    "closed_at_utc": null,
+    "tp1_hit": false,
+    "tp1_hit_at_utc": null,
+    "tp2_hit": false,
+    "tp2_hit_at_utc": null,
+    "runner_hit": false,
+    "runner_hit_at_utc": null,
+    "protect_1r_hit": false,
+    "mfe_r": 0.822,
+    "mae_r": -0.295,
+    "promotion_history": [
+      {
+        "at_utc": "2026-10-21T18:59:59.779634+00:00",
+        "rank": 2,
+        "score": 81.06
+      }
+    ]
+  },
+  {
+    "signal_id": "STRK_USDT|long|2026-10-22T00:44:50.363100+00:00",
+    "created_at_utc": "2026-10-22T00:44:50.363100+00:00",
+    "symbol": "STRK_USDT",
+    "direction": "long",
+    "rank": 1,
+    "score": 85.53,
+    "grade": "A",
+    "entry_lower": 0.05504,
+    "entry_upper": 0.05636,
+    "entry_source": "1H demand",
+    "stop_loss": 0.05466382142857143,
+    "tp1": 0.05777235714285714,
+    "tp2": 0.05984471428571428,
+    "runner_target": 0.07241,
+    "runner_move_pct": 30.0,
+    "position_plan": {
+      "base_risk_pct": 0.65,
+      "size_label": "FULL",
+      "risk_modifier": 1.0,
+      "recommended_risk_pct": 0.65,
+      "notional_equity_multiple": 0.349,
+      "tp1_close_fraction": 0.35,
+      "tp2_close_fraction": 0.35,
+      "runner_fraction": 0.3,
+      "target_total_r": 6.938,
+      "projected_account_profit_pct": 4.51
+    },
     "status": "PENDING_ENTRY",
     "outcome": null,
     "entry_time_utc": null,
@@ -4007,9 +4056,58 @@
     "mae_r": null,
     "promotion_history": [
       {
-        "at_utc": "2026-10-21T18:59:59.779634+00:00",
+        "at_utc": "2026-10-22T00:44:50.363100+00:00",
+        "rank": 1,
+        "score": 85.53
+      }
+    ]
+  },
+  {
+    "signal_id": "FILECOIN_USDT|long|2026-10-22T00:44:50.363100+00:00",
+    "created_at_utc": "2026-10-22T00:44:50.363100+00:00",
+    "symbol": "FILECOIN_USDT",
+    "direction": "long",
+    "rank": 2,
+    "score": 81.84,
+    "grade": "A",
+    "entry_lower": 1.026,
+    "entry_upper": 1.0399,
+    "entry_source": "1H demand",
+    "stop_loss": 1.020745,
+    "tp1": 1.05736,
+    "tp2": 1.0817700000000001,
+    "runner_target": 1.1878925,
+    "runner_move_pct": 15.0,
+    "position_plan": {
+      "base_risk_pct": 0.65,
+      "size_label": "FULL",
+      "risk_modifier": 1.0,
+      "recommended_risk_pct": 0.55,
+      "notional_equity_multiple": 0.465,
+      "tp1_close_fraction": 0.35,
+      "tp2_close_fraction": 0.35,
+      "runner_fraction": 0.3,
+      "target_total_r": 5.909,
+      "projected_account_profit_pct": 3.25
+    },
+    "status": "PENDING_ENTRY",
+    "outcome": null,
+    "entry_time_utc": null,
+    "closed_at_utc": null,
+    "tp1_hit": false,
+    "tp1_hit_at_utc": null,
+    "tp2_hit": false,
+    "tp2_hit_at_utc": null,
+    "runner_hit": false,
+    "runner_hit_at_utc": null,
+    "protect_1r_hit": false,
+    "mfe_r": null,
+    "mae_r": null,
+    "promotion_history": [
+      {
+        "at_utc": "2026-10-22T00:44:50.363100+00:00",
         "rank": 2,
-        "score": 81.06
+        "score": 81.84
       }
     ]
   }
