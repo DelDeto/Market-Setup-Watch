@@ -3688,10 +3688,10 @@
       "target_total_r": 6.269,
       "projected_account_profit_pct": 4.07
     },
-    "status": "ACTIVE",
+    "status": "CLOSED",
     "outcome": "WIN",
     "entry_time_utc": "2026-10-20T19:00:00+00:00",
-    "closed_at_utc": null,
+    "closed_at_utc": "2026-10-22T15:00:00+00:00",
     "tp1_hit": true,
     "tp1_hit_at_utc": "2026-10-20T20:00:00+00:00",
     "tp2_hit": true,
@@ -3700,7 +3700,7 @@
     "runner_hit_at_utc": null,
     "protect_1r_hit": true,
     "mfe_r": 9.459,
-    "mae_r": -0.742,
+    "mae_r": -1.861,
     "promotion_history": [
       {
         "at_utc": "2026-10-20T18:41:28.703836+00:00",
@@ -4108,6 +4108,55 @@
         "at_utc": "2026-10-22T00:44:50.363100+00:00",
         "rank": 2,
         "score": 81.84
+      }
+    ]
+  },
+  {
+    "signal_id": "BAT_USDT|short|2026-10-22T20:11:07.316723+00:00",
+    "created_at_utc": "2026-10-22T20:11:07.316723+00:00",
+    "symbol": "BAT_USDT",
+    "direction": "short",
+    "rank": 1,
+    "score": 83.77,
+    "grade": "A",
+    "entry_lower": 0.17425,
+    "entry_upper": 0.17765,
+    "entry_source": "1H supply",
+    "stop_loss": 0.17964721428571429,
+    "tp1": 0.16855557142857142,
+    "tp2": 0.16116114285714284,
+    "runner_target": 0.14955749999999998,
+    "runner_move_pct": 15.0,
+    "position_plan": {
+      "base_risk_pct": 0.65,
+      "size_label": "FULL",
+      "risk_modifier": 1.0,
+      "recommended_risk_pct": 0.65,
+      "notional_equity_multiple": 0.309,
+      "tp1_close_fraction": 0.35,
+      "tp2_close_fraction": 0.35,
+      "runner_fraction": 0.3,
+      "target_total_r": 4.242,
+      "projected_account_profit_pct": 2.76
+    },
+    "status": "PENDING_ENTRY",
+    "outcome": null,
+    "entry_time_utc": null,
+    "closed_at_utc": null,
+    "tp1_hit": false,
+    "tp1_hit_at_utc": null,
+    "tp2_hit": false,
+    "tp2_hit_at_utc": null,
+    "runner_hit": false,
+    "runner_hit_at_utc": null,
+    "protect_1r_hit": false,
+    "mfe_r": null,
+    "mae_r": null,
+    "promotion_history": [
+      {
+        "at_utc": "2026-10-22T20:11:07.316723+00:00",
+        "rank": 1,
+        "score": 83.77
       }
     ]
   }
