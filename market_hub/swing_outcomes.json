@@ -4150,7 +4150,7 @@
     "runner_hit": false,
     "runner_hit_at_utc": null,
     "protect_1r_hit": true,
-    "mfe_r": 4.82,
+    "mfe_r": 5.921,
     "mae_r": -0.982,
     "promotion_history": [
       {
@@ -4199,7 +4199,7 @@
     "runner_hit": false,
     "runner_hit_at_utc": null,
     "protect_1r_hit": true,
-    "mfe_r": 7.909,
+    "mfe_r": 9.345,
     "mae_r": -0.047,
     "promotion_history": [
       {
