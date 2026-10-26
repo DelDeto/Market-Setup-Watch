@@ -4508,7 +4508,7 @@
     "runner_hit": false,
     "runner_hit_at_utc": null,
     "protect_1r_hit": true,
-    "mfe_r": 2.218,
+    "mfe_r": 2.408,
     "mae_r": -0.41,
     "promotion_history": [
       {
@@ -4709,7 +4709,7 @@
     "runner_hit": false,
     "runner_hit_at_utc": null,
     "protect_1r_hit": true,
-    "mfe_r": 1.572,
+    "mfe_r": 1.599,
     "mae_r": -0.797,
     "promotion_history": [
       {
@@ -4765,6 +4765,11 @@
         "at_utc": "2026-10-26T17:35:15.660722+00:00",
         "rank": 1,
         "score": 84.08
+      },
+      {
+        "at_utc": "2026-10-26T21:51:33.887205+00:00",
+        "rank": 1,
+        "score": 86.89
       }
     ]
   },
@@ -4863,6 +4868,104 @@
         "at_utc": "2026-10-26T17:35:15.660722+00:00",
         "rank": 3,
         "score": 80.03
+      }
+    ]
+  },
+  {
+    "signal_id": "FARTCOIN_USDT|long|2026-10-26T21:51:33.887205+00:00",
+    "created_at_utc": "2026-10-26T21:51:33.887205+00:00",
+    "symbol": "FARTCOIN_USDT",
+    "direction": "long",
+    "rank": 2,
+    "score": 84.13,
+    "grade": "A",
+    "entry_lower": 0.12405,
+    "entry_upper": 0.12551,
+    "entry_source": "1H demand",
+    "stop_loss": 0.12275307142857142,
+    "tp1": 0.12883385714285717,
+    "tp2": 0.13288771428571433,
+    "runner_target": 0.14349699999999999,
+    "runner_move_pct": 15.0,
+    "position_plan": {
+      "base_risk_pct": 0.65,
+      "size_label": "FULL",
+      "risk_modifier": 1.0,
+      "recommended_risk_pct": 0.55,
+      "notional_equity_multiple": 0.339,
+      "tp1_close_fraction": 0.35,
+      "tp2_close_fraction": 0.35,
+      "runner_fraction": 0.3,
+      "target_total_r": 4.87,
+      "projected_account_profit_pct": 2.68
+    },
+    "status": "PENDING_ENTRY",
+    "outcome": null,
+    "entry_time_utc": null,
+    "closed_at_utc": null,
+    "tp1_hit": false,
+    "tp1_hit_at_utc": null,
+    "tp2_hit": false,
+    "tp2_hit_at_utc": null,
+    "runner_hit": false,
+    "runner_hit_at_utc": null,
+    "protect_1r_hit": false,
+    "mfe_r": null,
+    "mae_r": null,
+    "promotion_history": [
+      {
+        "at_utc": "2026-10-26T21:51:33.887205+00:00",
+        "rank": 2,
+        "score": 84.13
+      }
+    ]
+  },
+  {
+    "signal_id": "NBISSTOCK_USDT|long|2026-10-26T21:51:33.887205+00:00",
+    "created_at_utc": "2026-10-26T21:51:33.887205+00:00",
+    "symbol": "NBISSTOCK_USDT",
+    "direction": "long",
+    "rank": 3,
+    "score": 79.12,
+    "grade": "A",
+    "entry_lower": 151.12,
+    "entry_upper": 151.78,
+    "entry_source": "1H demand",
+    "stop_loss": 149.1324642857143,
+    "tp1": 156.08507142857138,
+    "tp2": 160.72014285714278,
+    "runner_target": 174.16749999999996,
+    "runner_move_pct": 15.0,
+    "position_plan": {
+      "base_risk_pct": 0.65,
+      "size_label": "FULL",
+      "risk_modifier": 1.0,
+      "recommended_risk_pct": 0.3,
+      "notional_equity_multiple": 0.196,
+      "tp1_close_fraction": 0.35,
+      "tp2_close_fraction": 0.35,
+      "runner_fraction": 0.3,
+      "target_total_r": 5.041,
+      "projected_account_profit_pct": 1.51
+    },
+    "status": "PENDING_ENTRY",
+    "outcome": null,
+    "entry_time_utc": null,
+    "closed_at_utc": null,
+    "tp1_hit": false,
+    "tp1_hit_at_utc": null,
+    "tp2_hit": false,
+    "tp2_hit_at_utc": null,
+    "runner_hit": false,
+    "runner_hit_at_utc": null,
+    "protect_1r_hit": false,
+    "mfe_r": null,
+    "mae_r": null,
+    "promotion_history": [
+      {
+        "at_utc": "2026-10-26T21:51:33.887205+00:00",
+        "rank": 3,
+        "score": 79.12
       }
     ]
   }
