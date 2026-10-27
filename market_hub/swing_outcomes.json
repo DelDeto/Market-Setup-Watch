@@ -4763,7 +4763,7 @@
     "runner_hit": false,
     "runner_hit_at_utc": null,
     "protect_1r_hit": true,
-    "mfe_r": 6.643,
+    "mfe_r": 8.027,
     "mae_r": -0.231,
     "promotion_history": [
       {
@@ -5014,7 +5014,7 @@
     "runner_hit_at_utc": null,
     "protect_1r_hit": true,
     "mfe_r": 2.584,
-    "mae_r": 0.045,
+    "mae_r": -0.668,
     "promotion_history": [
       {
         "at_utc": "2026-10-27T06:12:41.151455+00:00",
@@ -5116,7 +5116,7 @@
     "runner_hit": false,
     "runner_hit_at_utc": null,
     "protect_1r_hit": false,
-    "mfe_r": 0.096,
+    "mfe_r": 0.23,
     "mae_r": -0.615,
     "promotion_history": [
       {
