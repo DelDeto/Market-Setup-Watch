@@ -4508,7 +4508,7 @@
     "runner_hit": false,
     "runner_hit_at_utc": null,
     "protect_1r_hit": true,
-    "mfe_r": 3.324,
+    "mfe_r": 3.609,
     "mae_r": -0.41,
     "promotion_history": [
       {
@@ -4644,18 +4644,18 @@
       "target_total_r": 4.234,
       "projected_account_profit_pct": 2.75
     },
-    "status": "ACTIVE",
+    "status": "CLOSED",
     "outcome": "WIN",
     "entry_time_utc": "2026-10-25T20:00:00+00:00",
-    "closed_at_utc": null,
+    "closed_at_utc": "2026-10-27T07:00:00+00:00",
     "tp1_hit": true,
     "tp1_hit_at_utc": "2026-10-25T20:00:00+00:00",
     "tp2_hit": true,
     "tp2_hit_at_utc": "2026-10-26T05:00:00+00:00",
-    "runner_hit": false,
-    "runner_hit_at_utc": null,
+    "runner_hit": true,
+    "runner_hit_at_utc": "2026-10-27T07:00:00+00:00",
     "protect_1r_hit": true,
-    "mfe_r": 6.036,
+    "mfe_r": 30.453,
     "mae_r": 0.011,
     "promotion_history": [
       {
@@ -4747,19 +4747,19 @@
       "target_total_r": 6.773,
       "projected_account_profit_pct": 4.4
     },
-    "status": "PENDING_ENTRY",
-    "outcome": null,
-    "entry_time_utc": null,
+    "status": "ACTIVE",
+    "outcome": "WIN",
+    "entry_time_utc": "2026-10-27T06:00:00+00:00",
     "closed_at_utc": null,
-    "tp1_hit": false,
-    "tp1_hit_at_utc": null,
-    "tp2_hit": false,
-    "tp2_hit_at_utc": null,
+    "tp1_hit": true,
+    "tp1_hit_at_utc": "2026-10-27T08:00:00+00:00",
+    "tp2_hit": true,
+    "tp2_hit_at_utc": "2026-10-27T09:00:00+00:00",
     "runner_hit": false,
     "runner_hit_at_utc": null,
-    "protect_1r_hit": false,
-    "mfe_r": null,
-    "mae_r": null,
+    "protect_1r_hit": true,
+    "mfe_r": 5.488,
+    "mae_r": -0.231,
     "promotion_history": [
       {
         "at_utc": "2026-10-26T17:35:15.660722+00:00",
@@ -4997,6 +4997,55 @@
       "target_total_r": 9.118,
       "projected_account_profit_pct": 5.93
     },
+    "status": "ACTIVE",
+    "outcome": "WIN",
+    "entry_time_utc": "2026-10-27T07:00:00+00:00",
+    "closed_at_utc": null,
+    "tp1_hit": true,
+    "tp1_hit_at_utc": "2026-10-27T09:00:00+00:00",
+    "tp2_hit": false,
+    "tp2_hit_at_utc": null,
+    "runner_hit": false,
+    "runner_hit_at_utc": null,
+    "protect_1r_hit": true,
+    "mfe_r": 2.584,
+    "mae_r": 0.356,
+    "promotion_history": [
+      {
+        "at_utc": "2026-10-27T06:12:41.151455+00:00",
+        "rank": 1,
+        "score": 78.47
+      }
+    ]
+  },
+  {
+    "signal_id": "ZEC_USDT|long|2026-10-27T12:27:48.019674+00:00",
+    "created_at_utc": "2026-10-27T12:27:48.019674+00:00",
+    "symbol": "ZEC_USDT",
+    "direction": "long",
+    "rank": 1,
+    "score": 82.17,
+    "grade": "A",
+    "entry_lower": 1215.04,
+    "entry_upper": 1237.36,
+    "entry_source": "1H demand",
+    "stop_loss": 1209.889642857143,
+    "tp1": 1258.8207142857136,
+    "tp2": 1291.4414285714274,
+    "runner_target": 1410.1299999999997,
+    "runner_move_pct": 15.0,
+    "position_plan": {
+      "base_risk_pct": 0.65,
+      "size_label": "FULL",
+      "risk_modifier": 1.0,
+      "recommended_risk_pct": 0.65,
+      "notional_equity_multiple": 0.489,
+      "tp1_close_fraction": 0.35,
+      "tp2_close_fraction": 0.35,
+      "runner_fraction": 0.3,
+      "target_total_r": 5.483,
+      "projected_account_profit_pct": 3.56
+    },
     "status": "PENDING_ENTRY",
     "outcome": null,
     "entry_time_utc": null,
@@ -5012,9 +5061,107 @@
     "mae_r": null,
     "promotion_history": [
       {
-        "at_utc": "2026-10-27T06:12:41.151455+00:00",
+        "at_utc": "2026-10-27T12:27:48.019674+00:00",
         "rank": 1,
-        "score": 78.47
+        "score": 82.17
+      }
+    ]
+  },
+  {
+    "signal_id": "ZRO_USDT|short|2026-10-27T12:27:48.019674+00:00",
+    "created_at_utc": "2026-10-27T12:27:48.019674+00:00",
+    "symbol": "ZRO_USDT",
+    "direction": "short",
+    "rank": 2,
+    "score": 80.64,
+    "grade": "A",
+    "entry_lower": 1.6471,
+    "entry_upper": 1.689,
+    "entry_source": "1H supply",
+    "stop_loss": 1.7491225000000001,
+    "tp1": 1.5059049999999998,
+    "tp2": 1.3437599999999996,
+    "runner_target": 1.4178425,
+    "runner_move_pct": 15.0,
+    "position_plan": {
+      "base_risk_pct": 0.65,
+      "size_label": "FULL",
+      "risk_modifier": 1.0,
+      "recommended_risk_pct": 0.55,
+      "notional_equity_multiple": 0.113,
+      "tp1_close_fraction": 0.35,
+      "tp2_close_fraction": 0.35,
+      "runner_fraction": 0.3,
+      "target_total_r": 3.026,
+      "projected_account_profit_pct": 1.66
+    },
+    "status": "PENDING_ENTRY",
+    "outcome": null,
+    "entry_time_utc": null,
+    "closed_at_utc": null,
+    "tp1_hit": false,
+    "tp1_hit_at_utc": null,
+    "tp2_hit": false,
+    "tp2_hit_at_utc": null,
+    "runner_hit": false,
+    "runner_hit_at_utc": null,
+    "protect_1r_hit": false,
+    "mfe_r": null,
+    "mae_r": null,
+    "promotion_history": [
+      {
+        "at_utc": "2026-10-27T12:27:48.019674+00:00",
+        "rank": 2,
+        "score": 80.64
+      }
+    ]
+  },
+  {
+    "signal_id": "NIL_USDT|long|2026-10-27T12:27:48.019674+00:00",
+    "created_at_utc": "2026-10-27T12:27:48.019674+00:00",
+    "symbol": "NIL_USDT",
+    "direction": "long",
+    "rank": 3,
+    "score": 79.64,
+    "grade": "A",
+    "entry_lower": 0.08772,
+    "entry_upper": 0.08886,
+    "entry_source": "1H demand",
+    "stop_loss": 0.08652892857142858,
+    "tp1": 0.09181214285714287,
+    "tp2": 0.09533428571428573,
+    "runner_target": 0.11477700000000002,
+    "runner_move_pct": 30.0,
+    "position_plan": {
+      "base_risk_pct": 0.65,
+      "size_label": "FULL",
+      "risk_modifier": 1.0,
+      "recommended_risk_pct": 0.3,
+      "notional_equity_multiple": 0.15,
+      "tp1_close_fraction": 0.35,
+      "tp2_close_fraction": 0.35,
+      "runner_fraction": 0.3,
+      "target_total_r": 6.612,
+      "projected_account_profit_pct": 1.98
+    },
+    "status": "PENDING_ENTRY",
+    "outcome": null,
+    "entry_time_utc": null,
+    "closed_at_utc": null,
+    "tp1_hit": false,
+    "tp1_hit_at_utc": null,
+    "tp2_hit": false,
+    "tp2_hit_at_utc": null,
+    "runner_hit": false,
+    "runner_hit_at_utc": null,
+    "protect_1r_hit": false,
+    "mfe_r": null,
+    "mae_r": null,
+    "promotion_history": [
+      {
+        "at_utc": "2026-10-27T12:27:48.019674+00:00",
+        "rank": 3,
+        "score": 79.64
       }
     ]
   }
