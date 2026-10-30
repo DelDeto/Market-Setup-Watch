@@ -97110,7 +97110,7 @@
     "entry_time_utc": "2026-10-24T17:15:00+00:00",
     "closed_at_utc": null,
     "outcome": null,
-    "mfe_r": 5.136,
+    "mfe_r": 5.154,
     "mae_r": 0.0,
     "management": {
       "protect_at_r": 1.0,
@@ -113851,7 +113851,7 @@
     "checkpoints_r": {
       "1h": 0.912,
       "4h": 1.458,
-      "24h": null
+      "24h": -0.351
     },
     "correlation_suppressed": false,
     "top_pick_history": []
@@ -114230,7 +114230,7 @@
     "closed_at_utc": null,
     "outcome": null,
     "mfe_r": 0.52,
-    "mae_r": 0.655,
+    "mae_r": 0.892,
     "management": {
       "protect_at_r": 1.0,
       "partial_at_r": 2.0,
@@ -114423,10 +114423,10 @@
       "participation_aligned": true,
       "market_context_aligned": false
     },
-    "status": "PENDING_ENTRY",
+    "status": "CLOSED",
     "entry_time_utc": null,
-    "closed_at_utc": null,
-    "outcome": null,
+    "closed_at_utc": "2026-10-30T23:17:30.330679+00:00",
+    "outcome": "EXPIRED",
     "mfe_r": null,
     "mae_r": null,
     "management": {
@@ -114667,9 +114667,9 @@
     "selector": {
       "target_r": 2.0,
       "tp1": 0.16378714285714285,
-      "status": "ACTIVE",
-      "outcome": null,
-      "closed_at_utc": null
+      "status": "CLOSED",
+      "outcome": "LOSS",
+      "closed_at_utc": "2026-10-30T22:30:00+00:00"
     },
     "position_plan": null,
     "stop_loss": 0.17820642857142857,
@@ -114687,12 +114687,12 @@
       "participation_aligned": false,
       "market_context_aligned": false
     },
-    "status": "ACTIVE",
+    "status": "CLOSED",
     "entry_time_utc": "2026-10-30T04:45:00+00:00",
-    "closed_at_utc": null,
-    "outcome": null,
+    "closed_at_utc": "2026-10-30T22:30:00+00:00",
+    "outcome": "LOSS",
     "mfe_r": 0.895,
-    "mae_r": 0.874,
+    "mae_r": 1.207,
     "management": {
       "protect_at_r": 1.0,
       "partial_at_r": 2.0,
@@ -114704,7 +114704,7 @@
       "partial_reached_at_utc": null,
       "trail_reached_at_utc": null,
       "raw_loss_after_protect": false,
-      "raw_realized_r": null
+      "raw_realized_r": -1.0
     },
     "checkpoints_r": {
       "1h": 0.416,
@@ -117552,7 +117552,7 @@
     "entry_time_utc": "2026-10-30T15:45:00+00:00",
     "closed_at_utc": null,
     "outcome": null,
-    "mfe_r": 1.192,
+    "mfe_r": 1.507,
     "mae_r": 0.461,
     "management": {
       "protect_at_r": 1.0,
@@ -117619,7 +117619,7 @@
     "closed_at_utc": null,
     "outcome": null,
     "mfe_r": 1.868,
-    "mae_r": 0.307,
+    "mae_r": 0.864,
     "management": {
       "protect_at_r": 1.0,
       "partial_at_r": 2.0,
@@ -118097,7 +118097,7 @@
     "closed_at_utc": null,
     "outcome": null,
     "mfe_r": 0.458,
-    "mae_r": 0.014,
+    "mae_r": 0.213,
     "management": {
       "protect_at_r": 1.0,
       "partial_at_r": 2.0,
@@ -118163,7 +118163,7 @@
     "closed_at_utc": null,
     "outcome": null,
     "mfe_r": 0.409,
-    "mae_r": 0.035,
+    "mae_r": 0.293,
     "management": {
       "protect_at_r": 1.0,
       "partial_at_r": 2.0,
@@ -118204,7 +118204,7 @@
     "selector": {
       "target_r": 2.0,
       "tp1": 0.02787499999999999,
-      "status": "PENDING_ENTRY",
+      "status": "ACTIVE",
       "outcome": null,
       "closed_at_utc": null
     },
@@ -118223,6 +118223,89 @@
       "rr_1_5_plus": true,
       "participation_aligned": true,
       "market_context_aligned": false
+    },
+    "status": "ACTIVE",
+    "entry_time_utc": "2026-10-30T22:30:00+00:00",
+    "closed_at_utc": null,
+    "outcome": null,
+    "mfe_r": 1.044,
+    "mae_r": 0.0,
+    "management": {
+      "protect_at_r": 1.0,
+      "partial_at_r": 2.0,
+      "trail_at_r": 2.0,
+      "protect_reached": true,
+      "partial_reached": false,
+      "trail_reached": false,
+      "protect_reached_at_utc": "2026-10-30T22:30:00+00:00",
+      "partial_reached_at_utc": null,
+      "trail_reached_at_utc": null,
+      "raw_loss_after_protect": false,
+      "raw_realized_r": null
+    },
+    "checkpoints_r": {
+      "1h": null,
+      "4h": null,
+      "24h": null
+    },
+    "correlation_suppressed": false,
+    "top_pick_history": []
+  },
+  {
+    "signal_id": "OL_USDT|short|0.006442|0.006513|0.006613",
+    "created_at_utc": "2026-10-30T23:10:46.022933+00:00",
+    "symbol": "OL_USDT",
+    "direction": "short",
+    "bucket": "ENTRY_READY",
+    "score": 81,
+    "quality_score": 81,
+    "execution_score": 94,
+    "entry_distance_atr": 0.0,
+    "entry_lower": 0.006442,
+    "entry_upper": 0.006513,
+    "entry_source": "supply",
+    "entry_selection_score": 80.155,
+    "selector_score": 85.46,
+    "top_pick_rank": 2,
+    "selector": {
+      "target_r": 2.0,
+      "tp1": 0.006206499999999999,
+      "status": "PENDING_ENTRY",
+      "outcome": null,
+      "closed_at_utc": null
+    },
+    "position_plan": {
+      "grade": "A",
+      "base_risk_pct": 0.75,
+      "stop_distance_pct": 2.0919,
+      "stop_size_label": "FULL",
+      "stop_risk_modifier": 1.0,
+      "recommended_risk_pct": 0.75,
+      "notional_equity_multiple": 0.359,
+      "max_notional_equity_multiple": 2.0,
+      "tp1_r": 2.0,
+      "tp1_close_fraction": 0.8,
+      "runner_fraction": 0.2,
+      "runner_target_r": 3.0,
+      "runner_target_price": 0.006070999999999999,
+      "profit_if_runner_be_pct": 1.2,
+      "profit_if_runner_target_pct": 1.65,
+      "management": "At +1R move stop to breakeven; at +2R close 80%; trail the remaining 20% toward 3R-4R / structural liquidity."
+    },
+    "stop_loss": 0.006613,
+    "tp1": 0.006201,
+    "first_target_rr": 2.0405904059040547,
+    "features": {
+      "confirmed": false,
+      "displacement": true,
+      "structure": true,
+      "retest": true,
+      "sweep": false,
+      "mtf_aligned": true,
+      "zone_a_or_better": true,
+      "rr_1_5_plus": true,
+      "participation_aligned": false,
+      "market_context_aligned": true
     },
     "status": "PENDING_ENTRY",
     "entry_time_utc": null,
@@ -118249,6 +118332,137 @@
       "24h": null
     },
     "correlation_suppressed": false,
-    "top_pick_history": []
+    "top_pick_history": [
+      {
+        "promoted_at_utc": "2026-10-30T23:10:46.022933+00:00",
+        "rank": 2,
+        "selector_score": 85.46,
+        "position_plan": {
+          "grade": "A",
+          "base_risk_pct": 0.75,
+          "stop_distance_pct": 2.0919,
+          "stop_size_label": "FULL",
+          "stop_risk_modifier": 1.0,
+          "recommended_risk_pct": 0.75,
+          "notional_equity_multiple": 0.359,
+          "max_notional_equity_multiple": 2.0,
+          "tp1_r": 2.0,
+          "tp1_close_fraction": 0.8,
+          "runner_fraction": 0.2,
+          "runner_target_r": 3.0,
+          "runner_target_price": 0.006070999999999999,
+          "profit_if_runner_be_pct": 1.2,
+          "profit_if_runner_target_pct": 1.65,
+          "management": "At +1R move stop to breakeven; at +2R close 80%; trail the remaining 20% toward 3R-4R / structural liquidity."
+        }
+      }
+    ]
+  },
+  {
+    "signal_id": "ORCA_USDT|short|1.552|1.556|1.56287143",
+    "created_at_utc": "2026-10-30T23:10:46.022933+00:00",
+    "symbol": "ORCA_USDT",
+    "direction": "short",
+    "bucket": "NEAR_ENTRY",
+    "score": 94,
+    "quality_score": 94,
+    "execution_score": 82,
+    "entry_distance_atr": 0.6885245901639345,
+    "entry_lower": 1.552,
+    "entry_upper": 1.556,
+    "entry_source": "supply",
+    "entry_selection_score": 83.58,
+    "selector_score": 90.51,
+    "top_pick_rank": 1,
+    "selector": {
+      "target_r": 2.0,
+      "tp1": 1.5362571428571428,
+      "status": "PENDING_ENTRY",
+      "outcome": null,
+      "closed_at_utc": null
+    },
+    "position_plan": {
+      "grade": "A",
+      "base_risk_pct": 0.9,
+      "stop_distance_pct": 0.5709,
+      "stop_size_label": "FULL",
+      "stop_risk_modifier": 1.0,
+      "recommended_risk_pct": 0.9,
+      "notional_equity_multiple": 1.577,
+      "max_notional_equity_multiple": 2.0,
+      "tp1_r": 2.0,
+      "tp1_close_fraction": 0.8,
+      "runner_fraction": 0.2,
+      "runner_target_r": 3.0,
+      "runner_target_price": 1.5273857142857141,
+      "profit_if_runner_be_pct": 1.44,
+      "profit_if_runner_target_pct": 1.98,
+      "management": "At +1R move stop to breakeven; at +2R close 80%; trail the remaining 20% toward 3R-4R / structural liquidity."
+    },
+    "stop_loss": 1.5628714285714287,
+    "tp1": 1.532,
+    "first_target_rr": 2.479871175523332,
+    "features": {
+      "confirmed": false,
+      "displacement": true,
+      "structure": true,
+      "retest": true,
+      "sweep": true,
+      "mtf_aligned": true,
+      "zone_a_or_better": true,
+      "rr_1_5_plus": true,
+      "participation_aligned": true,
+      "market_context_aligned": true
+    },
+    "status": "PENDING_ENTRY",
+    "entry_time_utc": null,
+    "closed_at_utc": null,
+    "outcome": null,
+    "mfe_r": null,
+    "mae_r": null,
+    "management": {
+      "protect_at_r": 1.0,
+      "partial_at_r": 2.0,
+      "trail_at_r": 2.0,
+      "protect_reached": false,
+      "partial_reached": false,
+      "trail_reached": false,
+      "protect_reached_at_utc": null,
+      "partial_reached_at_utc": null,
+      "trail_reached_at_utc": null,
+      "raw_loss_after_protect": false,
+      "raw_realized_r": null
+    },
+    "checkpoints_r": {
+      "1h": null,
+      "4h": null,
+      "24h": null
+    },
+    "correlation_suppressed": false,
+    "top_pick_history": [
+      {
+        "promoted_at_utc": "2026-10-30T23:10:46.022933+00:00",
+        "rank": 1,
+        "selector_score": 90.51,
+        "position_plan": {
+          "grade": "A",
+          "base_risk_pct": 0.9,
+          "stop_distance_pct": 0.5709,
+          "stop_size_label": "FULL",
+          "stop_risk_modifier": 1.0,
+          "recommended_risk_pct": 0.9,
+          "notional_equity_multiple": 1.577,
+          "max_notional_equity_multiple": 2.0,
+          "tp1_r": 2.0,
+          "tp1_close_fraction": 0.8,
+          "runner_fraction": 0.2,
+          "runner_target_r": 3.0,
+          "runner_target_price": 1.5273857142857141,
+          "profit_if_runner_be_pct": 1.44,
+          "profit_if_runner_target_pct": 1.98,
+          "management": "At +1R move stop to breakeven; at +2R close 80%; trail the remaining 20% toward 3R-4R / structural liquidity."
+        }
+      }
+    ]
   }
 ]
