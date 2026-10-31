@@ -5758,7 +5758,7 @@
     "runner_hit": false,
     "runner_hit_at_utc": null,
     "protect_1r_hit": false,
-    "mfe_r": 0.347,
+    "mfe_r": 0.764,
     "mae_r": 0.127,
     "promotion_history": [
       {
