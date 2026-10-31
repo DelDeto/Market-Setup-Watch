@@ -5914,5 +5914,54 @@
         "score": 78.4
       }
     ]
+  },
+  {
+    "signal_id": "BEAMX_USDT|long|2026-10-31T12:06:13.276958+00:00",
+    "created_at_utc": "2026-10-31T12:06:13.276958+00:00",
+    "symbol": "BEAMX_USDT",
+    "direction": "long",
+    "rank": 1,
+    "score": 86.19,
+    "grade": "A",
+    "entry_lower": 0.004591,
+    "entry_upper": 0.004742,
+    "entry_source": "1H demand",
+    "stop_loss": 0.004494696428571429,
+    "tp1": 0.005010107142857142,
+    "tp2": 0.005353714285714284,
+    "runner_target": 0.005392,
+    "runner_move_pct": 15.55,
+    "position_plan": {
+      "base_risk_pct": 0.65,
+      "size_label": "FULL",
+      "risk_modifier": 1.0,
+      "recommended_risk_pct": 0.65,
+      "notional_equity_multiple": 0.177,
+      "tp1_close_fraction": 0.35,
+      "tp2_close_fraction": 0.35,
+      "runner_fraction": 0.3,
+      "target_total_r": 3.367,
+      "projected_account_profit_pct": 2.19
+    },
+    "status": "PENDING_ENTRY",
+    "outcome": null,
+    "entry_time_utc": null,
+    "closed_at_utc": null,
+    "tp1_hit": false,
+    "tp1_hit_at_utc": null,
+    "tp2_hit": false,
+    "tp2_hit_at_utc": null,
+    "runner_hit": false,
+    "runner_hit_at_utc": null,
+    "protect_1r_hit": false,
+    "mfe_r": null,
+    "mae_r": null,
+    "promotion_history": [
+      {
+        "at_utc": "2026-10-31T12:06:13.276958+00:00",
+        "rank": 1,
+        "score": 86.19
+      }
+    ]
   }
 ]
