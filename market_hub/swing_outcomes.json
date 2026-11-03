@@ -5758,7 +5758,7 @@
     "runner_hit": false,
     "runner_hit_at_utc": null,
     "protect_1r_hit": true,
-    "mfe_r": 1.539,
+    "mfe_r": 1.655,
     "mae_r": 0.035,
     "promotion_history": [
       {
@@ -6059,6 +6059,55 @@
         "at_utc": "2026-10-31T22:02:20.331096+00:00",
         "rank": 2,
         "score": 80.22
+      }
+    ]
+  },
+  {
+    "signal_id": "TIA_USDT|short|2026-11-03T08:52:02.523844+00:00",
+    "created_at_utc": "2026-11-03T08:52:02.523844+00:00",
+    "symbol": "TIA_USDT",
+    "direction": "short",
+    "rank": 1,
+    "score": 78.95,
+    "grade": "A",
+    "entry_lower": 0.4438,
+    "entry_upper": 0.4521,
+    "entry_source": "1H supply",
+    "stop_loss": 0.4528885714285714,
+    "tp1": 0.43807285714285704,
+    "tp2": 0.4281957142857141,
+    "runner_target": 0.38075749999999997,
+    "runner_move_pct": 15.0,
+    "position_plan": {
+      "base_risk_pct": 0.65,
+      "size_label": "FULL",
+      "risk_modifier": 1.0,
+      "recommended_risk_pct": 0.65,
+      "notional_equity_multiple": 0.59,
+      "tp1_close_fraction": 0.35,
+      "tp2_close_fraction": 0.35,
+      "runner_fraction": 0.3,
+      "target_total_r": 6.182,
+      "projected_account_profit_pct": 4.02
+    },
+    "status": "PENDING_ENTRY",
+    "outcome": null,
+    "entry_time_utc": null,
+    "closed_at_utc": null,
+    "tp1_hit": false,
+    "tp1_hit_at_utc": null,
+    "tp2_hit": false,
+    "tp2_hit_at_utc": null,
+    "runner_hit": false,
+    "runner_hit_at_utc": null,
+    "protect_1r_hit": false,
+    "mfe_r": null,
+    "mae_r": null,
+    "promotion_history": [
+      {
+        "at_utc": "2026-11-03T08:52:02.523844+00:00",
+        "rank": 1,
+        "score": 78.95
       }
     ]
   }
