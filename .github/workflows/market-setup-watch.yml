@@ -40,6 +40,11 @@ jobs:
         run: |
           pip install -r requirements.txt
 
+      - name: Verify Python dependencies and scanner imports
+        run: |
+          python -m pip check
+          python -c "import six, mplfinance; import market_hub.chart; print('Scanner import smoke test passed')"
+
       - name: Compile scanner
         run: |
           python -m py_compile \
