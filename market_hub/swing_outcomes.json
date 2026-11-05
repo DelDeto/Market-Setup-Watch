@@ -5748,17 +5748,17 @@
       "projected_account_profit_pct": 2.4
     },
     "status": "ACTIVE",
-    "outcome": null,
+    "outcome": "WIN",
     "entry_time_utc": "2026-10-30T23:00:00+00:00",
     "closed_at_utc": null,
-    "tp1_hit": false,
-    "tp1_hit_at_utc": null,
+    "tp1_hit": true,
+    "tp1_hit_at_utc": "2026-11-05T15:00:00+00:00",
     "tp2_hit": false,
     "tp2_hit_at_utc": null,
     "runner_hit": false,
     "runner_hit_at_utc": null,
     "protect_1r_hit": true,
-    "mfe_r": 1.713,
+    "mfe_r": 2.628,
     "mae_r": -0.174,
     "promotion_history": [
       {
@@ -6144,10 +6144,10 @@
       "target_total_r": 3.218,
       "projected_account_profit_pct": 2.09
     },
-    "status": "ACTIVE",
+    "status": "CLOSED",
     "outcome": "WIN",
     "entry_time_utc": "2026-11-04T00:00:00+00:00",
-    "closed_at_utc": null,
+    "closed_at_utc": "2026-11-05T15:00:00+00:00",
     "tp1_hit": true,
     "tp1_hit_at_utc": "2026-11-04T15:00:00+00:00",
     "tp2_hit": false,
@@ -6156,7 +6156,7 @@
     "runner_hit_at_utc": null,
     "protect_1r_hit": true,
     "mfe_r": 2.607,
-    "mae_r": -0.488,
+    "mae_r": -1.646,
     "promotion_history": [
       {
         "at_utc": "2026-11-03T22:04:57.777368+00:00",
@@ -6605,10 +6605,10 @@
       "target_total_r": 6.624,
       "projected_account_profit_pct": 1.99
     },
-    "status": "ACTIVE",
-    "outcome": null,
+    "status": "CLOSED",
+    "outcome": "BE",
     "entry_time_utc": "2026-11-05T08:00:00+00:00",
-    "closed_at_utc": null,
+    "closed_at_utc": "2026-11-05T15:00:00+00:00",
     "tp1_hit": false,
     "tp1_hit_at_utc": null,
     "tp2_hit": false,
@@ -6617,12 +6617,61 @@
     "runner_hit_at_utc": null,
     "protect_1r_hit": true,
     "mfe_r": 1.847,
-    "mae_r": -0.377,
+    "mae_r": -2.967,
     "promotion_history": [
       {
         "at_utc": "2026-11-05T07:16:34.465353+00:00",
         "rank": 3,
         "score": 78.16
+      }
+    ]
+  },
+  {
+    "signal_id": "TRUMPOFFICIAL_USDT|short|2026-11-05T21:35:48.657722+00:00",
+    "created_at_utc": "2026-11-05T21:35:48.657722+00:00",
+    "symbol": "TRUMPOFFICIAL_USDT",
+    "direction": "short",
+    "rank": 1,
+    "score": 89.74,
+    "grade": "A+",
+    "entry_lower": 1.23,
+    "entry_upper": 1.247,
+    "entry_source": "1H supply",
+    "stop_loss": 1.284,
+    "tp1": 1.1475000000000004,
+    "tp2": 1.0565000000000007,
+    "runner_target": 0.8669500000000001,
+    "runner_move_pct": 30.0,
+    "position_plan": {
+      "base_risk_pct": 0.9,
+      "size_label": "FULL",
+      "risk_modifier": 1.0,
+      "recommended_risk_pct": 0.9,
+      "notional_equity_multiple": 0.245,
+      "tp1_close_fraction": 0.35,
+      "tp2_close_fraction": 0.35,
+      "runner_fraction": 0.3,
+      "target_total_r": 4.55,
+      "projected_account_profit_pct": 4.09
+    },
+    "status": "PENDING_ENTRY",
+    "outcome": null,
+    "entry_time_utc": null,
+    "closed_at_utc": null,
+    "tp1_hit": false,
+    "tp1_hit_at_utc": null,
+    "tp2_hit": false,
+    "tp2_hit_at_utc": null,
+    "runner_hit": false,
+    "runner_hit_at_utc": null,
+    "protect_1r_hit": false,
+    "mfe_r": null,
+    "mae_r": null,
+    "promotion_history": [
+      {
+        "at_utc": "2026-11-05T21:35:48.657722+00:00",
+        "rank": 1,
+        "score": 89.74
       }
     ]
   }
