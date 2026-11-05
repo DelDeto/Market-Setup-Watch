@@ -5905,7 +5905,7 @@
     "runner_hit": false,
     "runner_hit_at_utc": null,
     "protect_1r_hit": true,
-    "mfe_r": 6.77,
+    "mfe_r": 6.908,
     "mae_r": -0.677,
     "promotion_history": [
       {
@@ -6476,6 +6476,153 @@
         "at_utc": "2026-11-05T02:55:10.030799+00:00",
         "rank": 2,
         "score": 80.95
+      }
+    ]
+  },
+  {
+    "signal_id": "SAMSUNGSTOCK_USDT|short|2026-11-05T07:16:34.465353+00:00",
+    "created_at_utc": "2026-11-05T07:16:34.465353+00:00",
+    "symbol": "SAMSUNGSTOCK_USDT",
+    "direction": "short",
+    "rank": 1,
+    "score": 86.03,
+    "grade": "A",
+    "entry_lower": 153.08,
+    "entry_upper": 155.44,
+    "entry_source": "1H supply",
+    "stop_loss": 161.82139285714285,
+    "tp1": 139.13721428571426,
+    "tp2": 124.01442857142854,
+    "runner_target": 131.12099999999998,
+    "runner_move_pct": 15.0,
+    "position_plan": {
+      "base_risk_pct": 0.65,
+      "size_label": "FULL",
+      "risk_modifier": 1.0,
+      "recommended_risk_pct": 0.65,
+      "notional_equity_multiple": 0.133,
+      "tp1_close_fraction": 0.35,
+      "tp2_close_fraction": 0.35,
+      "runner_fraction": 0.3,
+      "target_total_r": 3.018,
+      "projected_account_profit_pct": 1.96
+    },
+    "status": "PENDING_ENTRY",
+    "outcome": null,
+    "entry_time_utc": null,
+    "closed_at_utc": null,
+    "tp1_hit": false,
+    "tp1_hit_at_utc": null,
+    "tp2_hit": false,
+    "tp2_hit_at_utc": null,
+    "runner_hit": false,
+    "runner_hit_at_utc": null,
+    "protect_1r_hit": false,
+    "mfe_r": null,
+    "mae_r": null,
+    "promotion_history": [
+      {
+        "at_utc": "2026-11-05T07:16:34.465353+00:00",
+        "rank": 1,
+        "score": 86.03
+      }
+    ]
+  },
+  {
+    "signal_id": "EWY_USDT|short|2026-11-05T07:16:34.465353+00:00",
+    "created_at_utc": "2026-11-05T07:16:34.465353+00:00",
+    "symbol": "EWY_USDT",
+    "direction": "short",
+    "rank": 2,
+    "score": 81.61,
+    "grade": "A",
+    "entry_lower": 147.9,
+    "entry_upper": 148.82,
+    "entry_source": "1H supply",
+    "stop_loss": 154.12525,
+    "tp1": 136.82950000000005,
+    "tp2": 125.29900000000009,
+    "runner_target": 126.10600000000001,
+    "runner_move_pct": 15.0,
+    "position_plan": {
+      "base_risk_pct": 0.65,
+      "size_label": "FULL",
+      "risk_modifier": 1.0,
+      "recommended_risk_pct": 0.55,
+      "notional_equity_multiple": 0.142,
+      "tp1_close_fraction": 0.35,
+      "tp2_close_fraction": 0.35,
+      "runner_fraction": 0.3,
+      "target_total_r": 3.258,
+      "projected_account_profit_pct": 1.79
+    },
+    "status": "PENDING_ENTRY",
+    "outcome": null,
+    "entry_time_utc": null,
+    "closed_at_utc": null,
+    "tp1_hit": false,
+    "tp1_hit_at_utc": null,
+    "tp2_hit": false,
+    "tp2_hit_at_utc": null,
+    "runner_hit": false,
+    "runner_hit_at_utc": null,
+    "protect_1r_hit": false,
+    "mfe_r": null,
+    "mae_r": null,
+    "promotion_history": [
+      {
+        "at_utc": "2026-11-05T07:16:34.465353+00:00",
+        "rank": 2,
+        "score": 81.61
+      }
+    ]
+  },
+  {
+    "signal_id": "LSK_USDT|long|2026-11-05T07:16:34.465353+00:00",
+    "created_at_utc": "2026-11-05T07:16:34.465353+00:00",
+    "symbol": "LSK_USDT",
+    "direction": "long",
+    "rank": 3,
+    "score": 78.16,
+    "grade": "A",
+    "entry_lower": 0.19472,
+    "entry_upper": 0.20038,
+    "entry_source": "1H demand",
+    "stop_loss": 0.19361975,
+    "tp1": 0.2054105,
+    "tp2": 0.213271,
+    "runner_target": 0.256815,
+    "runner_move_pct": 30.0,
+    "position_plan": {
+      "base_risk_pct": 0.65,
+      "size_label": "FULL",
+      "risk_modifier": 1.0,
+      "recommended_risk_pct": 0.3,
+      "notional_equity_multiple": 0.151,
+      "tp1_close_fraction": 0.35,
+      "tp2_close_fraction": 0.35,
+      "runner_fraction": 0.3,
+      "target_total_r": 6.624,
+      "projected_account_profit_pct": 1.99
+    },
+    "status": "PENDING_ENTRY",
+    "outcome": null,
+    "entry_time_utc": null,
+    "closed_at_utc": null,
+    "tp1_hit": false,
+    "tp1_hit_at_utc": null,
+    "tp2_hit": false,
+    "tp2_hit_at_utc": null,
+    "runner_hit": false,
+    "runner_hit_at_utc": null,
+    "protect_1r_hit": false,
+    "mfe_r": null,
+    "mae_r": null,
+    "promotion_history": [
+      {
+        "at_utc": "2026-11-05T07:16:34.465353+00:00",
+        "rank": 3,
+        "score": 78.16
       }
     ]
   }
