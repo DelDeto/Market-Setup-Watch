@@ -6714,8 +6714,8 @@
     "runner_hit": false,
     "runner_hit_at_utc": null,
     "protect_1r_hit": true,
-    "mfe_r": 2.153,
-    "mae_r": 0.233,
+    "mfe_r": 2.36,
+    "mae_r": -0.233,
     "promotion_history": [
       {
         "at_utc": "2026-11-06T01:50:20.202843+00:00",
