@@ -132414,7 +132414,7 @@
     "entry_time_utc": "2026-11-06T16:45:00+00:00",
     "closed_at_utc": null,
     "outcome": null,
-    "mfe_r": 3.183,
+    "mfe_r": 3.458,
     "mae_r": 0.705,
     "management": {
       "protect_at_r": 1.0,
