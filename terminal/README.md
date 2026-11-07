@@ -79,3 +79,19 @@ The GitHub source is two ES modules: `terminal/worker.js` and `terminal/live.js`
 3. Production `/api/live-health` timestamp remains fresh, with MEXC instruments >50 and no recent errors after several scheduled polls.
 4. Next actual scanner run must show an OIDC publish step accepted and only verified plans imported. With zero ENTRY_READY signals, `0 accepted` is expected; no artificial signals are created.
 5. Telegram event workflow should be tested with genuine observed-level events; without genuine events, delivery is **not verified**, even if its job passes. Event notifications must not be invented to prove the test.
+
+
+## V3: Audited Telegram Publication Ledger and Closed-Candle Outcomes
+
+The V2 prototype sampled last prices and only ingested ENTRY_READY plans, so its signal history did not match every sent message. V3 separates the confirmed Telegram receipt ledger, actionable source plans, and candle-based outcome observations.
+
+- market_hub/main.py persists delivery metadata in the full scanner report only after all Telegram destinations confirm success. It records the same text items as the notifier's sorting and limits. Heartbeats are reference-only.
+- terminal/publish_scan.py publishes deterministic IDs for confirmed text references, including ENTRY_READY, NEAR_ENTRY, DEVELOPING, WATCHLIST and SWING_TOP_PICK. Only valid, execution-ready READY/SWING plans create price-level monitors.
+- The source's Telegram selector_tp1 takes precedence for TOP PICKs. Structural first targets are not substituted for the published 2R target.
+- /api/tracking reports publications, monitors and events separately. /api/outcomes reports TP1-first versus SL-first among unambiguous resolved candle observations, not live portfolio PnL or exchange fills.
+- Closed MEXC Min1 (intraday) or Min15 (swing) candles are evaluated chronologically, excluding pre-publication and still-forming candles. Missing a candle is DATA_GAP; same-candle entry/stop/target conflicts are AMBIGUOUS and never guessed.
+- The outcome scheduler runs every two minutes, independent from the five-minute background market/scanner/research source sync. The hourly watchdog checks price freshness, scanner freshness and outcome health.
+
+**Upgrade SQL:** apply only the ATLAS V3 section of terminal/schema.sql to an existing database; ALTER TABLE statements are not repeatable.
+
+**Provenance limitation:** the confirmed Telegram receipt ledger begins with V3. Old scanner signatures are not proof of which messages were sent. Crypto Short and VVV are historical research inputs until source-specific verified publishers are connected. Results are theoretical price-level conditions, not actual trades, broker fills or realized profits.
