@@ -20,16 +20,21 @@ jobs:
           BASE: https://atlas-market-terminal.duc-nguyen-ndd127.workers.dev
         run: |
           python - <<'PY'
-          import json, os, time, urllib.request
+          import json, os, time, urllib.request, urllib.error
           b=os.environ['BASE']
           def get(path):
               for attempt in range(3):
                   try:
-                      with urllib.request.urlopen(b+path, timeout=15) as r:
+                      request=urllib.request.Request(b+path,headers={'User-Agent':'ATLAS-Terminal-Synthetic-Healthcheck/1.0','Accept':'text/html,application/json'})
+                      with urllib.request.urlopen(request, timeout=15) as r:
                           raw=r.read()
                           assert r.status==200, (path, r.status)
                           return json.loads(raw) if path.startswith('/api') else raw.decode()
-                  except Exception:
+                  except urllib.error.HTTPError as e:
+                      print('HTTP ERROR',path,e.code,dict(e.headers),e.read(800).decode('utf-8','replace'))
+                      if attempt==2: raise
+                  except Exception as e:
+                      print('NETWORK ERROR',path,type(e).__name__,str(e))
                       if attempt==2: raise
                       time.sleep(5)
           assert 'ATLAS' in get('/') and 'MARKET INTELLIGENCE' in get('/')
