@@ -6665,7 +6665,7 @@
     "runner_hit": false,
     "runner_hit_at_utc": null,
     "protect_1r_hit": true,
-    "mfe_r": 1.33,
+    "mfe_r": 1.484,
     "mae_r": -0.846,
     "promotion_history": [
       {
@@ -6819,6 +6819,55 @@
         "at_utc": "2026-11-06T01:50:20.202843+00:00",
         "rank": 3,
         "score": 83.13
+      }
+    ]
+  },
+  {
+    "signal_id": "ZRO_USDT|short|2026-11-07T15:12:50.338096+00:00",
+    "created_at_utc": "2026-11-07T15:12:50.338096+00:00",
+    "symbol": "ZRO_USDT",
+    "direction": "short",
+    "rank": 1,
+    "score": 81.78,
+    "grade": "A",
+    "entry_lower": 1.6511,
+    "entry_upper": 1.6697,
+    "entry_source": "1H supply",
+    "stop_loss": 1.6723914285714285,
+    "tp1": 1.6364171428571432,
+    "tp2": 1.6124342857142864,
+    "runner_target": 1.41134,
+    "runner_move_pct": 15.0,
+    "position_plan": {
+      "base_risk_pct": 0.65,
+      "size_label": "TIGHT",
+      "risk_modifier": 0.6,
+      "recommended_risk_pct": 0.39,
+      "notional_equity_multiple": 0.54,
+      "tp1_close_fraction": 0.35,
+      "tp2_close_fraction": 0.35,
+      "runner_fraction": 0.3,
+      "target_total_r": 8.331,
+      "projected_account_profit_pct": 3.25
+    },
+    "status": "PENDING_ENTRY",
+    "outcome": null,
+    "entry_time_utc": null,
+    "closed_at_utc": null,
+    "tp1_hit": false,
+    "tp1_hit_at_utc": null,
+    "tp2_hit": false,
+    "tp2_hit_at_utc": null,
+    "runner_hit": false,
+    "runner_hit_at_utc": null,
+    "protect_1r_hit": false,
+    "mfe_r": null,
+    "mae_r": null,
+    "promotion_history": [
+      {
+        "at_utc": "2026-11-07T15:12:50.338096+00:00",
+        "rank": 1,
+        "score": 81.78
       }
     ]
   }
