@@ -795,6 +795,54 @@ def main():
             "Telegram suppressed."
         )
 
+    # Auditable delivery journal: only records the exact setups actually
+    # included in a successfully sent Telegram text, not all scanner candidates.
+    # A heartbeat is a status/reference message, not a new trade instruction.
+    sent_items = []
+    if notification_sent and notification_kind == "setup_change":
+        displayed = [item for item in results
+                     if not item.get("correlation_suppressed", False)]
+        displayed.sort(key=lambda item: (
+            0 if item.get("top_pick_rank") else 1,
+            item.get("top_pick_rank") or 99,
+            -float(item.get("selector_score") or 0),
+        ))
+        sent_items.extend({
+            "symbol": item.get("symbol"),
+            "direction": str(item.get("direction") or "").upper(),
+            "bucket": item.get("bucket"),
+            "mode": "INTRADAY",
+        } for item in displayed[:MAX_TELEGRAM_SETUPS])
+        sent_items.extend({
+            "symbol": item.get("symbol"),
+            "direction": str(item.get("direction") or "").upper(),
+            "bucket": "SWING_TOP_PICK",
+            "mode": "SWING",
+        } for item in swing_top_picks)
+    elif notification_sent and notification_kind == "heartbeat":
+        heartbeat_items = [item for item in results if _alert_eligible(item)]
+        heartbeat_items.sort(key=lambda item: (
+            0 if item.get("top_pick_rank") else 1,
+            item.get("top_pick_rank") or 99,
+            -float(item.get("selector_score") or 0),
+        ))
+        sent_items.extend({
+            "symbol": item.get("symbol"),
+            "direction": str(item.get("direction") or "").upper(),
+            "bucket": item.get("bucket"),
+            "mode": "HEARTBEAT_REFERENCE",
+        } for item in heartbeat_items[:3])
+
+    report["telegram_delivery"] = {
+        "confirmed": bool(notification_sent),
+        "kind": notification_kind,
+        "sent_at_utc": datetime.now(timezone.utc).isoformat() if notification_sent else None,
+        "items": sent_items,
+        "scope": "text body after all Telegram destinations succeed",
+    }
+    REPORT_PATH.write_text(json.dumps(report, ensure_ascii=False, indent=2),
+                           encoding="utf-8")
+
     last_notification_utc = previous.get("last_notification_utc")
     if notification_sent:
         last_notification_utc = generated_at
