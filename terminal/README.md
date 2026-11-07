@@ -9,7 +9,7 @@ Cloudflare Workers + D1 market terminal for **manual** crypto futures analysis, 
 
 ## Current features and data provenance
 
-- Market overview: MEXC USDT perpetual ticker snapshot, up to 350 most liquid symbols. Website refreshes the API every 15 seconds while open. This is HTTP polling, **not** a persistent exchange-wide tick feed.
+- Market overview: MEXC USDT perpetual ticker snapshot, all available USDT perpetual symbols returned by the exchange. Website refreshes the API every 15 seconds while open. This is HTTP polling, **not** a persistent exchange-wide tick feed.
 - Closed-candle charts: MEXC 15m/1h OHLC from the public futures API; the ongoing candle is excluded.
 - Latest scanner status from `Market-Setup-Watch/market_hub/state.json`; four buckets, timestamps and published alert signatures. These signatures are **not** proof of current active positions.
 - Historical calibration from `market_hub/calibration.json`. Historical win rate is **not live PnL**.
@@ -21,7 +21,7 @@ Cloudflare Workers + D1 market terminal for **manual** crypto futures analysis, 
 
 1. The Worker scheduled event runs every five minutes to fetch MEXC futures tickers, the latest Market-Setup-Watch published state, and its calibration snapshot.
 2. Once per hour it also refreshes archive research sources (M2/M3/VVV). Historical imports may be stale.
-3. The frontend calls `/api/market` every 15 seconds while open. It calls `/api/dashboard` every minute and `/api/research` every ten minutes. The market endpoint fetches live HTTP data with a database fallback and an explicit freshness label.
+3. The frontend calls `/api/market` every 15 seconds while open. An independent hourly GitHub Actions watchdog checks market and scheduled-sync freshness and, when existing repository Telegram secrets are configured, sends incident alerts. It calls `/api/dashboard` every minute and `/api/research` every ten minutes. The market endpoint fetches live HTTP data with a database fallback and an explicit freshness label.
 4. GitHub Actions scanner continues to run on **closed** 15m candles. Scanner output may lag the market ticker; prices must not be presented as confirmed new strategy signals.
 
 API routes:
