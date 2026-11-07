@@ -19,7 +19,12 @@ jobs:
         with:
           node-version: '22'
       - name: Parse Worker JavaScript
-        run: node --check terminal/worker.js
+        run: |
+          node --check terminal/worker.js
+          node --check terminal/live.js
+          node --test terminal/tests/live.test.mjs
+      - name: Verify OIDC publisher scripts
+        run: python -m py_compile terminal/publish_scan.py terminal/dispatch_events.py
       - name: Check APIs and read-only defaults
         run: |
           python - <<'PY'
