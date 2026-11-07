@@ -21,7 +21,7 @@ export function evaluateClosedCandles(m,bars,now,intervalMs){
   if(c.t+intervalMs>expiry)break;
   // Missing a full candle means intraperiod ordering is no longer observable.
   const previous=last===null?Math.ceil(created/intervalMs)*intervalMs-intervalMs:last;
-  if(c.t-previous>2*intervalMs){
+  if(c.t-previous>1.5*intervalMs){
    status='DATA_GAP';quality='missing_closed_candles';
    events.push(event('DATA_GAP',c.t,null,'Missing candle(s) in post-publication history'));
    break;
