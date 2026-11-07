@@ -27,7 +27,7 @@ jobs:
                   except Exception:
                       if attempt==2: raise
                       time.sleep(5)
-          assert 'ATLAS TERMINAL' in get('/')
+          assert 'ATLAS' in get('/') and 'MARKET INTELLIGENCE' in get('/')
           health=get('/api/health')
           assert health['status'] in ('not-initialized','stale','ok'),health
           dash=get('/api/dashboard')
