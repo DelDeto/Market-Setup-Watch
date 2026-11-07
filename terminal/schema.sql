@@ -32,3 +32,24 @@ CREATE INDEX IF NOT EXISTS idx_signal_events_delivery ON signal_events(delivery_
 CREATE TABLE IF NOT EXISTS live_feed_health (
  id INTEGER PRIMARY KEY CHECK(id=1),updated_at TEXT,mode TEXT,last_error TEXT,instrument_count INTEGER
 );
+
+
+-- ATLAS V3: upgrade existing V2 schema in-place (ALTER statements apply once).
+CREATE TABLE IF NOT EXISTS signal_publications (
+ id TEXT PRIMARY KEY,source TEXT NOT NULL,symbol TEXT NOT NULL,
+ direction TEXT NOT NULL,bucket TEXT NOT NULL,
+ notification_kind TEXT NOT NULL,scan_at TEXT NOT NULL,sent_at TEXT NOT NULL,
+ is_trackable INTEGER NOT NULL DEFAULT 0,eligibility_reason TEXT NOT NULL,
+ monitor_id TEXT,entry_low REAL,entry_high REAL,stop REAL,tp1 REAL,tp2 REAL,
+ received_at TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_publications_sent ON signal_publications(sent_at DESC);
+CREATE INDEX IF NOT EXISTS idx_publications_bucket ON signal_publications(bucket,source);
+ALTER TABLE signal_monitors ADD COLUMN last_candle_at TEXT;
+ALTER TABLE signal_monitors ADD COLUMN outcome_quality TEXT;
+ALTER TABLE signal_monitors ADD COLUMN monitor_error TEXT;
+CREATE TABLE IF NOT EXISTS outcome_health (
+ id INTEGER PRIMARY KEY CHECK(id=1),last_attempt_at TEXT,last_success_at TEXT,
+ last_error TEXT,evaluated_count INTEGER NOT NULL DEFAULT 0,
+ pending_count INTEGER NOT NULL DEFAULT 0,scanned_candles INTEGER NOT NULL DEFAULT 0
+);

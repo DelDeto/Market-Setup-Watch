@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
-"""Publish verified MEXC scanner plans to ATLAS using GitHub Actions OIDC.
+"""Record *confirmed Telegram-delivered* setup references in ATLAS.
 
-No secret is stored here. The source scanner's Telegram behavior is unchanged.
-This program never places an order.
+GitHub Actions OIDC signs the request. No exchange orders are placed.
+Heartbeat mentions and unready setups are journaled, never simulated as trades.
 """
 import hashlib
 import json
+import math
 import os
 from pathlib import Path
 import sys
@@ -22,68 +23,78 @@ ENDPOINT = os.environ.get(
 def number(value):
     try:
         f = float(value)
-        return f if f > 0 else None
+        return f if math.isfinite(f) and f > 0 else None
     except (TypeError, ValueError):
         return None
 
 
-def plan_to_signal(item, swing=False):
-    if item.get("correlation_suppressed"):
-        return None
-    if swing:
-        if not item.get("swing_top_pick_rank"):
-            return None
+def details(item, mode):
+    if mode == "SWING":
         plan = item
-        zone = item.get("entry_zone") or {}
-        bucket = "SWING_TOP_PICK"
-        stop = item.get("stop_loss")
-        tp1 = item.get("tp1")
-        tp2 = item.get("tp2")
-        score = item.get("swing_score")
-    else:
-        if item.get("bucket") != "ENTRY_READY":
-            return None
-        plan = item.get("trade_plan") or {}
-        if not plan.get("execution_ready"):
-            return None
         zone = plan.get("entry_zone") or {}
-        bucket = "ENTRY_READY"
-        stop = plan.get("stop_loss")
+        first = plan.get("tp1")
+        second = plan.get("tp2")
+        score = plan.get("swing_score")
+        ready = bool(plan.get("swing_top_pick_rank"))
+    else:
+        plan = item.get("trade_plan") or {}
+        zone = plan.get("entry_zone") or {}
         targets = plan.get("targets") or []
-        tp1 = targets[0].get("price") if targets else None
-        tp2 = targets[1].get("price") if len(targets) > 1 else None
+        # The Telegram TOP PICK explicitly publishes selector_tp1 = +2R.
+        # The structural target in targets[0] is NOT a substitute for it.
+        first = (item.get("selector_tp1") if item.get("top_pick_rank")
+                 else (targets[0].get("price") if targets else None))
+        position = item.get("position_plan") or {}
+        second = (position.get("runner_target_price") if item.get("top_pick_rank")
+                  else (targets[1].get("price") if len(targets) > 1 else None))
         score = item.get("selector_score") or item.get("score")
-    symbol = item.get("symbol")
-    direction = str(item.get("direction") or "").upper()
+        ready = bool(plan.get("execution_ready"))
     lo, hi = number(zone.get("lower")), number(zone.get("upper"))
-    stop, tp1, tp2 = number(stop), number(tp1), number(tp2)
-    if (not symbol or not symbol.endswith("_USDT")
-            or direction not in ("LONG", "SHORT")
-            or None in (lo, hi, stop, tp1) or lo > hi):
+    stop, first, second = number(plan.get("stop_loss")), number(first), number(second)
+    return {"entry_low": lo, "entry_high": hi, "stop": stop,
+            "tp1": first, "tp2": second, "score": score,
+            "source_ready": ready}
+
+
+def serialize_publication(message, scan_at, sent_at, kind, report):
+    mode = str(message.get("mode") or "INTRADAY")
+    symbol = str(message.get("symbol") or "")
+    direction = str(message.get("direction") or "").upper()
+    bucket = str(message.get("bucket") or "")
+    source = ((report.get("swing") or {}).get("top_picks") or []
+              if mode == "SWING" else report.get("setups") or [])
+    match = next((x for x in source
+                  if x.get("symbol") == symbol
+                  and str(x.get("direction") or "").upper() == direction
+                  and (mode == "SWING" or x.get("bucket") == bucket)), None)
+    if match is None:
         return None
-    if direction == "LONG" and not (stop < lo and tp1 > hi):
-        return None
-    if direction == "SHORT" and not (stop > hi and tp1 < lo):
-        return None
-    if tp2 is not None and (tp2 <= tp1 if direction == "LONG" else tp2 >= tp1):
-        tp2 = None
-    payload = {
-        "symbol": symbol,
-        "direction": direction,
-        "bucket": bucket,
-        "score": score,
-        "entry_low": lo,
-        "entry_high": hi,
-        "stop": stop,
-        "tp1": tp1,
-        "tp2": tp2,
-    }
-    key = "|".join(
-        str(payload[k])
-        for k in ("symbol", "direction", "entry_low", "entry_high", "stop", "tp1")
+    values = details(match, mode if mode == "SWING" else "INTRADAY")
+    trackable = (
+        kind == "setup_change"
+        and (bucket == "SWING_TOP_PICK"
+             or bucket == "ENTRY_READY" and values["source_ready"])
+        and all(values[x] is not None for x in (
+            "entry_low", "entry_high", "stop", "tp1"
+        ))
     )
-    payload["id"] = "setup-" + hashlib.sha256(key.encode()).hexdigest()[:30]
-    return payload
+    if mode == "HEARTBEAT_REFERENCE":
+        trackable = False
+        reason = "HEARTBEAT_REFERENCE_ONLY"
+    elif bucket in ("NEAR_ENTRY", "DEVELOPING", "WATCHLIST"):
+        trackable = False
+        reason = "PREPARATORY_SIGNAL_NOT_EXECUTION"
+    elif not trackable:
+        reason = "PLAN_NOT_VALIDATED"
+    else:
+        reason = "VALIDATED_PLAN_PRICE_OBSERVATION"
+    key = "|".join((scan_at, sent_at, mode, symbol, bucket, direction))
+    identifier = "tg-" + hashlib.sha256(key.encode()).hexdigest()[:40]
+    return {"id": identifier, "symbol": symbol, "direction": direction,
+            "bucket": bucket, "mode": mode, "is_trackable": bool(trackable),
+            "reason": reason,
+            **{k: values[k] for k in ("score", "entry_low", "entry_high",
+                                      "stop", "tp1", "tp2")}}
 
 
 def oidc_token():
@@ -104,41 +115,47 @@ def oidc_token():
 
 def main():
     if not REPORT.is_file():
-        print("ATLAS publisher: scanner report not found; skipping.")
+        print("ATLAS: scanner report missing; publication journal skipped")
         return 0
     report = json.loads(REPORT.read_text(encoding="utf-8"))
-    at = report.get("generated_at_utc")
-    if not at:
-        print("ATLAS publisher: report timestamp missing; skipping.")
+    delivery = report.get("telegram_delivery") or {}
+    if delivery.get("confirmed") is not True:
+        print("ATLAS: no confirmed Telegram delivery; no published signal to track")
         return 0
-    candidates = []
-    for item in report.get("setups") or []:
-        result = plan_to_signal(item)
-        if result:
-            candidates.append(result)
-    for item in (report.get("swing") or {}).get("top_picks") or []:
-        result = plan_to_signal(item, swing=True)
-        if result:
-            candidates.append(result)
-    unique = list({x["id"]: x for x in candidates}.values())[:50]
-    payload = json.dumps({"generatedAt": at, "signals": unique}).encode()
-    token = oidc_token()
+    scan_at = report.get("generated_at_utc")
+    sent_at = delivery.get("sent_at_utc")
+    if not scan_at or not sent_at:
+        raise ValueError("Telegram delivery evidence incomplete")
+    kind = str(delivery.get("kind") or "")
+    if kind not in ("setup_change", "heartbeat"):
+        raise ValueError("Unexpected delivery kind")
+    publications = [
+        record for message in delivery.get("items") or []
+        if (record := serialize_publication(
+            message, scan_at, sent_at, kind, report
+        )) is not None
+    ]
+    # Empty confirmed Telegram heartbeat is valid and need not create a trade.
+    payload = json.dumps({
+        "generatedAt": scan_at, "sentAt": sent_at,
+        "notificationKind": kind, "publications": publications[:30]
+    }, allow_nan=False).encode()
     req = urllib.request.Request(
         ENDPOINT, method="POST", data=payload,
         headers={
             "Content-Type": "application/json",
-            "Authorization": "Bearer " + token,
-            "User-Agent": "ATLAS-Market-Setup-Publisher/2.0",
+            "Authorization": "Bearer " + oidc_token(),
+            "User-Agent": "ATLAS-Market-Setup-Publisher/3.0",
         }
     )
-    with urllib.request.urlopen(req, timeout=30) as resp:
+    with urllib.request.urlopen(req, timeout=35) as resp:
         data = json.load(resp)
     if not data.get("ok"):
-        raise RuntimeError("ATLAS publisher rejected scanner report")
-    print(
-        "ATLAS published", data["accepted"], "verified plans (",
-        data.get("rejected", 0), "rejected ) from", at
-    )
+        raise RuntimeError("ATLAS rejected confirmed Telegram delivery")
+    print("ATLAS: confirmed publications:", data.get("published"),
+          "trackable:", data.get("tracked"),
+          "rejected:", data.get("rejected"),
+          "Telegram delivery:", kind)
     return 0
 
 

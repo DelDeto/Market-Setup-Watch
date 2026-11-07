@@ -61,8 +61,29 @@ jobs:
                   errors.append('live hub: '+str(live.get('error'))[:140])
           except Exception as exc:
               errors.append('live hub API error: '+str(exc)[:140])
+          try:
+              o=get('/api/outcomes')
+              oh=o.get('health') or {}
+              when=oh.get('last_success_at')
+              if when:
+                  age=(datetime.now(timezone.utc)-datetime.fromisoformat(when.replace('Z','+00:00'))).total_seconds()
+                  if age>900:
+                      errors.append('outcome engine stale (%.0fs)'%age)
+              if oh.get('last_error'):
+                  errors.append('outcome engine: '+str(oh['last_error'])[:150])
+          except Exception as exc:
+              errors.append('outcome metrics API error: '+str(exc)[:130])
+          try:
+              scan=get('/api/dashboard').get('scanner') or {}
+              updated=scan.get('updatedAt')
+              if updated:
+                  age=(datetime.now(timezone.utc)-datetime.fromisoformat(updated.replace('Z','+00:00'))).total_seconds()
+                  if age>5400:
+                      errors.append('scanner publication stale (%.0f min)'%(age/60))
+          except Exception as exc:
+              errors.append('scanner freshness API error: '+str(exc)[:130])
           if not errors:
-              print('ATLAS healthy: scheduled sync, WebSocket hub and live market feed responded')
+              print('ATLAS healthy: scanner state, outcome engine, live stream and terminal sync')
               raise SystemExit(0)
           message='⚠️ ATLAS TERMINAL HEALTH ALERT\n'+'\n'.join(errors)+'\n'+base+'/api/health'
           token=os.environ.get('TELEGRAM_BOT_TOKEN','')

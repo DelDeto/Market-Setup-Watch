@@ -57,7 +57,9 @@ jobs:
           live=get('/api/live-health')
           assert live.get('instrumentCount',0)>50 and not live.get('error'), live
           tracking=get('/api/tracking')
-          assert 'signals' in tracking and 'events' in tracking
+          assert all(k in tracking for k in ('signals','events','publications')),tracking.keys()
+          outcome=get('/api/outcomes')
+          assert 'publications' in outcome and 'bySource' in outcome
           research=get('/api/research')
           assert 'signals' in research and 'sources' in research
           print('Public Worker OK:',health)
