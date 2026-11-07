@@ -31,4 +31,5 @@ test('long target and stop geometry',()=>{
 test('expiry takes precedence over stale levels',()=>{
  const m={...valid,status:'WAIT_ENTRY',valid_until:'2026-11-07T16:10:00Z'};
  assert.equal(transition(m,99,'2026-11-07T16:20:00Z').status,'EXPIRED');
+ assert.equal(transition(m,null,'2026-11-07T16:20:00Z').status,'EXPIRED');
 });
