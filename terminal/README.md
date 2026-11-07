@@ -95,3 +95,8 @@ The V2 prototype sampled last prices and only ingested ENTRY_READY plans, so its
 **Upgrade SQL:** apply only the ATLAS V3 section of terminal/schema.sql to an existing database; ALTER TABLE statements are not repeatable.
 
 **Provenance limitation:** the confirmed Telegram receipt ledger begins with V3. Old scanner signatures are not proof of which messages were sent. Crypto Short and VVV are historical research inputs until source-specific verified publishers are connected. Results are theoretical price-level conditions, not actual trades, broker fills or realized profits.
+
+
+### V3 operational recovery
+
+An independent 15-minute GitHub Actions watchdog now checks if Market Setup Watch source state is more than 45 minutes old. If no scanner run started in the last 40 minutes, it uses the repository-scoped GitHub Actions GITHUB_TOKEN (actions:write only on the watchdog job) to dispatch **one** existing Market Setup Watch scan. A recent run prevents duplicate recovery dispatches. This is schedule resilience, not a guarantee that GitHub Actions will always start immediately, and it never initiates exchange trades. If the GitHub API is unavailable or dispatch permission is denied, the workflow logs an error and continues health checks.
