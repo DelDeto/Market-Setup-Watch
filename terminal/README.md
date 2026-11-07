@@ -55,3 +55,27 @@ The current deployment is a working foundation, not the final low-latency 24/7 m
 ## Migration and rollback
 
 Existing `market_hub/` scanner Python code and GitHub Actions are unchanged. To roll back the Terminal, roll back the `atlas-market-terminal` Worker deployment; do not delete shared scanner code. D1 remains independent of trading repositories.
+
+## ATLAS V2 upgrade: server-push market feed and observed-level alerts
+
+**Status:** V2 preview first, deploy to main Worker only after passing CI and E2E. Only the Market Setup Watch scanner is wired to the authenticated *live* signal publish workflow. Crypto Short M2/M3 and VVV are still historical journal sources, not real-time publishers.
+
+- **Frontend:** `GET /api/ws` upgrades to a Cloudflare Durable Object WebSocket. It broadcasts a full-MEXC USDT perpetual futures ticker *snapshot* every ~10 seconds while browsers connect; the DO checks every ~30 seconds without viewers. Upstream remains public REST `/api/v1/contract/ticker` — **not** exchange tick-by-tick WebSocket. HTTP fallback remains.
+- **Durable Object:** singleton `AtlasLiveRoom` bound as `LIVE_ROOM` (SQLite migration `v1-atlas-live` on production, preview has independent namespace). An alarm re-arms itself, with error logging and restarts on scheduled cron/connection. Existing 5-minute cron continues the source-state sync as a safety net.
+- **Scanner integration:** `.github/workflows/market-setup-watch.yml` gains `id-token: write`, then calls `python terminal/publish_scan.py` after the existing Telegram sender. The publisher uses a signed GitHub Actions OIDC JWT. Cloudflare checks RS256 signature against GitHub JWKS and verifies exact issuer, audience, repository, branch and authorized workflow before importing confirmed ENTRY_READY plans. No shared user secret is embedded in public files.
+- **Price tracking:** `GET /api/tracking` reads only newly published, verified source plans. Server periodically checks **sampled last price** against Entry/Stop/TP; it cannot observe prices between samples. States include WAIT_ENTRY, ENTRY_OBSERVED, TP1_OBSERVED, TP2_OBSERVED, SL_OBSERVED and EXPIRED. This does not prove real order execution, fills or live PnL.
+- **Telegram event relay:** GitHub workflow `atlas-event-dispatch.yml` runs every ~5 minutes and uses the existing repo's Telegram bot secrets. It claims pending observation events with GitHub OIDC (`POST /api/alerts/claim`) and acknowledges successful sends (`POST /api/alerts/ack`). A failed send is retried after a lease timeout. Scheduled job starts can be delayed; updates are not guaranteed immediate.
+- **Health:** `GET /api/live-health` returns last live feed success/error, total subscribers and alarm schedule; existing `/api/health` shows 5-minute background snapshots; the independent GitHub watchdog should monitor both sources.
+- **Safety:** no exchange trading API keys, no auto-entry, no claims of actual trading profits. The system sends observations, not financial promises. Limited frontend/websocket rate is by design; low-latency exchange WebSocket consumption needs dedicated reliable upstream services and additional setup.
+
+### Deploy manifest (Cloudflare API)
+
+The GitHub source is two ES modules: `terminal/worker.js` and `terminal/live.js`. Configure Worker upload metadata with `main_module: worker.js`, `compatibility_date: 2026-11-07`, `bindings: [{type: d1, name: DB, id: <DATABASE_ID>}, {type: durable_object_namespace, name: LIVE_ROOM, class_name: AtlasLiveRoom}]`, and on the **first** DO deployment only: `migrations: {new_tag: v1-atlas-live, new_sqlite_classes: [AtlasLiveRoom]}`. Existing production migrations must not be reapplied under the same tag. Cloudflare managed Worker deployments via API are used here; GitHub CI performs validation, not implicit production deploys.
+
+### Operational acceptance
+
+1. `node --check terminal/worker.js && node --check terminal/live.js` and `node --test terminal/tests/live.test.mjs` pass.
+2. Preview GitHub E2E test receives a nonempty WebSocket `market` frame and rejects unauthenticated POST to `/api/ingest/github`.
+3. Production `/api/live-health` timestamp remains fresh, with MEXC instruments >50 and no recent errors after several scheduled polls.
+4. Next actual scanner run must show an OIDC publish step accepted and only verified plans imported. With zero ENTRY_READY signals, `0 accepted` is expected; no artificial signals are created.
+5. Telegram event workflow should be tested with genuine observed-level events; without genuine events, delivery is **not verified**, even if its job passes. Event notifications must not be invented to prove the test.
