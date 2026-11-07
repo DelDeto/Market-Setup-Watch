@@ -1,5 +1,10 @@
 name: Trading Terminal Smoke Test
 on:
+  push:
+    branches: [main]
+    paths:
+      - 'terminal/**'
+      - '.github/workflows/trading-terminal-smoke.yml'
   workflow_dispatch:
 
 permissions:
@@ -32,6 +37,8 @@ jobs:
           assert health['status'] in ('not-initialized','stale','ok'),health
           dash=get('/api/dashboard')
           assert 'signals' in dash and 'health' in dash
+          market=get('/api/market')
+          assert market.get('items') and len(market['items'])>0, 'MEXC Futures market feed unavailable'
           research=get('/api/research')
           assert 'signals' in research and 'sources' in research
           print('Public Worker OK:',health)
