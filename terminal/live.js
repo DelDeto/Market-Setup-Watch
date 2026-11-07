@@ -141,7 +141,7 @@ export class AtlasLiveRoom{
   const url=new URL(req.url);
   if(url.pathname==='/wake'){await this.wake();return response({ok:true})}
   if(url.pathname==='/status'){const h=await this.ctx.storage.get('lastStatus');return response({...(h||{mode:'starting'}),subscribers:this.ctx.getWebSockets().length,scheduled:!!(await this.ctx.storage.getAlarm())})}
-  if(url.pathname!=='/connect')return response({error:'not found'},404);
+  if(url.pathname!=='/connect'&&url.pathname!=='/api/ws')return response({error:'not found'},404);
   if(req.headers.get('upgrade')?.toLowerCase()!=='websocket')return response({error:'WebSocket upgrade required'},426);
   const pair=new WebSocketPair();const [client,server]=Object.values(pair);
   this.ctx.acceptWebSocket(server);
