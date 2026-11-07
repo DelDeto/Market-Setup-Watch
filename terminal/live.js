@@ -43,8 +43,9 @@ export function parseMonitor(x,when){
  return {id:x.id,symbol:x.symbol,direction,bucket,entryLow,entryHigh,stop,tp1,tp2,score,source:'Market Setup Watch',createdAt:when,validUntil:new Date(Date.parse(when)+(bucket==='SWING_TOP_PICK'?48:4)*3600000).toISOString()};
 }
 export function transition(m,price,now){
- if(!Number.isFinite(price)||price<=0||!ACTIVE.has(m.status))return null;
- if(Date.parse(m.valid_until)<Date.parse(now))return {status:'EXPIRED',kind:'EXPIRED',price};
+ if(!ACTIVE.has(m.status))return null;
+ if(Date.parse(m.valid_until)<Date.parse(now))return {status:'EXPIRED',kind:'EXPIRED',price:Number.isFinite(price)?price:null};
+ if(!Number.isFinite(price)||price<=0)return null;
  if(m.status==='WAIT_ENTRY'){
   if(price>=m.entry_low&&price<=m.entry_high)return {status:'ENTRY_OBSERVED',kind:'ENTRY_OBSERVED',price};
   return null;
@@ -77,11 +78,11 @@ async function observe(env,rows,at){
  const bySymbol=new Map(rows.map(x=>[x.symbol,x.price]));const changes=[];
  for(const m of r.results||[]){
   const price=bySymbol.get(m.symbol);
-  if(price===undefined)continue;
-  const t=transition(m,price,at);
+  const observedPrice=Number.isFinite(price)?price:null;
+  const t=transition(m,observedPrice,at);
   if(t){
    const updates=["status=?","updated_at=?","last_price=?","last_tick_at=?"];
-   const params=[t.status,at,price,at];
+   const params=[t.status,at,observedPrice,at];
    if(t.kind==='ENTRY_OBSERVED'){updates.push('entry_observed_at=?');params.push(at)}
    if(t.kind==='TP1_OBSERVED'){updates.push('tp1_observed_at=?');params.push(at)}
    if(t.kind==='TP2_OBSERVED'){updates.push('tp2_observed_at=?','ended_at=?');params.push(at,at)}
@@ -89,7 +90,7 @@ async function observe(env,rows,at){
    if(t.kind==='EXPIRED'){updates.push('ended_at=?');params.push(at)}
    params.push(m.id,m.status);
    const saved=await env.DB.prepare("UPDATE signal_monitors SET "+updates.join(',')+" WHERE id=? AND status=?").bind(...params).run();
-   if((saved.meta?.changes||0)>0){await addEvent(env,m,t.kind,price,at);changes.push({id:m.id,symbol:m.symbol,direction:m.direction,kind:t.kind,price,at})}
+   if((saved.meta?.changes||0)>0){await addEvent(env,m,t.kind,observedPrice,at);changes.push({id:m.id,symbol:m.symbol,direction:m.direction,kind:t.kind,price:observedPrice,at})}
   }
  }
  return changes;
