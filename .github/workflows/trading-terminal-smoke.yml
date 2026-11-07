@@ -15,6 +15,16 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Prepare WebSocket test dependency
+        run: npm install --no-save ws@8
+      - name: Verify realtime server-push WebSocket
+        env:
+          ATLAS_URL: https://atlas-market-terminal.duc-nguyen-ndd127.workers.dev
+        run: node terminal/smoke_ws.mjs
       - name: Check deployed Worker public API
         env:
           BASE: https://atlas-market-terminal.duc-nguyen-ndd127.workers.dev
@@ -44,6 +54,10 @@ jobs:
           assert 'signals' in dash and 'health' in dash
           market=get('/api/market')
           assert market.get('items') and len(market['items'])>0, 'MEXC Futures market feed unavailable'
+          live=get('/api/live-health')
+          assert live.get('instrumentCount',0)>50 and not live.get('error'), live
+          tracking=get('/api/tracking')
+          assert 'signals' in tracking and 'events' in tracking
           research=get('/api/research')
           assert 'signals' in research and 'sources' in research
           print('Public Worker OK:',health)
