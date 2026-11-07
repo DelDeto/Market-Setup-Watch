@@ -1,4 +1,5 @@
 import { AtlasLiveRoom, ingestScan, trackingData, claimEvents, ackEvents } from './live.js';
+export { AtlasLiveRoom } from './live.js';
 
 const MEXC='https://contract.mexc.com';
 const GH='https://raw.githubusercontent.com/DelDeto/Market-Setup-Watch/main/market_hub/';
