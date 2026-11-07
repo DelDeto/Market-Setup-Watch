@@ -39,7 +39,6 @@ jobs:
             smc_analysis.py \
             trade_plan.py \
             market_hub/config.py \
-            market_hub/binance_crosslist.py \
             market_hub/mexc_market.py \
             market_hub/participation.py \
             market_hub/market_context.py \
@@ -50,7 +49,9 @@ jobs:
             market_hub/scanner.py \
             market_hub/chart.py \
             market_hub/notifier.py \
-            market_hub/main.py
+            market_hub/main.py \
+            terminal/publish_scan.py \
+            terminal/dispatch_events.py
 
       - name: Import smoke test
         run: |
