@@ -1,0 +1,34 @@
+name: Trading Terminal CI
+on:
+  pull_request:
+    paths:
+      - 'terminal/**'
+      - '.github/workflows/trading-terminal-ci.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  static-validation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Parse Worker JavaScript
+        run: node --check terminal/worker.js
+      - name: Check APIs and read-only defaults
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          src=Path('terminal/worker.js').read_text()
+          for route in ('/api/market','/api/chart','/api/dashboard','/api/research','/api/health','/api/ingest'):
+              assert route in src, route
+          assert "PUBLISH_TOKEN" in src and "unauthorized" in src
+          assert "async scheduled" in src
+          assert "order/place" not in src
+          print('Static safeguards OK')
+          PY
