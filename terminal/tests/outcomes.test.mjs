@@ -49,7 +49,7 @@ test('candle that began before alert cannot create a trade outcome',()=>{
 });
 test('ignore still-forming candle',()=>{
  const v=evaluateClosedCandles(m,[bar(0,99,101),bar(9,80,106)],'2026-11-07T16:09:20Z',60000);
- assert.equal(v.status,'DATA_GAP'); // gap detected only from first closed available candle? bar 9 is unclosed and ignored
+ assert.equal(v.status,'ENTRY_OBSERVED'); // unclosed bar is ignored
 });
 test('validated source publication is not automatically a trade monitor',()=>{
  const receipt={id:'tg-'+'a'.repeat(40),symbol:'BTC_USDT',direction:'LONG',bucket:'NEAR_ENTRY',mode:'INTRADAY',is_trackable:false,reason:'PREPARATORY_SIGNAL_NOT_EXECUTION'};
