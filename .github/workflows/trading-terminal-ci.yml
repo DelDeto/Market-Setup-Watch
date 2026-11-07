@@ -22,15 +22,19 @@ jobs:
         run: |
           node --check terminal/worker.js
           node --check terminal/live.js
-          node --test terminal/tests/live.test.mjs
+          node --check terminal/publications.js
+          node --check terminal/outcomes.js
+          node --test terminal/tests/*.test.mjs
       - name: Verify OIDC publisher scripts
         run: python -m py_compile terminal/publish_scan.py terminal/dispatch_events.py
+      - name: Test confirmed Telegram provenance parsing
+        run: python -m unittest discover -s terminal/tests -p 'test_*.py' -v
       - name: Check APIs and read-only defaults
         run: |
           python - <<'PY'
           from pathlib import Path
           src=Path('terminal/worker.js').read_text()
-          for route in ('/api/market','/api/chart','/api/dashboard','/api/research','/api/health','/api/ingest'):
+          for route in ('/api/market','/api/chart','/api/dashboard','/api/research','/api/health','/api/ingest','/api/tracking','/api/outcomes'):
               assert route in src, route
           assert "PUBLISH_TOKEN" in src and "unauthorized" in src
           assert "async scheduled" in src
