@@ -1,0 +1,44 @@
+name: ATLAS V2 Preview End-to-End Test
+on:
+  pull_request:
+    paths:
+      - 'terminal/**'
+      - '.github/workflows/atlas-v2-preview-smoke.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  preview-e2e:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install WebSocket test dependency (not production)
+        run: npm install --no-save ws@8
+      - name: Test public WebSocket push from preview Durable Object
+        env:
+          ATLAS_URL: https://atlas-terminal-v2-preview.duc-nguyen-ndd127.workers.dev
+        run: node terminal/smoke_ws.mjs
+      - name: Check read APIs and refuse unauthenticated publishing
+        env:
+          ATLAS_URL: https://atlas-terminal-v2-preview.duc-nguyen-ndd127.workers.dev
+        run: |
+          python - <<'PY'
+          import json,os,urllib.request,urllib.error
+          b=os.environ['ATLAS_URL']
+          def check(path):
+              with urllib.request.urlopen(urllib.request.Request(b+path,headers={'User-Agent':'ATLAS-Preview-Validation/2.0'}),timeout=25) as r:return json.load(r)
+          h=check('/api/live-health');print('Feed:',h)
+          assert h.get('updatedAt') and not h.get('error'),h
+          t=check('/api/tracking');assert 'signals' in t and 'events' in t
+          m=check('/api/market');assert len(m.get('items',[]))>50
+          req=urllib.request.Request(b+'/api/ingest/github',data=b'{}',headers={'Content-Type':'application/json','User-Agent':'ATLAS-Preview-Validation/2.0'})
+          try:urllib.request.urlopen(req,timeout=20);raise AssertionError('Unauthorized publisher accepted!')
+          except urllib.error.HTTPError as e:assert e.code==401,e.code
+          print('ATLAS V2 preview end-to-end checks OK')
+          PY
