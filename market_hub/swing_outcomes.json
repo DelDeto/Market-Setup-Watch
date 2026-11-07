@@ -6355,10 +6355,10 @@
       "target_total_r": 3.328,
       "projected_account_profit_pct": 1.0
     },
-    "status": "PENDING_ENTRY",
-    "outcome": null,
+    "status": "EXPIRED",
+    "outcome": "EXPIRED",
     "entry_time_utc": null,
-    "closed_at_utc": null,
+    "closed_at_utc": "2026-11-07T03:17:55.614179+00:00",
     "tp1_hit": false,
     "tp1_hit_at_utc": null,
     "tp2_hit": false,
@@ -6458,10 +6458,10 @@
       "target_total_r": 6.392,
       "projected_account_profit_pct": 3.52
     },
-    "status": "PENDING_ENTRY",
-    "outcome": null,
+    "status": "EXPIRED",
+    "outcome": "EXPIRED",
     "entry_time_utc": null,
-    "closed_at_utc": null,
+    "closed_at_utc": "2026-11-07T03:17:55.614179+00:00",
     "tp1_hit": false,
     "tp1_hit_at_utc": null,
     "tp2_hit": false,
@@ -6714,7 +6714,7 @@
     "runner_hit": false,
     "runner_hit_at_utc": null,
     "protect_1r_hit": true,
-    "mfe_r": 2.36,
+    "mfe_r": 2.568,
     "mae_r": -0.233,
     "promotion_history": [
       {
