@@ -13,7 +13,7 @@ function response(x,status=200){return new Response(JSON.stringify(x),{status,he
 function number(v){if(v===null||v===undefined||v==='')return null;const x=Number(v);return Number.isFinite(x)?x:null}
 function base64url(s){const p=s.replace(/-/g,'+').replace(/_/g,'/');return Uint8Array.from(atob(p+'='.repeat((4-p.length%4)%4)),c=>c.charCodeAt(0))}
 function decodePart(s){return JSON.parse(new TextDecoder().decode(base64url(s)))}
-async function verifyGitHubOIDC(req,filename){
+export async function verifyGitHubOIDC(req,filename){
  const bearer=req.headers.get('authorization')||'';
  if(!bearer.startsWith('Bearer '))throw Error('missing bearer token');
  const parts=bearer.slice(7).split('.');
@@ -157,7 +157,9 @@ export class AtlasLiveRoom{
   const at=new Date().toISOString();const peers=this.ctx.getWebSockets();
   try{
    const rows=await listMarket();
-   const changed=await observe(this.env,rows,at);
+   // Result tracking is handled by the chronological closed-candle evaluator.
+   // The 10-second ticker stream must never infer fills from sampled last prices.
+   const changed=[];
    const payload=JSON.stringify({type:'market',updatedAt:at,mode:'REST snapshots via WebSocket',items:rows});
    for(const ws of peers){try{ws.send(payload)}catch{try{ws.close(1011,'send failed')}catch{}}}
    if(changed.length){const msg=JSON.stringify({type:'tracking',observedAt:at,events:changed});for(const ws of peers){try{ws.send(msg)}catch{}}}
