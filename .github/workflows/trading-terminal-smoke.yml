@@ -1,0 +1,38 @@
+name: Trading Terminal Smoke Test
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify-public-worker:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check deployed Worker public API
+        env:
+          BASE: https://atlas-market-terminal.duc-nguyen-ndd127.workers.dev
+        run: |
+          python - <<'PY'
+          import json, os, time, urllib.request
+          b=os.environ['BASE']
+          def get(path):
+              for attempt in range(3):
+                  try:
+                      with urllib.request.urlopen(b+path, timeout=15) as r:
+                          raw=r.read()
+                          assert r.status==200, (path, r.status)
+                          return json.loads(raw) if path.startswith('/api') else raw.decode()
+                  except Exception:
+                      if attempt==2: raise
+                      time.sleep(5)
+          assert 'ATLAS TERMINAL' in get('/')
+          health=get('/api/health')
+          assert health['status'] in ('not-initialized','stale','ok'),health
+          dash=get('/api/dashboard')
+          assert 'signals' in dash and 'health' in dash
+          research=get('/api/research')
+          assert 'signals' in research and 'sources' in research
+          print('Public Worker OK:',health)
+          PY
