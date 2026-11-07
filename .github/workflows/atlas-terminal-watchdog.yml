@@ -6,6 +6,7 @@ on:
 
 permissions:
   contents: read
+  actions: write
 
 concurrency:
   group: atlas-terminal-watchdog
@@ -16,6 +17,17 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Recover stale scanner schedule (45-minute threshold with dispatch cooldown)
+        continue-on-error: true
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          ATLAS_URL: https://atlas-market-terminal.duc-nguyen-ndd127.workers.dev
+        run: python terminal/scanner_recovery.py
       - name: Verify terminal data freshness and notify on incident
         env:
           TERMINAL_URL: https://atlas-market-terminal.duc-nguyen-ndd127.workers.dev
