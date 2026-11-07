@@ -9,3 +9,26 @@ CREATE TABLE IF NOT EXISTS research_signals(id TEXT PRIMARY KEY,source TEXT NOT 
 CREATE INDEX IF NOT EXISTS idx_research_date ON research_signals(recorded_at DESC);
 CREATE INDEX IF NOT EXISTS idx_research_source ON research_signals(source);
 CREATE TABLE IF NOT EXISTS research_sources(source TEXT PRIMARY KEY,updated_at TEXT,imported_at TEXT NOT NULL,total_signals INTEGER,imported_signals INTEGER,closed_signals INTEGER,net_r_sum REAL,last_error TEXT);
+
+-- ATLAS V2 — price-observation only, never exchange executions.
+CREATE TABLE IF NOT EXISTS signal_monitors (
+ id TEXT PRIMARY KEY,symbol TEXT NOT NULL,source TEXT NOT NULL,
+ direction TEXT NOT NULL CHECK(direction IN ('LONG','SHORT')),
+ bucket TEXT NOT NULL,score REAL,entry_low REAL NOT NULL,entry_high REAL NOT NULL,
+ stop REAL NOT NULL,tp1 REAL NOT NULL,tp2 REAL,
+ created_at TEXT NOT NULL,updated_at TEXT NOT NULL,valid_until TEXT NOT NULL,
+ status TEXT NOT NULL DEFAULT 'WAIT_ENTRY',
+ last_price REAL,last_tick_at TEXT,entry_observed_at TEXT,tp1_observed_at TEXT,
+ tp2_observed_at TEXT,sl_observed_at TEXT,ended_at TEXT
+);
+CREATE INDEX IF NOT EXISTS idx_signal_monitors_status ON signal_monitors(status,valid_until);
+CREATE TABLE IF NOT EXISTS signal_events (
+ id TEXT PRIMARY KEY,signal_id TEXT NOT NULL,kind TEXT NOT NULL,symbol TEXT NOT NULL,
+ direction TEXT NOT NULL,observed_price REAL,observed_at TEXT NOT NULL,
+ details_json TEXT NOT NULL DEFAULT '{}',delivery_status TEXT NOT NULL DEFAULT 'pending',
+ leased_until TEXT,delivered_at TEXT,UNIQUE(signal_id,kind)
+);
+CREATE INDEX IF NOT EXISTS idx_signal_events_delivery ON signal_events(delivery_status,observed_at);
+CREATE TABLE IF NOT EXISTS live_feed_health (
+ id INTEGER PRIMARY KEY CHECK(id=1),updated_at TEXT,mode TEXT,last_error TEXT,instrument_count INTEGER
+);

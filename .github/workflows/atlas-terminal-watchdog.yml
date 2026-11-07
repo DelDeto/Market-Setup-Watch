@@ -2,7 +2,7 @@ name: ATLAS Terminal Health Watchdog
 on:
   workflow_dispatch:
   schedule:
-    - cron: '17 * * * *'
+    - cron: '2,17,32,47 * * * *'
 
 permissions:
   contents: read
@@ -24,6 +24,7 @@ jobs:
         run: |
           python - <<'PY'
           import json, os, urllib.request, urllib.parse, urllib.error
+          from datetime import datetime,timezone
           base=os.environ['TERMINAL_URL']
           def get(path):
               req=urllib.request.Request(base+path,headers={'User-Agent':'ATLAS-Terminal-Watchdog/1.0'})
@@ -46,8 +47,22 @@ jobs:
                   errors.append('MEXC upstream fallback active')
           except Exception as exc:
               errors.append('market API error: '+str(exc)[:160])
+          try:
+              live=get('/api/live-health')
+              updated=live.get('updatedAt')
+              if not updated:
+                  errors.append('live hub has never published a price snapshot')
+              else:
+                  dt=datetime.fromisoformat(updated.replace('Z','+00:00'))
+                  delay=(datetime.now(timezone.utc)-dt).total_seconds()
+                  if delay>120:
+                      errors.append('live hub has stale data (%.0fs)'%delay)
+              if live.get('error'):
+                  errors.append('live hub: '+str(live.get('error'))[:140])
+          except Exception as exc:
+              errors.append('live hub API error: '+str(exc)[:140])
           if not errors:
-              print('ATLAS healthy: scheduled sync and live market feed responded')
+              print('ATLAS healthy: scheduled sync, WebSocket hub and live market feed responded')
               raise SystemExit(0)
           message='⚠️ ATLAS TERMINAL HEALTH ALERT\n'+'\n'.join(errors)+'\n'+base+'/api/health'
           token=os.environ.get('TELEGRAM_BOT_TOKEN','')
