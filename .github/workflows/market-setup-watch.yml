@@ -9,6 +9,7 @@ on:
 
 permissions:
   contents: write
+  id-token: write
 
 concurrency:
   group: market-setup-watch
@@ -73,6 +74,13 @@ jobs:
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
           python -m market_hub.main
+
+      - name: Publish confirmed scanner plans to ATLAS (OIDC)
+        # Failures here must not interrupt the existing scanner Telegram pipeline.
+        continue-on-error: true
+        env:
+          ATLAS_URL: https://atlas-market-terminal.duc-nguyen-ndd127.workers.dev
+        run: python terminal/publish_scan.py
 
       - name: Upload scan report
         uses: actions/upload-artifact@v4
