@@ -62,7 +62,7 @@ test('missing history and zero-variance returns cannot manufacture a correlation
  const p=Array.from({length:26},(_,i)=>({time:String(i),a:100,b:100+i}));
  const out=analyzeRelationships(p);
  assert.equal(out.correlation,null);
- assert.equal(out.beta,null);
+ assert.equal(out.beta,0); // zero return variance of A with nonzero B variance yields beta 0
  assert.equal(out.relation,'INCONCLUSIVE');
  assert.equal(analyzeRelationships(p.slice(0,3)).available,false);
  assert.equal(pearson([1,1,1],[2,3,4]),null);
