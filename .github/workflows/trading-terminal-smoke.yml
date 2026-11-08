@@ -61,6 +61,8 @@ jobs:
           wd=get('/api/watchdog')
           assert wd.get('watchdog',{}).get('status') in ('OK','STALE','INITIALIZING'),wd
           assert 'method' in wd,wd
+          calendar=get('/api/macro/calendar')
+          assert isinstance(calendar.get('events'),list),calendar
           macro=get('/api/macro?limit=10')
           assert macro.get('version')=='3.5' and isinstance(macro.get('news'),list),macro
           assert isinstance(macro.get('feeds'),list),macro

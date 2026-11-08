@@ -39,6 +39,9 @@ jobs:
           o=check('/api/outcomes');assert 'bySource' in o and 'publications' in o
           w=check('/api/watchdog');assert 'watchdog' in w and 'method' in w
           assert w['watchdog']['status'] in ('OK','STALE','INITIALIZING')
+          calendar=check('/api/macro/calendar')
+          assert isinstance(calendar.get('events'),list),calendar
+          assert 'health' in calendar
           macro=check('/api/macro?limit=10')
           assert macro.get('version')=='3.5'
           assert isinstance(macro.get('news'),list)
