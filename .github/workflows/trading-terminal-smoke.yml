@@ -69,6 +69,11 @@ jobs:
           macro=get('/api/macro?limit=10')
           assert macro.get('version')=='3.5' and isinstance(macro.get('news'),list),macro
           assert isinstance(macro.get('feeds'),list),macro
+          relation=get('/api/relationship?a=BTC&b=ZEC&tf=4h')
+          assert relation.get('version')=='3.6' and relation.get('available') is True,relation
+          assert relation.get('samples',0)>=20,relation
+          js=get('/assets/relationship.js')
+          assert 'function analyzeRelationship' in js
           outcome=get('/api/outcomes')
           assert 'publications' in outcome and 'bySource' in outcome
           research=get('/api/research')
