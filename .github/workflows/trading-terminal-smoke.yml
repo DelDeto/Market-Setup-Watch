@@ -50,6 +50,8 @@ jobs:
           html=get('/')
           assert 'ATLAS' in html and 'MARKET INTELLIGENCE' in html
           assert 'id="timezoneSelect"' in html and 'value="VN"' in html and 'value="UTC"' in html
+          assert '<select id="pairAssetA"' in html and '<select id="pairAssetB"' in html
+          assert 'id="pairFilterA"' in html and 'id="pairFilterB"' in html
           assert 'Asia/Ho_Chi_Minh' in html and 'atlas.display_time_zone' in html
           health=get('/api/health')
           assert health['status'] in ('not-initialized','stale','ok'),health
@@ -74,6 +76,8 @@ jobs:
           assert relation.get('samples',0)>=20,relation
           js=get('/assets/relationship.js')
           assert 'function analyzeRelationship' in js
+          assert 'window.loadPairAssetCatalog=loadPairAssetCatalog' in js
+          assert "get('/api/market')" in js
           outcome=get('/api/outcomes')
           assert 'publications' in outcome and 'bySource' in outcome
           research=get('/api/research')
