@@ -74,7 +74,7 @@ jobs:
           assert 'anomalies' in intel and 'rotation' in intel and 'capabilities' in intel,intel
           assert 'signalReadiness' in intel and 'funding' in intel,intel
           assert intel['marketRegime']['instruments']>50,intel['marketRegime']
-          assert intel['funding']['openInterestAvailable'] is False,intel['funding']
+          assert isinstance(intel['funding']['openInterestAvailable'],bool),intel['funding']
           assert 'id="intelligenceTab"' in page and 'id="intelRiskForm"' in page
           with urllib.request.urlopen(urllib.request.Request(b+'/assets/intelligence.js',headers={'User-Agent':'ATLAS-Preview-Validation/4.0'}),timeout=20) as js_response:
               intel_js=js_response.read().decode('utf-8')
@@ -84,6 +84,32 @@ jobs:
           try:check('/api/intelligence/risk?equity=1000&entry=100&stop=110&riskPct=1&direction=LONG');raise AssertionError('Invalid stop accepted')
           except urllib.error.HTTPError as e:assert e.code==400,e.code
           print('ATLAS V4 Intelligence:',intel['marketRegime']['regime'],'anomalies',len(intel['anomalies']['items']),'health',intel['health']['status'])
+          assert 'id="advancedTab"' in page and 'id="advBookSymbol"' in page and 'id="advReplay"' in page
+          with urllib.request.urlopen(urllib.request.Request(b+'/assets/intelligence-advanced.js',headers={'User-Agent':'ATLAS-Preview-Validation/5.0'}),timeout=20) as script_response:
+              advanced_js=script_response.read().decode('utf8')
+          assert 'window.loadAdvanced=loadAdvanced' in advanced_js
+          a=check('/api/intelligence/advanced')
+          assert a.get('version')=='5.0-evidence',a
+          assert isinstance(a.get('capabilities'),list) and len(a['capabilities'])==15,a
+          assert 'smartMoney' in a and 'selfAudit' in a and 'tournament' in a,a
+          assert 'oiSnapshot' in a and 'monitoredPlans' in a,a
+          assistant=check('/api/intelligence/ask?q=btc%20trend')
+          assert assistant.get('mode')=='RULE_BASED_EVIDENCE_ASSISTANT',assistant
+          if a['monitoredPlans']:
+              from urllib.parse import quote
+              replay=check('/api/intelligence/replay?id='+quote(a['monitoredPlans'][0]['id'],safe=''))
+              assert replay.get('monitor',{}).get('id')==a['monitoredPlans'][0]['id'],replay
+          vol=check('/api/intelligence/volatility?symbol=BTC_USDT')
+          assert vol.get('available') is True and vol.get('samples',0)>=34,vol
+          try:
+              book=check('/api/intelligence/liquidity?symbol=BTC_USDT')
+              assert book.get('available') is True and book.get('liquidationHeatmapAvailable') is False,book
+              print('ATLAS V5 MEXC order-book evidence:',book['spreadPct'])
+          except urllib.error.HTTPError as e:
+              if e.code!=503:raise
+              print('ATLAS V5 upstream order book unavailable; route reports 503 honestly')
+          print('ATLAS V5 advanced:',a['selfAudit']['status'],'OI coverage',a['oiSnapshot']['coverage'],
+                'tournament observed',a['tournament']['reviewed'])
           m=check('/api/market');assert len(m.get('items',[]))>50
           req=urllib.request.Request(b+'/api/ingest/github',data=b'{}',headers={'Content-Type':'application/json','User-Agent':'ATLAS-Preview-Validation/2.0'})
           try:urllib.request.urlopen(req,timeout=20);raise AssertionError('Unauthorized publisher accepted!')
