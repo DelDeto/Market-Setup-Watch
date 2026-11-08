@@ -209,3 +209,12 @@ The new **V4 Intelligence** tab is read-only except for the user's own hypotheti
 **Not shipped as completed V4/V5 capabilities:** order-book liquidation heatmap, verified OI/taker flows, full sector taxonomy, statistically calibrated win-probability engine, strategy OOS tournament, lead/lag prediction, generative AI Copilot, forecast-volatility model, self-adjusting strategy engine, actual account PnL. The API exposes these limitations rather than faking values.
 
 **Safety / deployment:** no order API, scanner logic, Telegram recipients, secrets, Cron, database schema or DO bindings are changed by this patch. Production deployment requires CI, controlled Worker upload with the existing bindings, and smoke checks on /api/intelligence, /api/health and the existing scanner/tracking/macro endpoints. No Worker deployment is implied by a GitHub commit/PR.
+
+
+### V4.0 production verification — 2026-11-08
+
+- PR #21 merged into main, commit `e0d54b1274980fdddbc2079de2d2540c8a55a0cf`; Cloudflare Worker `atlas-market-terminal` uploaded as production deployment `8a7af20c5ffb4476816f737c02a38ba6` (100%).
+- Preview v4 code passed the Preview E2E smoke, including `GET /api/intelligence`, risk valid/invalid inputs and existing live, relationship and macro endpoints.
+- Post-deployment production smoke run `42500280600` passed; output showed `ATLAS V4 Intelligence OK: OK BEAR_TREND_PROXY`, `Public Worker OK: {'status':'ok',...,'lastError':None}`. Regime is a transient 24h diagnostic, not a trade instruction.
+- Preserved Worker bindings `AI`, `DB`, `LIVE_ROOM`; existing Cron schedules still `*/2 * * * *`, `*/3 * * * *`, `*/5 * * * *` (UTC). No scanner or Telegram change from V4.
+- If V4 becomes unstable, roll back only the Worker to the prior deployment, while leaving D1 schema (unchanged) and scanner jobs untouched. The V4 capability matrix must remain honest about unavailable advanced data integrations.
