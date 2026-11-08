@@ -12,8 +12,10 @@ export const FEEDS=[
  {key:'bls_cpi',name:'BLS · Consumer Prices',url:'https://www.bls.gov/feed/cpi.rss',tier:'official'},
  {key:'bls_jobs',name:'BLS · Employment',url:'https://www.bls.gov/feed/empsit.rss',tier:'official'},
  {key:'bls_ppi',name:'BLS · Producer Prices',url:'https://www.bls.gov/feed/ppi.rss',tier:'official'},
- {key:'news_macro',name:'Google News · Macro',url:GOOGLE+encodeURIComponent('Federal Reserve OR FOMC OR CPI OR PCE OR US Treasury crypto market when:2d')+'&hl=en-US&gl=US&ceid=US:en',tier:'aggregator'},
- {key:'news_crypto_policy',name:'Google News · Crypto Policy',url:GOOGLE+encodeURIComponent('SEC bitcoin ETF OR CFTC crypto regulation OR stablecoin US policy when:2d')+'&hl=en-US&gl=US&ceid=US:en',tier:'aggregator'}
+ {key:'sec_releases',name:'SEC · Official Releases',url:'https://www.sec.gov/news/pressreleases.rss',tier:'official'},
+ {key:'ecb_press',name:'ECB · Press & Monetary',url:'https://www.ecb.europa.eu/rss/press.html',tier:'official'},
+ {key:'crypto_wire',name:'CoinDesk · Editorial',url:'https://www.coindesk.com/arc/outboundfeeds/rss/?outputType=xml',tier:'aggregator'},
+ {key:'crypto_regulation',name:'Cointelegraph · Regulation',url:'https://cointelegraph.com/rss/tag/regulation',tier:'aggregator'}
 ];
 function response(body,status=200){return new Response(JSON.stringify(body),{headers:JSON_HEADERS,status})}
 function clean(s){return String(s||'').replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g,'$1').replace(/<[^>]*>/g,' ').replace(/&amp;/gi,'&').replace(/&lt;/gi,'<').replace(/&gt;/gi,'>').replace(/&quot;/gi,'"').replace(/&#39;|&apos;/gi,"'").replace(/&#(\d+);/g,(_,n)=>String.fromCodePoint(Math.min(1114111,Number(n)))).replace(/\s+/g,' ').trim()}
@@ -42,13 +44,21 @@ export function parseFeed(xml,feed,nowMs=Date.now()){
   const host=new URL(url).hostname;
   if(feed.key.startsWith('fed_')&&!host.endsWith('federalreserve.gov'))continue;
   if(feed.key.startsWith('bls_')&&!host.endsWith('bls.gov'))continue;
-  if(feed.tier==='aggregator'&&!host.endsWith('google.com')&&!host.endsWith('news.google.com'))continue;
+  if(feed.key==='sec_releases'&&!host.endsWith('sec.gov'))continue;
+  if(feed.key==='ecb_press'&&!host.endsWith('ecb.europa.eu'))continue;
+  if(feed.key==='crypto_wire'&&!host.endsWith('coindesk.com'))continue;
+  if(feed.key==='crypto_regulation'&&!host.endsWith('cointelegraph.com'))continue;
+  if(feed.tier==='aggregator'&&!RULES.some(rule=>rule.re.test(title+' '+summary)))continue;
+  if(feed.key==='sec_releases'&&!/crypto|digital asset|bitcoin|ethereum|stablecoin|exchange-traded|ETF|tokeniz|securit(ies|y) law/i.test(title+' '+summary))continue;
+  if(feed.key==='ecb_press'&&!/monetary policy|interest rate|central bank|inflation|liquidity|rate decision/i.test(title+' '+summary))continue;
   seen.add(url);result.push({title,url,description:summary,publishedAt:new Date(stamp).toISOString(),
    source:feed.name,sourceKey:feed.key,tier:feed.tier});
  }
  return result;
 }
 const RULES=[
+ {cat:'ECB_POLICY',re:/european central bank|\becb\b|euro area interest rate|deposit facility rate/i,sev:3,
+  risk:'Chính sách ECB có thể ảnh hưởng thanh khoản EUR, tỷ giá và tâm lý tài sản rủi ro; chưa thể suy ra trực tiếp hướng BTC.'},
  {cat:'FED_POLICY',re:/fomc|federal open market|interest rate|fed funds|federal reserve|monetary policy|powell|rate cut|rate hike/i,sev:3,
   risk:'Các quyết định và tín hiệu lãi suất có thể làm thay đổi thanh khoản kỳ vọng và khẩu vị rủi ro. Cần đối chiếu DXY, lợi suất Mỹ và phản ứng BTC/ETH.'},
  {cat:'INFLATION',re:/consumer price|inflation|inflationary|cpi\b|core pce|personal consumption expenditure|\bppi\b|producer price/i,sev:3,
@@ -74,7 +84,7 @@ export function assess(item){
  if(cat==='INFLATION'&&/\b(higher than expected|above forecast|hotter than expected)\b/.test(full))bias='RISK_OFF_POSSIBLE';
  if(cat==='INFLATION'&&/\b(lower than expected|below forecast|cooler than expected)\b/.test(full))bias='RISK_ON_POSSIBLE';
  const templates={
- FED_POLICY:'Cập nhật chính sách tiền tệ Fed: ',INFLATION:'Cập nhật lạm phát Mỹ: ',
+ ECB_POLICY:'Cập nhật chính sách tiền tệ châu Âu: ',FED_POLICY:'Cập nhật chính sách tiền tệ Fed: ',INFLATION:'Cập nhật lạm phát Mỹ: ',
  EMPLOYMENT:'Cập nhật lao động/việc làm Mỹ: ',REGULATION:'Cập nhật chính sách và pháp lý crypto: ',
  LIQUIDITY:'Cập nhật thanh khoản và lợi suất: ',GEOPOLITICS:'Cập nhật rủi ro vĩ mô: ',
  GENERAL_MACRO:'Tin kinh tế/tài chính: '
@@ -107,8 +117,9 @@ async function annotateAi(env,row){
    {role:'user',content:JSON.stringify({headline:row.title,feed_description:row.description,category:row.category})}
   ];
   const res=await env.AI.run('@cf/meta/llama-3.1-8b-instruct',{messages,max_tokens:240,temperature:0.1});
-  const raw=String(res.response||res.result?.response||res.choices?.[0]?.message?.content||'');
-  const object=JSON.parse(raw.match(/\{[\s\S]*\}/)?.[0]||'{}');
+  const direct=res.response;
+  const object=(direct&&typeof direct==='object')?direct:
+   JSON.parse(String(direct||res.result?.response||res.choices?.[0]?.message?.content||'').match(/\{[\s\S]*\}/)?.[0]||'{}');
   if(typeof object.summary_vi==='string'&&typeof object.rationale_vi==='string'&&object.summary_vi.length>15&&object.rationale_vi.length>15){
    return {...row,summaryVi:object.summary_vi.slice(0,560),rationaleVi:object.rationale_vi.slice(0,570),method:'workers_ai_headline_only'};
   }
@@ -150,6 +161,17 @@ export async function collectMacro(env){
     .bind(feed.key,feed.name,feed.tier,started,err?null:started,err,count).run();
   if(err)failed.push(feed.key+': '+err);
  }
+ // Re-enrich official HIGH items originally saved with the fallback after AI errors.
+ if(env.AI){
+  const candidates=await env.DB.prepare("SELECT id,title,description,category,impact,tier,summary_vi,rationale_vi FROM macro_news WHERE tier='official' AND impact='HIGH' AND summary_method='rule_based' ORDER BY published_at DESC LIMIT 2").all();
+  for(const candidate of candidates.results||[]){
+   const improved=await annotateAi(env,{...candidate,summaryVi:candidate.summary_vi,rationaleVi:candidate.rationale_vi,method:'rule_based'});
+   if(improved.method==='workers_ai_headline_only'){
+    await env.DB.prepare("UPDATE macro_news SET summary_vi=?,rationale_vi=?,summary_method='workers_ai_headline_only' WHERE id=? AND summary_method='rule_based'")
+     .bind(improved.summaryVi,improved.rationaleVi,candidate.id).run();
+   }
+  }
+ }
  await env.DB.prepare("INSERT INTO macro_engine_health(id,checked_at,source_success,source_total,new_count,latest_error) VALUES(1,?,?,?, ?,?) ON CONFLICT(id) DO UPDATE SET checked_at=excluded.checked_at,source_success=excluded.source_success,source_total=excluded.source_total,new_count=excluded.new_count,latest_error=excluded.latest_error")
   .bind(started,sourcesOk,FEEDS.length,added,failed.length?failed.slice(0,3).join(' | '):null).run();
  return {checkedAt:started,sourceSuccess:sourcesOk,sourceTotal:FEEDS.length,added,alerted,skipped,errors:failed};
@@ -172,7 +194,7 @@ export async function trackMacroReactions(env,{max=8}={}){
   "SELECT n.id,n.published_at,r.symbol,r.horizon FROM macro_news n CROSS JOIN (SELECT 'BTC_USDT' symbol UNION ALL SELECT 'ETH_USDT') a CROSS JOIN (SELECT '15m' horizon UNION ALL SELECT '1h' UNION ALL SELECT '4h' UNION ALL SELECT '24h') h LEFT JOIN macro_reactions r ON 0=1 WHERE 1=0").all().catch(()=>null);
  // Explicit horizons rather than dynamically fabricated event labels.
  const pending=await env.DB.prepare("SELECT n.id,n.published_at FROM macro_news n WHERE n.published_at>? AND n.published_at<? AND (SELECT count(*) FROM macro_reactions m WHERE m.news_id=n.id)<8 ORDER BY n.published_at DESC LIMIT 24")
-  .bind(new Date(now-10*86400000).toISOString(),new Date(now-15*60000).toISOString()).all();
+  .bind(new Date(now-15*86400000).toISOString(),new Date(now-15*60000).toISOString()).all();
  let saved=0,checked=0,failures=[];
  outer:for(const n of pending.results||[]){
   const pub=Date.parse(n.published_at);
@@ -180,7 +202,7 @@ export async function trackMacroReactions(env,{max=8}={}){
   for(const asset of ['BTC_USDT','ETH_USDT']){
    for(const horizon of HORIZONS){
     if(checked>=max)break outer;
-    if(now<pub+horizon.ms+15*60000)continue;
+    if(now<pub+horizon.ms+(horizon.ms<=3600000?60000:900000))continue;
     const existing=await env.DB.prepare('SELECT news_id FROM macro_reactions WHERE news_id=? AND symbol=? AND horizon=?').bind(n.id,asset,horizon.label).first();
     if(existing)continue;
     checked++;
