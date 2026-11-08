@@ -128,3 +128,17 @@ CREATE TABLE IF NOT EXISTS macro_alerts (
  leased_until TEXT,delivered_at TEXT
 );
 CREATE INDEX IF NOT EXISTS idx_macro_alert_status ON macro_alerts(status,created_at);
+
+
+-- ATLAS V3.5.2: official BLS upcoming economic release calendar (no forecast/actual).
+CREATE TABLE IF NOT EXISTS macro_calendar_events(
+ id TEXT PRIMARY KEY,source_key TEXT NOT NULL,source_name TEXT NOT NULL,uid TEXT NOT NULL,
+ title TEXT NOT NULL,kind TEXT NOT NULL,impact TEXT NOT NULL,
+ scheduled_at TEXT NOT NULL,source_url TEXT NOT NULL,status TEXT NOT NULL,
+ checked_at TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS idx_macro_calendar_when ON macro_calendar_events(scheduled_at,impact);
+CREATE TABLE IF NOT EXISTS macro_calendar_health(
+ source TEXT PRIMARY KEY,last_attempt_at TEXT NOT NULL,last_success_at TEXT,
+ last_error TEXT,last_count INTEGER NOT NULL DEFAULT 0
+);
