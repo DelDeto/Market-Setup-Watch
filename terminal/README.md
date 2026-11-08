@@ -171,3 +171,12 @@ The 2026-11-08 Market Setup Watch scanner computed a full market report but fail
 - **All source timestamps stay UTC ISO 8601 in D1, Cloudflare Workers, GitHub Actions, Cron, MEXC OHLCV, and outcome calculations.** The timezone control is purely presentation. No scanner rules, candle windows, prices, signals, triggers or Telegram sending schedules are shifted.
 - Example: BLS CPI release `2026-11-10T13:30:00Z` appears as `10/11/2026 20:30:00 ICT` by default and `10/11/2026 13:30:00 UTC` when switched. All headlines retain their original UTC publication timestamp in the API.
 - Test coverage includes day/year rollover, invalid timestamps, both time zones, timezone selector persistence, dashboard JS syntax and Preview/production HTML smoke checks.
+
+
+## V3.6: Pair Relationship Lab
+
+- Compare any two MEXC USDT Perpetual instruments (BTC/ZEC, ETH/BTC) from historical CLOSED 1h/4h/1d candles; source: MEXC public futures API. Endpoint: GET /api/relationship?a=BTC&b=ZEC&tf=4h. Requires >=22 common closed price observations.
+- For BTC/DXY, DXY is an INDICATIVE RECONSTRUCTED daily six-FX basket (not ICE licensed real-time DXY). ECB euro reference FX rates 90-day XML is primary; Frankfurter redistributing ECB rates is an explicitly labeled fallback. DXY forces timeframe 1D. ECB source has weekday fixings; MEXC closes are grouped by UTC dates, not perfectly synchronized with ECB reference rate instant. Weekends and holidays are not forward filled.
+- Metrics: Pearson correlation on matched log returns, 20-bar rolling correlation, beta (A relative to B), index-to-100 price visualization, comparative percentage returns, vol ratio, sample coverage and source disclosure. No inferred causality or automatic trading.
+- New /assets/relationship.js is a same-origin classic browser script drawing normalized price and rolling correlation canvases with read-only API fetches. UI has presets for BTC/ZEC, BTC/DXY and ETH/BTC.
+- Source failures, invalid symbols/timeframes, mismatched timestamps and constant price histories cannot become fake correlations. Limits: only symbols with available MEXC Futures contracts or ECB proxy DXY; not arbitrary equities or commodities. Test with terminal/tests/relationships.test.mjs and Preview/production smoke.
