@@ -103,6 +103,12 @@ async function fetchRss(feed){
   return s;
  }finally{clearTimeout(t)}
 }
+export function parseAiResult(res){
+ const direct=res?.response;
+ if(direct&&typeof direct==='object')return direct;
+ const raw=String(direct||res?.result?.response||res?.choices?.[0]?.message?.content||'');
+ return JSON.parse(raw.match(/\{[\s\S]*\}/)?.[0]||'{}');
+}
 async function annotateAi(env,row){
  if(!env.AI||row.impact!=='HIGH'||row.tier!=='official')return row;
  // Strict daily cap, to remain beneath the provider's free quota in normal operation.
@@ -117,9 +123,7 @@ async function annotateAi(env,row){
    {role:'user',content:JSON.stringify({headline:row.title,feed_description:row.description,category:row.category})}
   ];
   const res=await env.AI.run('@cf/meta/llama-3.1-8b-instruct',{messages,max_tokens:240,temperature:0.1});
-  const direct=res.response;
-  const object=(direct&&typeof direct==='object')?direct:
-   JSON.parse(String(direct||res.result?.response||res.choices?.[0]?.message?.content||'').match(/\{[\s\S]*\}/)?.[0]||'{}');
+  const object=parseAiResult(res);
   if(typeof object.summary_vi==='string'&&typeof object.rationale_vi==='string'&&object.summary_vi.length>15&&object.rationale_vi.length>15){
    return {...row,summaryVi:object.summary_vi.slice(0,560),rationaleVi:object.rationale_vi.slice(0,570),method:'workers_ai_headline_only'};
   }
