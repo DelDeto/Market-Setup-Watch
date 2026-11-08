@@ -68,7 +68,7 @@ test('both dropdowns populate from MEXC, retain DXY and preserve independent sel
  };
  const ctx=createContext({
   document,Option:function(label,value){this.label=label;this.value=value},
-  state:{markets:[{symbol:'BTC_USDT'},{symbol:'ZEC_USDT'},{symbol:'SOL_USDT'},{symbol:'ETH_USDT'}, {symbol:'bad'},{symbol:'BTC_USDT'}]},
+  state:{markets:[...Array.from({length:25},(_,i)=>({symbol:'TEST'+(i+10)+'_USDT'})),{symbol:'BTC_USDT'},{symbol:'ZEC_USDT'},{symbol:'SOL_USDT'},{symbol:'ETH_USDT'}, {symbol:'bad'},{symbol:'BTC_USDT'}]},
   window:{addEventListener:()=>{}},$:id=>els[id],
   get:async()=>{throw Error('Should use already fetched market state')},
   console
