@@ -200,6 +200,7 @@ export function buildAdvanced(inputs={}){
  const marketOI=items.filter(x=>n(x.openInterestContracts)>0).length;
  return {version:'5.0-evidence',generatedAt:iso(),smartMoney,tournament,selfAudit:audit,macroEvents:inputs.calendar||[],
   oiSnapshot:{coverage:marketOI,total:items.length,source:'MEXC contract ticker holdVol',units:'contracts'},
+  monitoredPlans:(inputs.monitors||[]).slice(0,60).map(x=>({id:x.id,symbol:x.symbol,status:x.status,createdAt:x.created_at})),
   capabilities:[
    {name:'Market Regime AI',status:'RULE_BASED_PROXY',api:'/api/intelligence'},
    {name:'Smart Money Flow',status:smartMoney.coverage?'OI_DELTA_AVAILABLE':'OI_HISTORY_BOOTSTRAPPING',api:'/api/intelligence/advanced'},
