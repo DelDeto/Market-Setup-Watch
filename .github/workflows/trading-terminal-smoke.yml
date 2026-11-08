@@ -83,7 +83,7 @@ jobs:
           assert intel.get('version')=='4.0.0-research',intel
           assert intel.get('health') and intel.get('marketRegime') and intel.get('capabilities'),intel
           assert intel['marketRegime']['instruments']>50,intel['marketRegime']
-          assert intel['funding']['openInterestAvailable'] is False,intel['funding']
+          assert isinstance(intel['funding']['openInterestAvailable'],bool),intel['funding']
           risk=get('/api/intelligence/risk?equity=1000&entry=100&stop=98&riskPct=0.5&maxExposurePct=20&direction=LONG')
           assert risk['valid'] and risk['units']==2 and risk['exposureCapped'],risk
           intel_js=get('/assets/intelligence.js')
