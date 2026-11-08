@@ -55,3 +55,20 @@ test('iCal SUMMARY with language parameters and standard UID/URL are parsed',()=
  assert.equal(rows[0].uid,'jobs-2026');
  assert.equal(rows[0].scheduledAt,'2026-12-04T13:30:00.000Z');
 });
+
+test('BLS LIVE feed TZID=US-Eastern is recognized across winter and summer DST',()=>{
+ assert.equal(icalToUtc('20261110T083000','US-Eastern'),'2026-11-10T13:30:00.000Z');
+ assert.equal(icalToUtc('20260714T083000','US-Eastern'),'2026-07-14T12:30:00.000Z');
+ assert.equal(icalToUtc('20261110T083000','US/Eastern'),'2026-11-10T13:30:00.000Z');
+ const actualFormat=ics([[
+   'BEGIN:VEVENT',
+   'UID:f65741ec-4080-474c-b2e3-1349fe430963',
+   'DTSTART;TZID=US-Eastern:20261110T083000',
+   'SUMMARY:Consumer Price Index - October 2026',
+   'END:VEVENT'
+ ].join('\r\n')]);
+ const x=parseBlsCalendar(actualFormat,now);
+ assert.equal(x.length,1);
+ assert.equal(x[0].kind,'CPI');
+ assert.equal(x[0].scheduledAt,'2026-11-10T13:30:00.000Z');
+});
