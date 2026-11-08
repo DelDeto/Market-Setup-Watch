@@ -24,6 +24,7 @@ jobs:
           node --check terminal/live.js
           node --check terminal/publications.js
           node --check terminal/outcomes.js
+          node --check terminal/watchdog.js
           node --test terminal/tests/*.test.mjs
       - name: Verify OIDC publisher scripts
         run: python -m py_compile terminal/publish_scan.py terminal/dispatch_events.py terminal/scanner_recovery.py
@@ -34,7 +35,7 @@ jobs:
           python - <<'PY'
           from pathlib import Path
           src=Path('terminal/worker.js').read_text()
-          for route in ('/api/market','/api/chart','/api/dashboard','/api/research','/api/health','/api/ingest','/api/tracking','/api/outcomes'):
+          for route in ('/api/market','/api/chart','/api/dashboard','/api/research','/api/health','/api/ingest','/api/tracking','/api/outcomes','/api/watchdog','/api/watchdog/claim'):
               assert route in src, route
           assert "PUBLISH_TOKEN" in src and "unauthorized" in src
           assert "async scheduled" in src
