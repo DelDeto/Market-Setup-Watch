@@ -33,6 +33,10 @@ jobs:
           b=os.environ['ATLAS_URL']
           def check(path):
               with urllib.request.urlopen(urllib.request.Request(b+path,headers={'User-Agent':'ATLAS-Preview-Validation/2.0'}),timeout=25) as r:return json.load(r)
+          with urllib.request.urlopen(urllib.request.Request(b+'/',headers={'User-Agent':'ATLAS-Preview-Validation/2.0'}),timeout=20) as page_response:
+              page=page_response.read().decode('utf-8')
+          assert 'id="timezoneSelect"' in page and 'value="VN"' in page and 'value="UTC"' in page
+          assert "Asia/Ho_Chi_Minh" in page and "atlas.display_time_zone" in page
           h=check('/api/live-health');print('Feed:',h)
           assert h.get('updatedAt') and not h.get('error'),h
           t=check('/api/tracking');assert all(k in t for k in ('signals','events','publications'))
