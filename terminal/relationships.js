@@ -135,6 +135,28 @@ export function analyzeRelationships(pairs){
  const older20=aR.length>=40?pearson(aR.slice(-40,-20),bR.slice(-40,-20)):null;
  const vA=variance(aR),vB=variance(bR);
  const beta=vB&&vB>1e-16?cov(aR,bR)/vB:null;
+ const lagValues=[];
+ for(let lag=-3;lag<=3;lag++){
+  // Lag is an offset comparison of historical closed returns, not a claim of predictive causality.
+  const x=[],y=[];
+  for(let i=0;i<aR.length;i++){
+   const j=i-lag;
+   if(j>=0&&j<bR.length){x.push(aR[i]);y.push(bR[j])}
+  }
+  lagValues.push({lagBarsBPrecedesA:lag,correlation:round(pearson(x,y),3),sampleCount:x.length});
+ }
+ const lagCandidates=lagValues.filter(x=>x.lagBarsBPrecedesA!==0&&x.sampleCount>=20&&x.correlation!==null);
+ lagCandidates.sort((x,y)=>Math.abs(y.correlation)-Math.abs(x.correlation));
+ let divergenceZ=null;
+ if(beta!==null){
+  const spreads=pairs.map(v=>Math.log(v.a/a0)-beta*Math.log(v.b/b0)),window=spreads.slice(-20);
+  if(window.length>=20){
+   const mean=window.reduce((s,v)=>s+v,0)/window.length;
+   const sd=Math.sqrt(window.reduce((s,v)=>s+(v-mean)**2,0)/(window.length-1));
+   if(sd>1e-9)divergenceZ=round((window.at(-1)-mean)/sd,3);
+  }
+ }
+
  const retA=100*(pairs.at(-1).a/a0-1),retB=100*(pairs.at(-1).b/b0-1);
  let relation='INCONCLUSIVE';
  if(correlation!==null){relation=correlation>=0.6?'STRONG_POSITIVE':correlation>=0.25?'MODERATE_POSITIVE':correlation<=-0.6?'STRONG_INVERSE':correlation<=-0.25?'MODERATE_INVERSE':'WEAK_OR_MIXED'}
@@ -144,7 +166,8 @@ export function analyzeRelationships(pairs){
   volatilityB:round(vB===null?null:Math.sqrt(vB)*100,3),
   volRatio:round(vA&&vB?Math.sqrt(vA/vB):null,3),
   returnA:round(retA,2),returnB:round(retB,2),relativeReturn:round(retA-retB,2),
-  points,rolling,
+  points,rolling,lagDiagnostics:lagValues,largestAbsHistoricalLag:lagCandidates[0]||null,
+  divergenceZ20:divergenceZ,lagCaveat:'Lead/lag offsets are retrospective, vulnerable to multiple comparisons and cannot establish price prediction.',
   interpretation:'Pearson coefficient uses aligned logarithmic CLOSE-to-CLOSE returns, not price levels; BETA is sensitivity of A to B returns; window is historical and correlation is not causation.'};
 }
 export async function relationshipApi(reqUrl){
