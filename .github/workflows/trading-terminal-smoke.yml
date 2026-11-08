@@ -61,6 +61,9 @@ jobs:
           wd=get('/api/watchdog')
           assert wd.get('watchdog',{}).get('status') in ('OK','STALE','INITIALIZING'),wd
           assert 'method' in wd,wd
+          macro=get('/api/macro?limit=10')
+          assert macro.get('version')=='3.5' and isinstance(macro.get('news'),list),macro
+          assert isinstance(macro.get('feeds'),list),macro
           outcome=get('/api/outcomes')
           assert 'publications' in outcome and 'bySource' in outcome
           research=get('/api/research')
