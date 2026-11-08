@@ -29,6 +29,7 @@ function canonical(raw){
  }catch{return null}
 }
 async function hash(s){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('').slice(0,32)}
+function trustedHost(host,domain){return host===domain||host.endsWith('.'+domain)}
 export function parseFeed(xml,feed,nowMs=Date.now()){
  const chunks=[...xml.matchAll(/<item\b[^>]*>([\s\S]*?)<\/item>/gi)].map(x=>x[1]);
  if(!chunks.length)chunks.push(...[...xml.matchAll(/<entry\b[^>]*>([\s\S]*?)<\/entry>/gi)].map(x=>x[1]));
@@ -42,12 +43,12 @@ export function parseFeed(xml,feed,nowMs=Date.now()){
   if(!title||!url||!Number.isFinite(stamp)||stamp>nowMs+5*60000||stamp<nowMs-15*86400000||seen.has(url))continue;
   // Only the declared host is allowed to qualify as an official source.
   const host=new URL(url).hostname;
-  if(feed.key.startsWith('fed_')&&!host.endsWith('federalreserve.gov'))continue;
-  if(feed.key.startsWith('bls_')&&!host.endsWith('bls.gov'))continue;
-  if(feed.key==='sec_releases'&&!host.endsWith('sec.gov'))continue;
-  if(feed.key==='ecb_press'&&!host.endsWith('ecb.europa.eu'))continue;
-  if(feed.key==='crypto_wire'&&!host.endsWith('coindesk.com'))continue;
-  if(feed.key==='crypto_regulation'&&!host.endsWith('cointelegraph.com'))continue;
+  if(feed.key.startsWith('fed_')&&!trustedHost(host,'federalreserve.gov'))continue;
+  if(feed.key.startsWith('bls_')&&!trustedHost(host,'bls.gov'))continue;
+  if(feed.key==='sec_releases'&&!trustedHost(host,'sec.gov'))continue;
+  if(feed.key==='ecb_press'&&!trustedHost(host,'ecb.europa.eu'))continue;
+  if(feed.key==='crypto_wire'&&!trustedHost(host,'coindesk.com'))continue;
+  if(feed.key==='crypto_regulation'&&!trustedHost(host,'cointelegraph.com'))continue;
   // Editorial macro eligibility is title-led; shared article body boilerplate
   // must not cause unrelated industry stories to enter the macro feed.
   if(feed.tier==='aggregator'&&!/(?:\b(?:fed|fomc|cpi|pce|ppi|nfp|nonfarm|payrolls|inflation|unemployment|recession|tariffs?|yields?|liquidity|central bank|rate cuts?|rate hikes?|interest rates?|sanctions?|treasury|stablecoin|cftc|sec|regulator|regulation|licensing|crypto laws?|ban(?:s|ned|ning)?|etf|jobs|employment|trade war|tax policy)\b|monetary policy|exchange(?:s)? blocked|exchange crackdown)/i.test(title))continue;

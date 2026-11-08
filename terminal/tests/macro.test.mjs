@@ -62,3 +62,13 @@ test('official SEC/ECB links cannot be spoofed',()=>{
  assert.equal(parseFeed(rss([item('SEC digital asset regulation','https://sec.gov.evil.tld/press')]),sec,now).length,0);
  assert.equal(parseFeed(rss([item('ECB monetary policy press release','https://ecb.europa.eu.evil.tld/press')]),ecb,now).length,0);
 });
+
+
+test('look-alike official domains cannot pass trusted domain checks',()=>{
+ const fakeFed=parseFeed(rss([item('FOMC monetary policy','https://attackerfederalreserve.gov/feeds/latest')]),feed,now);
+ const fakeBls=parseFeed(rss([item('Consumer price index CPI','https://fraudbls.gov/news.release/cpi.toc.htm')]),bls,now);
+ assert.equal(fakeFed.length,0);
+ assert.equal(fakeBls.length,0);
+ const realFed=parseFeed(rss([item('FOMC monetary policy','https://www.federalreserve.gov/newsevents/pressreleases/monetary20261108a.htm')]),feed,now);
+ assert.equal(realFed.length,1);
+});
