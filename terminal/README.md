@@ -286,3 +286,8 @@ only the strongest aggregated modeled liquidation price zones. These are NOT
 MEXC depth or actual forced-liquidation fills, and may consume paid credits.
 Do not set these flags or add paid subscriptions without explicit cost
 approval; production ships this integration disabled.
+
+
+### V5.0.1 — OI history fallback when a scheduled MEXC egress address is HTTP 403 blocked
+
+The existing AtlasLiveRoom Durable Object independently obtains real MEXC public ticker data for the server-push feed. It now keeps a **small (max ~28 contracts)** authenticated-by-source MEXC snapshot (including `holdVol` contract counts) in its own DO storage, refreshed no more often than once per four minutes. The Worker Cron's bounded 15-minute OI collector uses this as a **fallback only** when the full-market D1 snapshot is stale or lacks open-interest fields. Source stays labelled `LIVE_ROOM_MEXC_BOUNDED`, not a complete market snapshot. Do **not** overwrite or mislabel the full scanner D1 snapshot with this subset. `/api/intelligence/advanced` displays the source and sample timestamp of its OI coverage independently from full-market source health. The first real OI comparison still requires 45+ minutes of correctly recorded observations. The live-room endpoint `/oi-snapshot` is internal DO-only and not publicly exposed as a Worker URL. No order trading, Telegram strategy, database migration or Cron changes.

@@ -163,22 +163,43 @@ async function getJson(url,timeout=10000){
  const ctl=new AbortController(),timer=setTimeout(()=>ctl.abort(),timeout);
  try{const res=await fetch(url,{signal:ctl.signal,headers:{Accept:'application/json'}});if(!res.ok)throw Error('MEXC upstream HTTP '+res.status);return res.json()}finally{clearTimeout(timer)}
 }
+export function recentOiTickerFromHistory(history=[]){
+ const latest=Math.max(0,...history.map(x=>millis(x.captured_at)||0));
+ if(!latest)return {items:[],capturedAt:null};
+ const rows=(history||[]).filter(x=>(millis(x.captured_at)||0)===latest&&liveSymbols(x.symbol)&&n(x.price)>0&&n(x.open_interest_contracts)>0);
+ return {capturedAt:new Date(latest).toISOString(),items:rows.map(x=>({symbol:x.symbol,price:n(x.price),openInterestContracts:n(x.open_interest_contracts),
+  turnover:n(x.turnover24)||0,updatedAt:x.captured_at}))};
+}
 export async function collectOpenInterestHistory(env){
  const last=await env.DB.prepare('SELECT MAX(captured_at) AS latest FROM market_intel_observations').first();
  if(timeAgo(last?.latest)!==null&&timeAgo(last.latest)<14)return {skipped:'too_recent'};
  const record=await env.DB.prepare('SELECT fetched_at,items_json FROM snapshots WHERE id=1').first();
- const items=safeJson(record?.items_json);
- if(!record||timeAgo(record.fetched_at)>20||items.length<50)return {skipped:'no_fresh_snapshot'};
- const sorted=items.filter(x=>liveSymbols(x.symbol)&&n(x.openInterestContracts)>0&&n(x.price)>0).sort((a,b)=>(n(b.turnover)||0)-(n(a.turnover)||0));
+ let items=safeJson(record?.items_json),at=record?.fetched_at,source='D1_FULL_MEXC';
+ const fresh=record&&timeAgo(at)!==null&&timeAgo(at)<=20;
+ const usable=items.filter(x=>liveSymbols(x.symbol)&&n(x.openInterestContracts)>0&&n(x.price)>0);
+ if(!fresh||usable.length<10){
+  // Independent fresh MEXC samples from the existing live Durable Object when the scheduled
+  // Worker egress is 403-blocked. Do not overwrite or mislabel a full-market ticker cache.
+  try{
+   const room=env.LIVE_ROOM.get(env.LIVE_ROOM.idFromName('atlas-usdt-futures'));
+   const response=await room.fetch('https://room.internal/oi-snapshot');
+   if(!response.ok)return {skipped:'live_room_oi_unavailable'};
+   const sampled=await response.json();
+   if(!sampled.available||timeAgo(sampled.updatedAt)===null||timeAgo(sampled.updatedAt)>15||
+     !Array.isArray(sampled.items)||sampled.items.length<10)return {skipped:'live_room_oi_stale_or_partial'};
+   items=sampled.items;at=sampled.updatedAt;source='LIVE_ROOM_MEXC_BOUNDED';
+  }catch(e){return {skipped:'live_room_oi_fetch_failed',error:String(e).slice(0,90)}}
+ }
+ const sorted=items.filter(x=>liveSymbols(x.symbol)&&n(x.openInterestContracts)>0&&n(x.price)>0)
+  .sort((a,b)=>(n(b.turnover)||0)-(n(a.turnover)||0));
  const selected=[...new Map([...sorted.slice(0,25),...['BTC_USDT','ETH_USDT','ZEC_USDT'].map(s=>sorted.find(x=>x.symbol===s)).filter(Boolean)].map(x=>[x.symbol,x])).values()];
- if(!selected.length)return {skipped:'holdvol_not_exposed'};
- const at=record.fetched_at;
- const stmts=selected.map(x=>env.DB.prepare('INSERT OR IGNORE INTO market_intel_observations(symbol,captured_at,price,open_interest_contracts,turnover24) VALUES(?,?,?,?,?)').bind(x.symbol,at,x.price,x.openInterestContracts,x.turnover||null));
- await env.DB.batch(stmts);
- // Prune once every few hours; avoid huge D1 history and avoid repeated writes.
+ if(selected.length<10)return {skipped:'oi_sample_too_small'};
+ const statements=selected.map(x=>env.DB.prepare('INSERT OR IGNORE INTO market_intel_observations(symbol,captured_at,price,open_interest_contracts,turnover24) VALUES(?,?,?,?,?)')
+  .bind(x.symbol,at,x.price,x.openInterestContracts,x.turnover||null));
+ await env.DB.batch(statements);
  if(new Date().getUTCHours()%6===0&&new Date().getUTCMinutes()<5)
   await env.DB.prepare("DELETE FROM market_intel_observations WHERE captured_at < datetime('now','-7 days')").run();
- return {captured:selected.length,at};
+ return {captured:selected.length,at,source};
 }
 export async function fetchAdvancedInputs(env){
  const safe=async(p,fallback)=>{try{return await p}catch{return fallback}};
@@ -194,12 +215,18 @@ export async function fetchAdvancedInputs(env){
  return {snapshot,scanner,outcome,macro,monitors:monitor.results||[],history:history.results||[],calendar:calendar.results||[]};
 }
 export function buildAdvanced(inputs={}){
- const items=safeJson(inputs.snapshot?.items_json);
+ const fullItems=safeJson(inputs.snapshot?.items_json);
+ const lastOiHistory=recentOiTickerFromHistory(inputs.history);
+ const fullFresh=timeAgo(inputs.snapshot?.fetched_at)!==null&&timeAgo(inputs.snapshot.fetched_at)<=20;
+ const fullOI=fullItems.filter(x=>n(x.openInterestContracts)>0).length;
+ const useFull=fullFresh&&fullOI>=10;
+ const items=useFull?fullItems:lastOiHistory.items;
+ const oiSource=useFull?'MEXC full ticker D1 snapshot':'MEXC bounded Durable Object observations in D1';
  const smartMoney=openInterestDelta(items,inputs.history),tournament=strategyTournament(inputs.monitors);
  const audit=selfAudit(inputs);
  const marketOI=items.filter(x=>n(x.openInterestContracts)>0).length;
  return {version:'5.0-evidence',generatedAt:iso(),smartMoney,tournament,selfAudit:audit,macroEvents:inputs.calendar||[],
-  oiSnapshot:{coverage:marketOI,total:items.length,source:'MEXC contract ticker holdVol',units:'contracts'},
+  oiSnapshot:{coverage:marketOI,total:items.length,source:oiSource,units:'contracts',capturedAt:useFull?inputs.snapshot?.fetched_at:lastOiHistory.capturedAt},
   monitoredPlans:(inputs.monitors||[]).slice(0,60).map(x=>({id:x.id,symbol:x.symbol,status:x.status,createdAt:x.created_at})),
   capabilities:[
    {name:'Market Regime AI',status:'RULE_BASED_PROXY',api:'/api/intelligence'},

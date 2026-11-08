@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {openInterestDelta,wilsonInterval,strategyTournament,selfAudit,historicalVolatility,
- orderBookSummary,ruleBasedCopilot,buildAdvanced} from '../intelligence-advanced.js';
+ orderBookSummary,ruleBasedCopilot,buildAdvanced,recentOiTickerFromHistory} from '../intelligence-advanced.js';
 
 const ts=(hoursAgo)=>new Date(Date.now()-hoursAgo*3600*1000).toISOString();
 const m=(id,source='scanner',win=true,hours=1,score=85)=>({id,source,created_at:ts(hours),score,status:win?'TP1_OBSERVED':'SL_OBSERVED',tp1_observed_at:win?ts(hours-.2):null});
@@ -57,4 +57,20 @@ test('capabilities explicitly mark unavailable data and disabled auto trading',(
  assert.equal(out.capabilities.length,15);
  assert.match(out.capabilities.find(x=>x.name.includes('Liquidation')).status,/NO_LIQUIDATION/);
  assert.equal(out.tournament.promotionAllowed,false);
+});
+
+test('bounded Durable Object OI history fallback is marked as real sourced observations, not a market-wide ticker',()=>{
+ const historical=[
+  {symbol:'BTC_USDT',captured_at:ts(2),price:100,open_interest_contracts:100,turnover24:100},
+  {symbol:'BTC_USDT',captured_at:ts(0),price:104,open_interest_contracts:108,turnover24:130},
+  {symbol:'ETH_USDT',captured_at:ts(0),price:45,open_interest_contracts:300,turnover24:120}
+ ];
+ const sample=recentOiTickerFromHistory(historical);
+ assert.equal(sample.items.length,2);
+ assert.ok(sample.items.some(x=>x.symbol==='BTC_USDT'&&x.openInterestContracts===108));
+ const output=buildAdvanced({snapshot:{fetched_at:'2020-01-01T00:00:00Z',items_json:'[]'},history:historical});
+ assert.match(output.oiSnapshot.source,/Durable Object/);
+ assert.equal(output.oiSnapshot.coverage,2);
+ assert.equal(output.smartMoney.coverage,1);
+ assert.equal(output.selfAudit.status,'DEGRADED'); // Full market source is still stale.
 });
