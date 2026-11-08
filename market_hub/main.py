@@ -30,6 +30,7 @@ from .mexc_market import (
     get_contract_universe,
 )
 from .notifier import send_heartbeat, send_telegram
+from .delivery_guard import guarded_notification
 from .outcomes import (
     load_outcomes,
     register_candidates,
@@ -776,19 +777,16 @@ def main():
         encoding="utf-8",
     )
 
-    notification_sent = False
-    notification_kind = None
-
-    if should_notify:
-        notification_sent = send_telegram(
-            report,
-            chart_paths=chart_paths,
-        )
-        notification_kind = "setup_change"
-    elif heartbeat_due:
-        notification_sent = send_heartbeat(report)
-        notification_kind = "heartbeat"
-    else:
+    notification_sent, notification_kind, telegram_error = guarded_notification(
+        should_notify=should_notify,
+        heartbeat_due=heartbeat_due,
+        setup_sender=lambda: send_telegram(report, chart_paths=chart_paths),
+        heartbeat_sender=lambda: send_heartbeat(report),
+    )
+    if telegram_error:
+        print("Telegram acknowledgement unconfirmed (scanner continues):",
+              telegram_error)
+    elif notification_kind is None:
         print(
             "Market Setup Watch: no new unsuppressed "
             "READY/NEAR/DEVELOPING setup change and heartbeat not due; "
@@ -839,6 +837,8 @@ def main():
         "sent_at_utc": datetime.now(timezone.utc).isoformat() if notification_sent else None,
         "items": sent_items,
         "scope": "text body after all Telegram destinations succeed",
+        "error": telegram_error,
+        "partial_delivery_possible": bool(telegram_error),
     }
     REPORT_PATH.write_text(json.dumps(report, ensure_ascii=False, indent=2),
                            encoding="utf-8")
@@ -856,7 +856,7 @@ def main():
             {
                 "updated_at_utc": generated_at,
                 "last_notification_utc": last_notification_utc,
-                "signatures": _compact_for_state(results),
+                "signatures": (_compact_for_state(results) if notification_sent else previous.get("signatures", [])),
                 "counts": counts,
                 "alert_counts": alert_counts,
                 "hold_vol_snapshot": hold_vol_snapshot,
@@ -866,7 +866,7 @@ def main():
                     _compact_swing_pick(item)
                     for item in swing_top_picks
                 ],
-                "swing_signatures": current_swing_signatures,
+                "swing_signatures": (current_swing_signatures if notification_sent else previous.get("swing_signatures", [])),
                 "swing_summary": swing_summary,
             },
             ensure_ascii=False,
