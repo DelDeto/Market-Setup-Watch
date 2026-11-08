@@ -67,8 +67,8 @@ export function fundingRadar(items){
  return {coverage:rows.length,positiveFundingPct:rounded(liquid.length?100*liquid.filter(x=>x.funding>0).length/liquid.length:null,1),
   highAbsoluteFunding:liquid.map(x=>({symbol:x.symbol,fundingRate:x.funding,change24hPct:n(x.changePct)}))
     .sort((a,b)=>Math.abs(b.fundingRate)-Math.abs(a.fundingRate)).slice(0,8),
-  openInterestAvailable:false,liquidationsAvailable:false,
-  caveat:'Funding is a snapshot from MEXC and may be interval-specific. No OI/taker-flow/large-player inference.'};
+  openInterestAvailable:rows.some(x=>n(x.openInterestContracts)>0),openInterestContractsCoverage:rows.filter(x=>n(x.openInterestContracts)>0).length,liquidationsAvailable:false,
+  caveat:'Funding and holdVol (open interest in CONTRACT units) are MEXC ticker snapshots. No verified taker-side flow, big-player attribution or liquidation heatmap.'};
 }
 export function signalLab(monitors=[],publications=[]){
  const valid=(monitors||[]).filter(x=>x&&x.id);
@@ -138,10 +138,10 @@ export function buildIntelligence(input={}){
   volatility:{type:'24h observed range only',symbols:viable(items).filter(x=>['BTC_USDT','ETH_USDT','SOL_USDT'].includes(x.symbol))
    .map(x=>({symbol:x.symbol,observedRangePct:rounded(n(x.high)>0&&n(x.low)>0?100*(x.high-x.low)/x.price:null)})),
    forecastAvailable:false},
-  limitations:['No open-interest or liquidation heatmap feed','Signal score is NOT calibrated win probability',
+  limitations:['Open interest is MEXC contract-unit ticker data; licensed liquidation heatmap is not connected','Signal score is NOT calibrated win probability',
    'No execution/position tracking or account PnL','Sector coverage is intentionally limited','No automatic strategy changes or orders']};
  data.capabilities=[
-  ['Market Regime','PROXY'],['Smart Money','FUNDING_ONLY'],['Signal Confidence','UNCALIBRATED'],
+  ['Market Regime','PROXY'],['Smart Money','FUNDING_AND_OI_SNAPSHOT'],['Signal Confidence','UNCALIBRATED'],
   ['Strategy Lab','OBSERVATIONAL'],['Risk Sizing','HYPOTHETICAL'],
   ['Liquidity Map','NEEDS_DATA'],['Cross-Asset','EXISTING_PAIR_API'],['Macro Impact','EXISTING_MACRO_API'],
   ['Anomaly Radar','PROXY'],['Sector Rotation','CURATED_PROXY'],['AI Copilot','NOT_ENABLED'],
