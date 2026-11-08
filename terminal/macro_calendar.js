@@ -37,8 +37,8 @@ export function parseBlsCalendar(source,nowMs=Date.now()){
  const rows=[],seen=new Set();
  for(const chunk of chunks){
   const lines=chunk[1].split(/\r?\n/).filter(Boolean);
-  const property=(name)=>lines.find(x=>x.toUpperCase().startsWith(name.toUpperCase()))||'';
-  const title=property('SUMMARY:').slice('SUMMARY:'.length).replace(/\\,/g,',').replace(/\\;/g,';').replace(/\\n/g,' ').trim().slice(0,180);
+  const property=(name)=>lines.find(x=>new RegExp('^'+name+'(?:;[^:]*)?:','i').test(x))?.replace(/^[^:]*:/,'')||'';
+  const title=property('SUMMARY').replace(/\\,/g,',').replace(/\\;/g,';').replace(/\\n/g,' ').trim().slice(0,180);
   const startLine=lines.find(x=>/^DTSTART(?:;[^:]*)?:/.test(x))||'';
   const startParts=startLine.split(':');const timeRaw=startParts.slice(1).join(':');
   const zone=/TZID=([^;:]+)/.exec(startParts[0])?.[1]||'America/New_York';
@@ -47,10 +47,10 @@ export function parseBlsCalendar(source,nowMs=Date.now()){
   if(!eventType||!start)continue;
   const t=Date.parse(start);
   if(t<nowMs-5*86400000||t>nowMs+120*86400000)continue;
-  const uid=(property('UID:').slice(4)||title+'@'+start).slice(0,230);
+  const uid=(property('UID')||title+'@'+start).slice(0,230);
   const id='bls:'+eventType.key+':'+start;
   if(seen.has(id))continue;seen.add(id);
-  const original=property('URL:').slice(4);
+  const original=property('URL');
   let url='https://www.bls.gov/schedule/news_release/';
   if(original){try{const u=new URL(original);if(u.protocol==='https:'&&u.hostname==='www.bls.gov')url=u.href.slice(0,600)}catch{}}
   rows.push({id,uid,title,kind:eventType.key,impact:eventType.impact,scheduledAt:start,sourceUrl:url,sourceName:'U.S. Bureau of Labor Statistics',status:'SCHEDULED'});
@@ -60,7 +60,7 @@ export function parseBlsCalendar(source,nowMs=Date.now()){
 export async function collectBlsCalendar(env,{nowMs=Date.now(),force=false}={}){
  const now=new Date(nowMs).toISOString();
  const old=await env.DB.prepare('SELECT last_attempt_at,last_success_at FROM macro_calendar_health WHERE source=?').bind('BLS_ICAL').first();
- if(!force&&old?.last_attempt_at&&nowMs-Date.parse(old.last_attempt_at)<2*3600000)return {skipped:true,lastSuccess:old.last_success_at||null};
+ if(!force&&old?.last_success_at&&old.last_attempt_at&&nowMs-Date.parse(old.last_attempt_at)<2*3600000)return {skipped:true,lastSuccess:old.last_success_at||null};
  let added=0,count=0,error=null;
  try{
   const ctrl=new AbortController();const timer=setTimeout(()=>ctrl.abort(),11000);
@@ -72,13 +72,18 @@ export async function collectBlsCalendar(env,{nowMs=Date.now(),force=false}={}){
   }finally{clearTimeout(timer)}
   if(!/BEGIN:VCALENDAR/.test(body)||!/BEGIN:VEVENT/.test(body))throw Error('BLS_ICAL_INVALID');
   const events=parseBlsCalendar(body,nowMs);count=events.length;
-  if(!events.length)throw Error('NO_SUPPORTED_UPCOMING_BLS_RELEASES');
+  if(!events.length){
+   // Include sanitized public iCal structure in health for audit; no user data.
+   const sample=body.match(/BEGIN:VEVENT([\s\S]*?)END:VEVENT/i)?.[1]||'';
+   const lines=sample.split(/\r?\n/).map(x=>x.trim()).filter(x=>/^(SUMMARY|DTSTART|DTEND|UID|DESCRIPTION)(;|:)/i.test(x)).slice(0,3).map(x=>x.slice(0,70));
+   throw Error('NO_BLS_RELEASES count='+((body.match(/BEGIN:VEVENT/g)||[]).length)+' first='+lines.join(' | '));
+  }
   for(const e of events){
    const r=await env.DB.prepare("INSERT INTO macro_calendar_events(id,source_key,source_name,uid,title,kind,impact,scheduled_at,source_url,status,checked_at) VALUES(?,?,?,?,?,?,?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET title=excluded.title,impact=excluded.impact,source_url=excluded.source_url,checked_at=excluded.checked_at")
     .bind(e.id,'BLS_ICAL',e.sourceName,e.uid,e.title,e.kind,e.impact,e.scheduledAt,e.sourceUrl,e.status,now).run();added+=r.meta?.changes||0;
   }
   await env.DB.prepare("DELETE FROM macro_calendar_events WHERE source_key='BLS_ICAL' AND scheduled_at<?").bind(new Date(nowMs-7*86400000).toISOString()).run();
- }catch(e){error=String(e).slice(0,180)}
+ }catch(e){error=String(e).slice(0,550)}
  await env.DB.prepare("INSERT INTO macro_calendar_health(source,last_attempt_at,last_success_at,last_error,last_count) VALUES(?,?,?,?,?) ON CONFLICT(source) DO UPDATE SET last_attempt_at=excluded.last_attempt_at,last_success_at=COALESCE(excluded.last_success_at,macro_calendar_health.last_success_at),last_error=excluded.last_error,last_count=excluded.last_count")
   .bind('BLS_ICAL',now,error?null:now,error,count).run();
  return {checkedAt:now,success:!error,events:count,upserted:added,error};
