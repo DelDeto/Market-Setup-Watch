@@ -145,7 +145,19 @@ def main():
         else:
             print("ATLAS watchdog incident pending retry:", notice["id"])
     print("ATLAS Cloudflare watchdog Telegram delivered:", incident_delivered)
-    if delivered != len(events) or incident_delivered != len(notices):
+    macro_batch = post("/api/macro/alerts/claim", jwt, {})
+    macro_items = macro_batch.get("alerts") or []
+    print("ATLAS high-impact macro alert batch:", len(macro_items))
+    macro_delivered = 0
+    for news in macro_items:
+        if send_watchdog_notice(news):
+            receipt = post("/api/macro/alerts/ack", jwt, {"ids": [news["id"]]})
+            if receipt.get("acknowledged") == 1:
+                macro_delivered += 1
+        else:
+            print("ATLAS macro alert pending retry:", news["id"])
+    print("ATLAS macro Telegram delivered:", macro_delivered)
+    if delivered != len(events) or incident_delivered != len(notices) or macro_delivered != len(macro_items):
         return 1
     return 0
 

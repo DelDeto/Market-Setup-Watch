@@ -39,13 +39,18 @@ jobs:
           o=check('/api/outcomes');assert 'bySource' in o and 'publications' in o
           w=check('/api/watchdog');assert 'watchdog' in w and 'method' in w
           assert w['watchdog']['status'] in ('OK','STALE','INITIALIZING')
+          macro=check('/api/macro?limit=10')
+          assert macro.get('version')=='3.5'
+          assert isinstance(macro.get('news'),list)
+          assert isinstance(macro.get('feeds'),list)
+          assert isinstance(macro.get('signalContext'),list)
           m=check('/api/market');assert len(m.get('items',[]))>50
           req=urllib.request.Request(b+'/api/ingest/github',data=b'{}',headers={'Content-Type':'application/json','User-Agent':'ATLAS-Preview-Validation/2.0'})
           try:urllib.request.urlopen(req,timeout=20);raise AssertionError('Unauthorized publisher accepted!')
           except urllib.error.HTTPError as e:assert e.code==401,e.code
-          for path in ('/api/watchdog/claim','/api/watchdog/ack'):
+          for path in ('/api/watchdog/claim','/api/watchdog/ack','/api/macro/alerts/claim','/api/macro/alerts/ack'):
               req=urllib.request.Request(b+path,data=b'{}',headers={'Content-Type':'application/json','User-Agent':'ATLAS-Preview-Validation/2.0'})
               try:urllib.request.urlopen(req,timeout=20);raise AssertionError('Unauthenticated watchdog operation accepted!')
               except urllib.error.HTTPError as e:assert e.code in (401,403),(path,e.code)
-          print('ATLAS V3.1 preview watchdog & security checks OK')
+          print('ATLAS V3.5 macro, watch, WebSocket & OIDC security checks OK')
           PY

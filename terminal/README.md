@@ -115,3 +115,27 @@ An independent 15-minute GitHub Actions watchdog now checks if Market Setup Watc
 - GitHub scheduling is best effort: queued notifications can be delayed if GitHub schedules are skipped. Deploying these Worker secrets later enables genuinely independent GitHub recovery dispatch and direct Telegram alerts without redeploying the source code.
 
 **Worker deployment checklist:** apply only the idempotent V3.1 CREATE TABLE/INDEX statements from terminal/schema.sql to D1; upload all worker modules worker.js, live.js, outcomes.js, publications.js, watchdog.js; preserve DB and LIVE_ROOM bindings. Enable Cron expressions `*/2 * * * *`, `*/3 * * * *`, and `*/5 * * * *`. Verify /api/watchdog after the first separate 3-minute trigger, plus the existing health/tracking/outcome endpoints. Do not treat a successful Workers upload as verification that GitHub dispatch or Telegram delivery actually occurred.
+
+
+## ATLAS V3.2–V3.5 Macro & News Intelligence
+
+Existing atlas-market-terminal Worker adds macro.js, D1 macro tables, and the Macro & News dashboard. Reuses */5 * * * * Cron without adding another trigger; existing DB, LIVE_ROOM, scanner, watchdog, outcomes and Telegram relay stay in place.
+
+### V3.2 Collection
+Official Federal Reserve monetary-policy & speeches RSS, BLS CPI/jobs/PPI RSS. Supplemental Google News RSS macro/crypto-policy aggregations are explicitly marked aggregator and are never treated as official announcements. XML parser uses safe-URL, official-domain, date, age and duplicate checks; each article links to the original source. Feed health records failed or blocked source fetches. Summaries are limited to the supplied headline and feed description; no full-text paywall scraping.
+
+### V3.3 Impact and AI
+Rules classify macro categories and HIGH/MEDIUM/LOW impact. Direction is UNCERTAIN by default, with only POSSIBLE risk-on/off interpretations for unambiguous keywords. There is no invented actual-versus-forecast data or certainty about BTC. Optional Cloudflare Workers AI binding AI uses model @cf/meta/llama-3.1-8b-instruct for up to 6 official/HIGH news summaries per UTC day; every actual AI summary is labeled workers_ai_headline_only. Missing or failing AI uses transparent rule_based text. This call cap does not guarantee account costs remain free; review Workers AI neuron usage.
+
+### V3.4 Market reaction
+Track BTC_USDT and ETH_USDT price-level returns in independent 15m/1h/4h/24h windows using MEXC closed candles. Baseline is a full 1m candle that begins after source publication, never a still-forming or pre-publication candle. Values are descriptive returns at specified observation windows, not proof of causation. No auto-trading.
+
+### V3.5 Signal context and Telegram
+High-impact news in a four-hour lookback from a sent READY/SWING plan creates macro_signal_context relations POTENTIAL_ALIGNMENT, POTENTIAL_CONFLICT or INDETERMINATE. It does not modify the scanner, risk plan, direction or any executed order.
+
+Only new (<45 minutes old when first ingested) high-impact OFFICIAL articles create macro Telegram alerts, capped at 8/day and handled by existing signed GitHub Actions claim/ack. Historical backfill never triggers "breaking news" alerts. Telegram may lag GitHub Actions scheduling and must not be reported as real-time guaranteed.
+
+### APIs, tests and migration
+GET /api/macro?limit=36&impact=HIGH&category=INFLATION&source=bls_cpi; POST /api/macro/alerts/claim and /api/macro/alerts/ack require GitHub OIDC exact workflow verification. Source/audit health fields are part of the macro GET response. Apply only V3.2–V3.5 CREATE IF NOT EXISTS section of terminal/schema.sql on an existing database. Deploy worker.js, live.js, outcomes.js, publications.js, watchdog.js, macro.js and preserve D1 and LIVE_ROOM bindings, optionally add binding {type:ai,name:AI}.
+
+Verify a real official RSS fetch, stored item, correct source URL, price observations, macro-signal context and signed Telegram relay independently. Empty results do not count as a completed news feed integration. Do not fabricate samples. Check usage and MEXC rate limits after adding sources.
