@@ -89,6 +89,28 @@ jobs:
           intel_js=get('/assets/intelligence.js')
           assert 'window.loadIntelligence=loadIntelligence' in intel_js
           print('ATLAS V4 Intelligence OK:',intel['health']['status'],intel['marketRegime']['regime'])
+          assert 'id="advancedTab"' in html and 'id="advBookSymbol"' in html
+          adv=get('/api/intelligence/advanced')
+          assert adv.get('version')=='5.0-evidence' and len(adv.get('capabilities',[]))==15,adv
+          assert isinstance(adv.get('smartMoney',{}).get('items'),list),adv
+          assert adv.get('selfAudit') and adv.get('tournament') and 'oiSnapshot' in adv,adv
+          assert 'monitoredPlans' in adv,adv
+          cli=get('/assets/intelligence-advanced.js')
+          assert 'window.loadAdvanced=loadAdvanced' in cli,cli[:200]
+          assistant=get('/api/intelligence/ask?q=btc%20trend')
+          assert assistant.get('mode')=='RULE_BASED_EVIDENCE_ASSISTANT',assistant
+          premium=get('/api/intelligence/liquidations?symbol=BTC_USDT')
+          assert premium.get('available') is False and premium.get('configured') is False,premium
+          if adv['monitoredPlans']:
+              from urllib.parse import quote
+              replay=get('/api/intelligence/replay?id='+quote(adv['monitoredPlans'][0]['id'],safe=''))
+              assert replay.get('monitor',{}).get('id')==adv['monitoredPlans'][0]['id'],replay
+          vol=get('/api/intelligence/volatility?symbol=BTC_USDT')
+          assert vol.get('available') is True and vol.get('samples',0)>=34,vol
+          book=get('/api/intelligence/liquidity?symbol=BTC_USDT')
+          assert book.get('available') is True and book.get('liquidationHeatmapAvailable') is False,book
+          print('ATLAS V5 Add-ons OK:',adv['selfAudit']['status'],'OI snapshot symbols',adv['oiSnapshot']['coverage'],
+                'chronological observations',adv['tournament']['reviewed'])
           outcome=get('/api/outcomes')
           assert 'publications' in outcome and 'bySource' in outcome
           research=get('/api/research')
