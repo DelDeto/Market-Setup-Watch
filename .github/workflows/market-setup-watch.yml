@@ -2,6 +2,15 @@ name: Market Setup Watch
 
 on:
   workflow_dispatch:
+  # One validation scan after scanner source/workflow changes reach main.
+  # State-only JSON commits do not match these paths, so no push loop.
+  push:
+    branches: [main]
+    paths:
+      - 'market_hub/main.py'
+      - 'market_hub/delivery_guard.py'
+      - 'market_hub/notifier.py'
+      - '.github/workflows/market-setup-watch.yml'
   schedule:
     # Primary scanner: four scans per hour, shortly after 15M candle closes.
     # Cron was refreshed on 2026-10-02 to explicitly reactivate scheduling.
@@ -66,6 +75,7 @@ jobs:
             market_hub/scanner.py \
             market_hub/chart.py \
             market_hub/notifier.py \
+            market_hub/delivery_guard.py \
             market_hub/main.py
 
       - name: Scan MEXC USDT perpetual market
