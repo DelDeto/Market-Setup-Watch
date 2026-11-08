@@ -161,3 +161,13 @@ Cloudflare Workers AI returns a structured JSON object from the Workers binding 
 On 2026-11-08, the real BLS iCalendar feed returned 313 events with `DTSTART;TZID=US-Eastern`. Earlier parsing only allowed `US/Eastern` and `America/New_York` and therefore produced no calendar rows. The converter now maps real `US-Eastern` to IANA `America/New_York` with US DST. The new unit test replicates the observed official field, and production D1 must contain an actual future CPI/PPI/jobs event before the calendar feature is called live. Official BLS calendar: https://www.bls.gov/schedule/news_release/bls.ics.
 
 The 2026-11-08 Market Setup Watch scanner computed a full market report but failed when Telegram returned `ReadTimeout`. The safe delivery guard now catches notification transport errors, persists the complete scanner report, and does **not** mark ambiguous/partial Telegram sends as confirmed. On unconfirmed sends, the state retains previously notified intraday/swing signatures so the next scan can retry; duplicate text may still be possible when Telegram accepted a message but its acknowledgment was lost. Error reports expose only the exception class, never URL strings or bot token information. This change does not auto-trade.
+
+
+## ATLAS V3.5.6 — Vietnam time zone display (ICT, UTC+7)
+
+- The web terminal defaults to **Vietnam time** using the IANA `Asia/Ho_Chi_Minh` time zone, with exact `DD/MM/YYYY HH:mm:ss ICT` formatting. This is independent of the viewer's browser/system clock time zone.
+- The top bar includes a **Việt Nam · UTC+7 / UTC · UTC+0** selector, with the choice saved in the browser as `localStorage['atlas.display_time_zone']`. If storage is disabled, the UI remains usable and defaults to ICT on reload.
+- A single `formatStamp()` function is used by the live feed, scanner timestamps, signal publications, entry/TP/SL tracking, research journal, macro articles and source health, BLS economic calendar, watchdog and live sidebar clock. Refreshes existing public APIs when switching, without mutating any server records.
+- **All source timestamps stay UTC ISO 8601 in D1, Cloudflare Workers, GitHub Actions, Cron, MEXC OHLCV, and outcome calculations.** The timezone control is purely presentation. No scanner rules, candle windows, prices, signals, triggers or Telegram sending schedules are shifted.
+- Example: BLS CPI release `2026-11-10T13:30:00Z` appears as `10/11/2026 20:30:00 ICT` by default and `10/11/2026 13:30:00 UTC` when switched. All headlines retain their original UTC publication timestamp in the API.
+- Test coverage includes day/year rollover, invalid timestamps, both time zones, timezone selector persistence, dashboard JS syntax and Preview/production HTML smoke checks.
