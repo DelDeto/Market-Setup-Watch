@@ -65,7 +65,7 @@ async function listMarket(){
   if(!r.ok)throw Error('MEXC HTTP '+r.status);
   const d=await r.json();
   if(d.success===false||!Array.isArray(d.data))throw Error('invalid MEXC ticker payload');
-  const rows=d.data.filter(x=>typeof x.symbol==='string'&&x.symbol.endsWith('_USDT')&&number(x.lastPrice)>0).map(x=>({symbol:x.symbol,price:number(x.lastPrice),changePct:number(x.riseFallRate)===null?null:100*number(x.riseFallRate),turnover:number(x.amount24),volume:number(x.volume24),funding:number(x.fundingRate)}));
+  const rows=d.data.filter(x=>typeof x.symbol==='string'&&x.symbol.endsWith('_USDT')&&number(x.lastPrice)>0).map(x=>({symbol:x.symbol,price:number(x.lastPrice),changePct:number(x.riseFallRate)===null?null:100*number(x.riseFallRate),turnover:number(x.amount24),volume:number(x.volume24),funding:number(x.fundingRate),openInterestContracts:number(x.holdVol)}));
   if(rows.length<50)throw Error('ticker response suspiciously small');
   return rows.sort((a,b)=>(b.turnover||0)-(a.turnover||0));
  }finally{clearTimeout(timer)}
@@ -143,6 +143,7 @@ export class AtlasLiveRoom{
   const url=new URL(req.url);
   if(url.pathname==='/wake'){await this.wake();return response({ok:true})}
   if(url.pathname==='/status'){const h=await this.ctx.storage.get('lastStatus');return response({...(h||{mode:'starting'}),subscribers:this.ctx.getWebSockets().length,scheduled:!!(await this.ctx.storage.getAlarm())})}
+  if(url.pathname==='/oi-snapshot'){const h=await this.ctx.storage.get('lastOiSnapshot');return response(h||{available:false,updatedAt:null,items:[]},h?200:503)}
   if(url.pathname!=='/connect'&&url.pathname!=='/api/ws')return response({error:'not found'},404);
   if(req.headers.get('upgrade')?.toLowerCase()!=='websocket')return response({error:'WebSocket upgrade required'},426);
   const pair=new WebSocketPair();const [client,server]=Object.values(pair);
@@ -164,6 +165,17 @@ export class AtlasLiveRoom{
    const payload=JSON.stringify({type:'market',updatedAt:at,mode:'REST snapshots via WebSocket',items:rows});
    for(const ws of peers){try{ws.send(payload)}catch{try{ws.close(1011,'send failed')}catch{}}}
    if(changed.length){const msg=JSON.stringify({type:'tracking',observedAt:at,events:changed});for(const ws of peers){try{ws.send(msg)}catch{}}}
+   // Persist a small, authentic MEXC contract-OI sample for Cron fallback if a separate Worker egress IP receives HTTP 403.
+   // This is NOT a full-market replacement for the D1 ticker snapshot.
+   try{
+    const previous=await this.ctx.storage.get('lastOiSnapshot');
+    if(!previous?.updatedAt||Date.now()-Date.parse(previous.updatedAt)>4*60*1000){
+     const withOi=rows.filter(x=>number(x.openInterestContracts)>0).sort((a,b)=>(b.turnover||0)-(a.turnover||0));
+     const pinned=['BTC_USDT','ETH_USDT','ZEC_USDT'].map(k=>withOi.find(x=>x.symbol===k)).filter(Boolean);
+     const chosen=[...new Map([...withOi.slice(0,25),...pinned].map(x=>[x.symbol,x])).values()];
+     if(chosen.length>=10)await this.ctx.storage.put('lastOiSnapshot',{available:true,updatedAt:at,items:chosen,source:'MEXC ticker via AtlasLiveRoom; contract units'});
+    }
+   }catch(e){console.warn('LiveRoom OI sample retention failed:',String(e).slice(0,100))}
    const status={updatedAt:at,instrumentCount:rows.length,mode:'REST snapshots via WebSocket',error:null};
    await this.ctx.storage.put('lastStatus',status);
    await this.env.DB.prepare("INSERT INTO live_feed_health(id,updated_at,mode,last_error,instrument_count) VALUES(1,?,?,NULL,?) ON CONFLICT(id) DO UPDATE SET updated_at=excluded.updated_at,mode=excluded.mode,last_error=NULL,instrument_count=excluded.instrument_count").bind(at,status.mode,rows.length).run();
