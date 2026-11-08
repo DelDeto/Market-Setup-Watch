@@ -12,7 +12,7 @@ test('DST and EST in BLS iCalendar are converted to UTC correctly',()=>{
  assert.equal(icalToUtc('20261110T083000','America/New_York'),'2026-11-10T13:30:00.000Z');
  assert.equal(icalToUtc('20260310T083000','America/New_York'),'2026-03-10T12:30:00.000Z');
  assert.equal(icalToUtc('20261110T133000Z'),'2026-11-10T13:30:00.000Z');
- assert.equal(icalToUtc('20261110'),'null');
+ assert.equal(icalToUtc('20261110'),null);
 });
 test('realistic iCal filters and calendar source schedule',()=>{
  const xml=ics([
