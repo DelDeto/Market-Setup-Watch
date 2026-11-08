@@ -272,3 +272,17 @@ generative Market Copilot requires an authenticated and quota-limited model
 service, and statistical trade win probability requires larger clean
 forward-tested cohorts. The historical tournament is a preliminary validation
 instrument; it must never modify scanner signals automatically.
+
+
+### Optional licensed liquidation heatmap (disabled until owner opts in)
+
+`GET /api/intelligence/liquidations?symbol=BTC_USDT` returns
+`{available:false,configured:false}` unless the owner deliberately configures
+both the Worker secret `COINGLASS_API_KEY` (licensed Professional/Enterprise)
+and the Worker variable `PUBLIC_HEATMAP_ENABLED=true`. No provider call is
+made while either is missing. If explicitly enabled, the Worker retrieves
+CoinGlass heatmap model1 for the corresponding **Binance** pair and returns
+only the strongest aggregated modeled liquidation price zones. These are NOT
+MEXC depth or actual forced-liquidation fills, and may consume paid credits.
+Do not set these flags or add paid subscriptions without explicit cost
+approval; production ships this integration disabled.
