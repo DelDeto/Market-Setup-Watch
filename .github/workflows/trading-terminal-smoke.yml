@@ -78,6 +78,17 @@ jobs:
           assert 'function analyzeRelationship' in js
           assert 'window.loadPairAssetCatalog=loadPairAssetCatalog' in js
           assert "get('/api/market')" in js
+          assert 'id="intelligenceTab"' in html and 'id="intelRiskForm"' in html
+          intel=get('/api/intelligence')
+          assert intel.get('version')=='4.0.0-research',intel
+          assert intel.get('health') and intel.get('marketRegime') and intel.get('capabilities'),intel
+          assert intel['marketRegime']['instruments']>50,intel['marketRegime']
+          assert intel['funding']['openInterestAvailable'] is False,intel['funding']
+          risk=get('/api/intelligence/risk?equity=1000&entry=100&stop=98&riskPct=0.5&maxExposurePct=20&direction=LONG')
+          assert risk['valid'] and risk['units']==2 and risk['exposureCapped'],risk
+          intel_js=get('/assets/intelligence.js')
+          assert 'window.loadIntelligence=loadIntelligence' in intel_js
+          print('ATLAS V4 Intelligence OK:',intel['health']['status'],intel['marketRegime']['regime'])
           outcome=get('/api/outcomes')
           assert 'publications' in outcome and 'bySource' in outcome
           research=get('/api/research')
