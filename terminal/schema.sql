@@ -142,3 +142,17 @@ CREATE TABLE IF NOT EXISTS macro_calendar_health(
  source TEXT PRIMARY KEY,last_attempt_at TEXT NOT NULL,last_success_at TEXT,
  last_error TEXT,last_count INTEGER NOT NULL DEFAULT 0
 );
+
+
+-- ATLAS V5: bounded, read-only market-intelligence observations (idempotent).
+-- MEXC holdVol is contract count, never USD notional or trade fills.
+-- Capture at most ~28 liquid or pinned markets every 15 minutes; prune >7 days.
+CREATE TABLE IF NOT EXISTS market_intel_observations (
+ symbol TEXT NOT NULL,
+ captured_at TEXT NOT NULL,
+ price REAL NOT NULL CHECK(price>0),
+ open_interest_contracts REAL NOT NULL CHECK(open_interest_contracts>0),
+ turnover24 REAL,
+ PRIMARY KEY(symbol,captured_at)
+);
+CREATE INDEX IF NOT EXISTS idx_intel_observation_time ON market_intel_observations(captured_at DESC);

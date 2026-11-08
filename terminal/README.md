@@ -218,3 +218,71 @@ The new **V4 Intelligence** tab is read-only except for the user's own hypotheti
 - Post-deployment production smoke run `42500280600` passed; output showed `ATLAS V4 Intelligence OK: OK BEAR_TREND_PROXY`, `Public Worker OK: {'status':'ok',...,'lastError':None}`. Regime is a transient 24h diagnostic, not a trade instruction.
 - Preserved Worker bindings `AI`, `DB`, `LIVE_ROOM`; existing Cron schedules still `*/2 * * * *`, `*/3 * * * *`, `*/5 * * * *` (UTC). No scanner or Telegram change from V4.
 - If V4 becomes unstable, roll back only the Worker to the prior deployment, while leaving D1 schema (unchanged) and scanner jobs untouched. The V4 capability matrix must remain honest about unavailable advanced data integrations.
+
+
+## ATLAS V5 — staged evidence-first add-ons (15-module catalog)
+
+V5 adds a separate "V5 Add-ons" dashboard tab and read-only APIs while retaining the
+existing V4 Intelligence, Pair Lab, Macro, Telegram scanner and Cloudflare watchdog.
+The feature catalog reports the status of all 15 proposed modules accurately:
+data-backed, experimental, or unavailable due to premium data/validation constraints.
+
+### New endpoints
+
+- GET /api/intelligence/advanced — contract-OI history deltas, chrono 70/30 split
+  outcomes, Wilson 95% intervals by scanner source and score band, D1 freshness
+  audit, official economic calendar and complete 15-module capability matrix.
+- GET /api/intelligence/liquidity?symbol=BTC_USDT — bounded MEXC public visible
+  bid/ask order-book levels, contract quantity and spread. **Not liquidation
+  levels, whales, executed volume or institutional order flow.**
+- GET /api/intelligence/volatility?symbol=BTC_USDT — closed MEXC hourly candles,
+  EWMA observed log-return volatility, unvalidated Gaussian 1-sigma scenario
+  and empirical historical absolute-return 80th percentile.
+- GET /api/intelligence/replay?id=... — specific verified signal monitor, source
+  Telegram publications and chronological level-observation events; no fill inference.
+- GET /api/intelligence/ask?q=... — deterministic, bounded rule-based Evidence
+  Copilot grounded in stored ATLAS context. This is **not** an LLM/generative AI.
+
+Pair Lab adds retrospective +/- 3-bar offset correlation and 20-bar residual
+z-score, explicitly exploratory and without predictive or causal claims.
+
+### Contract open-interest history migration and collection
+
+Apply ONLY the V5 CREATE IF NOT EXISTS statements in terminal/schema.sql to
+existing production D1 before enabling the new Cron collector. On the current
+*/5 Worker Cron, the new collector saves up to 25 highest turnover contracts
+plus BTC/ETH/ZEC every 15 minutes. Older than 7 days is pruned periodically.
+OI is MEXC ticker 'holdVol' **contracts**, not USDT notional. A 45-minute
+comparison requires real post-migration observations; zero results initially
+are correct and cannot be backfilled from unknown data. No new Cron is needed.
+
+### Reliability / release gates
+
+No new API secrets, subscriptions, auto orders, strategy selection, trade state
+or Telegram delivery behavior. Preview shares the current D1 binding, so schema
+migration must be idempotent and no synthetic rows may be written to the
+production database. Verify CI, preview E2E, production E2E and fresh collector
+observations separately. A green HTTP smoke test does not prove the next Cron
+or AI model quality. No automatic strategies are promoted by tournament output.
+
+### Not claimed as complete
+
+A licensed liquidation heatmap still requires a suitable paid provider,
+generative Market Copilot requires an authenticated and quota-limited model
+service, and statistical trade win probability requires larger clean
+forward-tested cohorts. The historical tournament is a preliminary validation
+instrument; it must never modify scanner signals automatically.
+
+
+### Optional licensed liquidation heatmap (disabled until owner opts in)
+
+`GET /api/intelligence/liquidations?symbol=BTC_USDT` returns
+`{available:false,configured:false}` unless the owner deliberately configures
+both the Worker secret `COINGLASS_API_KEY` (licensed Professional/Enterprise)
+and the Worker variable `PUBLIC_HEATMAP_ENABLED=true`. No provider call is
+made while either is missing. If explicitly enabled, the Worker retrieves
+CoinGlass heatmap model1 for the corresponding **Binance** pair and returns
+only the strongest aggregated modeled liquidation price zones. These are NOT
+MEXC depth or actual forced-liquidation fills, and may consume paid credits.
+Do not set these flags or add paid subscriptions without explicit cost
+approval; production ships this integration disabled.
