@@ -100,3 +100,18 @@ The V2 prototype sampled last prices and only ingested ENTRY_READY plans, so its
 ### V3 operational recovery
 
 An independent 15-minute GitHub Actions watchdog now checks if Market Setup Watch source state is more than 45 minutes old. If no scanner run started in the last 40 minutes, it uses the repository-scoped GitHub Actions GITHUB_TOKEN (actions:write only on the watchdog job) to dispatch **one** existing Market Setup Watch scan. A recent run prevents duplicate recovery dispatches. This is schedule resilience, not a guarantee that GitHub Actions will always start immediately, and it never initiates exchange trades. If the GitHub API is unavailable or dispatch permission is denied, the workflow logs an error and continues health checks.
+
+
+## ATLAS V3.1 — independent Cloudflare scanner watchdog
+
+**Status route:** /api/watchdog (read-only, does not expose secrets).
+
+- A **separate** Cloudflare Cron runs every three minutes (UTC) regardless of GitHub Actions schedules. It evaluates scanner_snapshots.source_updated_at, not the D1 mirror sync time. A source age greater than 45 minutes is STALE.
+- The source transition OK → STALE is journaled exactly once per outage into D1 watchdog_notifications, then OK creates a recovery notification. A durable pending/lease/ack queue avoids repeated alerts across scheduled runs.
+- Each stale check consults the **public GitHub Actions workflow runs API** no more often than every 12 minutes. An active GitHub run or a run started in the last 40 minutes prevents duplicate dispatch. A direct dispatch also has its own 40-minute cooldown.
+- Direct Cloudflare → GitHub workflow dispatch is **disabled unless** the Worker has the secret GITHUB_RECOVERY_TOKEN (a fine-grained GitHub PAT granting Actions: Read and write **only** to DelDeto/Market-Setup-Watch). Tokens must never be committed, exposed by a public endpoint, or inserted into D1.
+- Without that token, the independent Cloudflare watchdog still detects, records and queues incidents. The existing GitHub Actions watchdog remains a fallback recovery dispatcher when GitHub resumes scheduling; it is not fully independent recovery.
+- Direct Telegram delivery is optional using Worker secrets WATCHDOG_TELEGRAM_BOT_TOKEN and WATCHDOG_TELEGRAM_CHAT_ID. Without these, the existing GitHub Actions Telegram relay (with its configured GitHub secrets) retrieves queued notices through signed GitHub OIDC endpoints /api/watchdog/claim and /api/watchdog/ack.
+- GitHub scheduling is best effort: queued notifications can be delayed if GitHub schedules are skipped. Deploying these Worker secrets later enables genuinely independent GitHub recovery dispatch and direct Telegram alerts without redeploying the source code.
+
+**Worker deployment checklist:** apply only the idempotent V3.1 CREATE TABLE/INDEX statements from terminal/schema.sql to D1; upload all worker modules worker.js, live.js, outcomes.js, publications.js, watchdog.js; preserve DB and LIVE_ROOM bindings. Enable Cron expressions `*/2 * * * *`, `*/3 * * * *`, and `*/5 * * * *`. Verify /api/watchdog after the first separate 3-minute trigger, plus the existing health/tracking/outcome endpoints. Do not treat a successful Workers upload as verification that GitHub dispatch or Telegram delivery actually occurred.
