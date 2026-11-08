@@ -154,3 +154,10 @@ Cloudflare Workers AI returns a structured JSON object from the Workers binding 
 - New endpoint GET /api/macro/calendar provides next scheduled releases and source health; user-facing Macro tab displays the schedule. No new Cloudflare Cron trigger; reuses five-minute source sync.
 - Editorial macro classifier now requires relevance from headline rather than descriptive article boilerplate. Official ECB and BLS employment articles are classified by source to avoid false FED_POLICY descriptions.
 - Workers AI structured response uses JSON Schema with strict summary_vi and rationale_vi fields and Vietnamese output validation. AI remains quota limited; previous failed summary attempts are not falsely marked as successful. Check persisted summary_method after the next UTC-day quota reset before declaring AI production delivery proven.
+
+
+### ATLAS V3.5.4 — Verified BLS iCal timezones and scanner Telegram fault isolation
+
+On 2026-11-08, the real BLS iCalendar feed returned 313 events with `DTSTART;TZID=US-Eastern`. Earlier parsing only allowed `US/Eastern` and `America/New_York` and therefore produced no calendar rows. The converter now maps real `US-Eastern` to IANA `America/New_York` with US DST. The new unit test replicates the observed official field, and production D1 must contain an actual future CPI/PPI/jobs event before the calendar feature is called live. Official BLS calendar: https://www.bls.gov/schedule/news_release/bls.ics.
+
+The 2026-11-08 Market Setup Watch scanner computed a full market report but failed when Telegram returned `ReadTimeout`. The safe delivery guard now catches notification transport errors, persists the complete scanner report, and does **not** mark ambiguous/partial Telegram sends as confirmed. On unconfirmed sends, the state retains previously notified intraday/swing signatures so the next scan can retry; duplicate text may still be possible when Telegram accepted a message but its acknowledgment was lost. Error reports expose only the exception class, never URL strings or bot token information. This change does not auto-trade.
