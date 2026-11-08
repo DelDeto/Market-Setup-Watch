@@ -42,7 +42,7 @@ async function dispatchWorkflow(token){
   const r=await fetch(GH+'/dispatches',{method:'POST',headers:{'Accept':'application/vnd.github+json',
    'X-GitHub-Api-Version':'2022-11-28','User-Agent':'ATLAS-Cloudflare-Watchdog/3.1',
    'Content-Type':'application/json','Authorization':'Bearer '+token},body:JSON.stringify({ref:'main'}),signal:c.signal});
-  if(r.status!==204)throw Error('GITHUB_DISPATCH_HTTP_'+r.status);
+  if(r.status!==204&&r.status!==200)throw Error('GITHUB_DISPATCH_HTTP_'+r.status);
   return true;
  }finally{clearTimeout(timer)}
 }
