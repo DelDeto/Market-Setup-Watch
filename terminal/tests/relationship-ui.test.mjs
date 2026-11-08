@@ -32,3 +32,9 @@ test('client has source notices and accurate comparison options',()=>{
  assert.ok(relationshipClientJs.includes('relKind('));
  assert.ok(relationshipClientJs.includes('window.analyzeRelationship=analyzeRelationship'));
 });
+
+test('Pair comparison follows ICT/UTC toggle while daily sessions retain date meaning',()=>{
+ assert.ok(relationshipClientJs.includes('function relDisplayTime(value,daily)'));
+ assert.ok(relationshipClientJs.includes("formatStamp(value)"));
+ assert.ok(html.includes("if(state.tab==='relationship'&&window.renderRelationship)window.renderRelationship()"));
+});
