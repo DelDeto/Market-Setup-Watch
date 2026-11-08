@@ -139,3 +139,10 @@ Only new (<45 minutes old when first ingested) high-impact OFFICIAL articles cre
 GET /api/macro?limit=36&impact=HIGH&category=INFLATION&source=bls_cpi; POST /api/macro/alerts/claim and /api/macro/alerts/ack require GitHub OIDC exact workflow verification. Source/audit health fields are part of the macro GET response. Apply only V3.2–V3.5 CREATE IF NOT EXISTS section of terminal/schema.sql on an existing database. Deploy worker.js, live.js, outcomes.js, publications.js, watchdog.js, macro.js and preserve D1 and LIVE_ROOM bindings, optionally add binding {type:ai,name:AI}.
 
 Verify a real official RSS fetch, stored item, correct source URL, price observations, macro-signal context and signed Telegram relay independently. Empty results do not count as a completed news feed integration. Do not fabricate samples. Check usage and MEXC rate limits after adding sources.
+
+
+### V3.5.1 production feed/AI audit
+
+The first production Cron (2026-11-08 09:00 UTC) successfully fetched 5 official Fed/BLS feeds and inserted 2 real items, but both Google News RSS queries returned HTTP 503. V3.5.1 replaces those unstable sources with SEC official releases RSS, ECB press RSS, CoinDesk editorial RSS and Cointelegraph regulation RSS. SEC/ECB links are source-host-validated; editorial publisher items are clearly tiered aggregator/secondary and filtered for macro relevance. Official Fed/BLS remain the foundation. Subsequent health checks must confirm each replacement separately; a configured feed is not evidence of a successful fetch.
+
+Cloudflare Workers AI returns a structured JSON object from the Workers binding for the chosen model. Initial code treated the object as a string and stored rule-based fallback (2 quota attempts). V3.5.1 parses either object or JSON string, includes tests and re-enriches at most 2 earlier fallback official HIGH items per pass while respecting the 6-call UTC-day D1 cap. This hotfix does not modify any scanner or trade plan. Closed-candle price reactions now avoid an unnecessary additional 15-minute wait for 1-minute horizons.
