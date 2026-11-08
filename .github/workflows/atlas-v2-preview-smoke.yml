@@ -93,6 +93,9 @@ jobs:
           assert isinstance(a.get('capabilities'),list) and len(a['capabilities'])==15,a
           assert 'smartMoney' in a and 'selfAudit' in a and 'tournament' in a,a
           assert 'oiSnapshot' in a and 'monitoredPlans' in a,a
+          licensed=check('/api/intelligence/liquidations?symbol=BTC_USDT')
+          assert licensed.get('available') is False and licensed.get('configured') is False,licensed
+          assert 'id="advPremiumGo"' in page
           assistant=check('/api/intelligence/ask?q=btc%20trend')
           assert assistant.get('mode')=='RULE_BASED_EVIDENCE_ASSISTANT',assistant
           if a['monitoredPlans']:
