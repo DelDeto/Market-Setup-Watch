@@ -51,6 +51,11 @@ jobs:
           assert isinstance(macro.get('news'),list)
           assert isinstance(macro.get('feeds'),list)
           assert isinstance(macro.get('signalContext'),list)
+          relation=check('/api/relationship?a=BTC&b=ZEC&tf=4h')
+          assert relation.get('version')=='3.6',relation
+          assert relation.get('assetA')=='BTC_USDT' and relation.get('assetB')=='ZEC_USDT',relation
+          assert relation.get('matchedBars',0)>=22,relation
+          assert relation.get('available') is True,relation
           m=check('/api/market');assert len(m.get('items',[]))>50
           req=urllib.request.Request(b+'/api/ingest/github',data=b'{}',headers={'Content-Type':'application/json','User-Agent':'ATLAS-Preview-Validation/2.0'})
           try:urllib.request.urlopen(req,timeout=20);raise AssertionError('Unauthorized publisher accepted!')
