@@ -53,3 +53,36 @@ CREATE TABLE IF NOT EXISTS outcome_health (
  last_error TEXT,evaluated_count INTEGER NOT NULL DEFAULT 0,
  pending_count INTEGER NOT NULL DEFAULT 0,scanned_candles INTEGER NOT NULL DEFAULT 0
 );
+
+
+-- ATLAS V3.1: independent Cloudflare Cron scanner watchdog.
+-- These CREATE statements are idempotent and may be safely applied to existing D1.
+CREATE TABLE IF NOT EXISTS watchdog_state (
+ id INTEGER PRIMARY KEY CHECK(id=1),
+ checked_at TEXT NOT NULL,
+ status TEXT NOT NULL CHECK(status IN ('OK','STALE')),
+ scanner_source_at TEXT,
+ scanner_age_seconds INTEGER,
+ last_healthy_at TEXT,
+ github_checked_at TEXT,
+ github_run_at TEXT,
+ github_run_status TEXT,
+ last_dispatch_at TEXT,
+ last_dispatch_status TEXT,
+ last_dispatch_error TEXT,
+ direct_recovery_configured INTEGER NOT NULL DEFAULT 0,
+ direct_telegram_configured INTEGER NOT NULL DEFAULT 0,
+ note TEXT
+);
+CREATE TABLE IF NOT EXISTS watchdog_notifications (
+ id TEXT PRIMARY KEY,
+ kind TEXT NOT NULL,
+ created_at TEXT NOT NULL,
+ source_at TEXT,
+ message TEXT NOT NULL,
+ delivery_status TEXT NOT NULL DEFAULT 'pending',
+ leased_until TEXT,
+ delivered_at TEXT
+);
+CREATE INDEX IF NOT EXISTS idx_watchdog_delivery ON watchdog_notifications(delivery_status,created_at);
+CREATE INDEX IF NOT EXISTS idx_watchdog_kind ON watchdog_notifications(kind,created_at DESC);
