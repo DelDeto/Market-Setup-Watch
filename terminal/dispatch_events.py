@@ -85,6 +85,37 @@ def send_telegram(event):
     return False
 
 
+
+def send_watchdog_notice(notice):
+    """Send one independently detected Cloudflare scanner incident through the
+    existing authenticated GitHub Actions Telegram channel."""
+    message = str(notice.get("message") or "")[:3600]
+    if not message:
+        return False
+    body = urllib.parse.urlencode({
+        "chat_id": CHAT, "text": message, "disable_web_page_preview": "true"
+    }).encode()
+    for attempt in range(2):
+        req = urllib.request.Request(
+            "https://api.telegram.org/bot" + TOKEN + "/sendMessage",
+            data=body, method="POST",
+        )
+        try:
+            with urllib.request.urlopen(req, timeout=20) as resp:
+                reply = json.load(resp)
+            return reply.get("ok") is True
+        except urllib.error.HTTPError as error:
+            if error.code == 429 and attempt == 0:
+                time.sleep(min(15, max(2, int(error.headers.get("Retry-After") or "4"))))
+                continue
+            print("ATLAS watchdog Telegram HTTP", error.code)
+            return False
+        except Exception as error:
+            print("ATLAS watchdog Telegram dispatch error", type(error).__name__)
+            return False
+    return False
+
+
 def main():
     if not TOKEN or not CHAT:
         print("ATLAS notifications disabled: existing Telegram secrets unavailable.")
@@ -102,7 +133,19 @@ def main():
         else:
             print("An event remains leased for retry:", event["id"])
     print("ATLAS Telegram observed-price notifications delivered:", delivered)
-    if delivered != len(events):
+    incident_batch = post("/api/watchdog/claim", jwt, {})
+    notices = incident_batch.get("notices") or []
+    print("ATLAS Cloudflare watchdog incident batch:", len(notices))
+    incident_delivered = 0
+    for notice in notices:
+        if send_watchdog_notice(notice):
+            receipt = post("/api/watchdog/ack", jwt, {"ids": [notice["id"]]})
+            if receipt.get("acknowledged") == 1:
+                incident_delivered += 1
+        else:
+            print("ATLAS watchdog incident pending retry:", notice["id"])
+    print("ATLAS Cloudflare watchdog Telegram delivered:", incident_delivered)
+    if delivered != len(events) or incident_delivered != len(notices):
         return 1
     return 0
 
