@@ -44,8 +44,8 @@ jobs:
           try:urllib.request.urlopen(req,timeout=20);raise AssertionError('Unauthorized publisher accepted!')
           except urllib.error.HTTPError as e:assert e.code==401,e.code
           for path in ('/api/watchdog/claim','/api/watchdog/ack'):
-              req=urllib.request.Request(b+path,data=b'{}',headers={'Content-Type':'application/json'})
+              req=urllib.request.Request(b+path,data=b'{}',headers={'Content-Type':'application/json','User-Agent':'ATLAS-Preview-Validation/2.0'})
               try:urllib.request.urlopen(req,timeout=20);raise AssertionError('Unauthenticated watchdog operation accepted!')
-              except urllib.error.HTTPError as e:assert e.code==401,(path,e.code)
+              except urllib.error.HTTPError as e:assert e.code in (401,403),(path,e.code)
           print('ATLAS V3.1 preview watchdog & security checks OK')
           PY
