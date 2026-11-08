@@ -29,7 +29,7 @@ jobs:
           node --check terminal/macro_calendar.js
           node --test terminal/tests/*.test.mjs
       - name: Verify OIDC publisher scripts
-        run: python -m py_compile terminal/publish_scan.py terminal/dispatch_events.py terminal/scanner_recovery.py
+        run: python -m py_compile terminal/publish_scan.py terminal/dispatch_events.py terminal/scanner_recovery.py market_hub/main.py market_hub/delivery_guard.py
       - name: Test confirmed Telegram provenance parsing
         run: python -m unittest discover -s terminal/tests -p 'test_*.py' -v
       - name: Check APIs and read-only defaults
