@@ -217,7 +217,7 @@ export function buildAdvanced(inputs={}){
    {name:'Signal Replay & Journal',status:'VERIFIED_PUBLICATION_EVENT_JOURNAL',api:'/api/intelligence/replay?id=ID'},
    {name:'Predictive Volatility',status:'UNVALIDATED_EWMA_SCENARIO',api:'/api/intelligence/volatility?symbol=BTC_USDT'},
    {name:'ATLAS Self-Audit AI',status:'AUTOMATED_DATA_QUALITY_CHECKS',api:'/api/intelligence/advanced'}],
-  constraints:['No liquidation heatmap subscription,'No order fill or account PnL feed','Generative AI Copilot disabled to avoid public unbounded model costs','No strategy auto-promotion','Lag is descriptive not a proven lead signal']};
+  constraints:['No liquidation heatmap subscription','No order fill or account PnL feed','Generative AI Copilot disabled to avoid public unbounded model costs','No strategy auto-promotion','Lag is descriptive not a proven lead signal']};
 }
 export async function advancedApi(env){const x=await fetchAdvancedInputs(env);return respond(buildAdvanced(x),x.snapshot?200:503)}
 export async function copilotApi(url,env){
