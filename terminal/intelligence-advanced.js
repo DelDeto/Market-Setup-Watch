@@ -217,7 +217,7 @@ export function buildAdvanced(inputs={}){
    {name:'Signal Replay & Journal',status:'VERIFIED_PUBLICATION_EVENT_JOURNAL',api:'/api/intelligence/replay?id=ID'},
    {name:'Predictive Volatility',status:'UNVALIDATED_EWMA_SCENARIO',api:'/api/intelligence/volatility?symbol=BTC_USDT'},
    {name:'ATLAS Self-Audit AI',status:'AUTOMATED_DATA_QUALITY_CHECKS',api:'/api/intelligence/advanced'}],
-  constraints:['No liquidation heatmap subscription','No order fill or account PnL feed','Generative AI Copilot disabled to avoid public unbounded model costs','No strategy auto-promotion','Lag is descriptive not a proven lead signal']};
+  constraints:['No liquidation heatmap subscription,'No order fill or account PnL feed','Generative AI Copilot disabled to avoid public unbounded model costs','No strategy auto-promotion','Lag is descriptive not a proven lead signal']};
 }
 export async function advancedApi(env){const x=await fetchAdvancedInputs(env);return respond(buildAdvanced(x),x.snapshot?200:503)}
 export async function copilotApi(url,env){
@@ -240,6 +240,40 @@ export async function replayApi(url,env){
  return respond({version:'5.0-replay',monitor,events:events.results||[],publications:pubs.results||[],
   note:'Observed candle-price level sequence only. No inferred exchange fills or actual account returns.'});
 }
+// Optional licensed CoinGlass liquidation model. Disabled by default: never spend credits on an unauthenticated public UI.
+// Only operator-controlled, dual-opt-in secret + flag may enable upstream requests.
+export async function liquidationHeatmapApi(url,env){
+ const symbol=url.searchParams.get('symbol')||'BTC_USDT';
+ if(!liveSymbols(symbol))return respond({error:'Invalid contract symbol'},400);
+ if(!env?.COINGLASS_API_KEY||env.PUBLIC_HEATMAP_ENABLED!=='true')
+  return respond({available:false,configured:false,symbol,provider:'CoinGlass Professional/Enterprise',
+   reason:'Premium liquidation heatmap not activated; no paid provider requests were made.',
+   docs:'https://docs.coinglass.com/reference/liquidation-heatmap'});
+ const range=url.searchParams.get('range')||'24h';
+ if(!['12h','24h','3d','7d'].includes(range))return respond({error:'Unsupported range'},400);
+ const exchange='Binance',pair=symbol.replace('_','');
+ const urlApi='https://open-api-v4.coinglass.com/api/futures/liquidation/heatmap/model1?exchange='+exchange+'&symbol='+pair+'&range='+range;
+ const ac=new AbortController(),timer=setTimeout(()=>ac.abort(),11000);
+ try{
+  const res=await fetch(urlApi,{signal:ac.signal,headers:{Accept:'application/json','CG-API-KEY':env.COINGLASS_API_KEY}});
+  if(!res.ok)throw Error('Provider HTTP '+res.status);
+  const payload=await res.json();
+  if(String(payload?.code)!=='0'||!Array.isArray(payload?.data?.y_axis)||!Array.isArray(payload?.data?.liquidation_leverage_data))throw Error('Invalid licensed heatmap');
+  const levels=payload.data.y_axis,rollup=new Map();
+  for(const cell of payload.data.liquidation_leverage_data){
+   const index=Number(cell[1]),usd=n(cell[2]);
+   if(Number.isInteger(index)&&index>=0&&index<levels.length&&usd>0)
+    rollup.set(index,(rollup.get(index)||0)+usd);
+  }
+  const peaks=[...rollup].map(([index,valueUsd])=>({price:n(levels[index]),modeledExposureUsd:r(valueUsd)}))
+   .filter(x=>x.price>0).sort((a,b)=>b.modeledExposureUsd-a.modeledExposureUsd).slice(0,16);
+  return respond({available:true,configured:true,provider:'CoinGlass heatmap model1',exchange,symbol:pair,range,
+   peakModeledZones:peaks,capturedAt:iso(),method:'Provider modeled estimated leverage liquidation concentration',
+   caveat:'Modeled exposure, not actual forced fills or guaranteed liquidation. Not MEXC market data. Licensed provider may charge API credits.'});
+ }catch(e){return respond({available:false,configured:true,symbol,error:'Premium heatmap unavailable: '+String(e.message).slice(0,95)},503)}
+ finally{clearTimeout(timer)}
+}
+
 export async function liquidityApi(url){
  const symbol=url.searchParams.get('symbol')||'BTC_USDT';
  if(!liveSymbols(symbol))return respond({error:'Invalid MEXC futures symbol'},400);
