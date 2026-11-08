@@ -86,3 +86,45 @@ CREATE TABLE IF NOT EXISTS watchdog_notifications (
 );
 CREATE INDEX IF NOT EXISTS idx_watchdog_delivery ON watchdog_notifications(delivery_status,created_at);
 CREATE INDEX IF NOT EXISTS idx_watchdog_kind ON watchdog_notifications(kind,created_at DESC);
+
+
+-- ATLAS V3.2–V3.5: Macro/news archive, source health, real market response and context.
+-- All statements below are CREATE IF NOT EXISTS, idempotent on existing D1.
+CREATE TABLE IF NOT EXISTS macro_news (
+ id TEXT PRIMARY KEY,source_key TEXT NOT NULL,source_name TEXT NOT NULL,
+ tier TEXT NOT NULL CHECK(tier IN ('official','aggregator')),
+ title TEXT NOT NULL,source_url TEXT NOT NULL UNIQUE,description TEXT,
+ published_at TEXT NOT NULL,ingested_at TEXT NOT NULL,
+ category TEXT NOT NULL,impact TEXT NOT NULL,bias TEXT NOT NULL,confidence TEXT NOT NULL,
+ summary_vi TEXT NOT NULL,rationale_vi TEXT NOT NULL,
+ summary_method TEXT NOT NULL,forecast_available INTEGER NOT NULL DEFAULT 0
+);
+CREATE INDEX IF NOT EXISTS idx_macro_date ON macro_news(published_at DESC);
+CREATE INDEX IF NOT EXISTS idx_macro_impact ON macro_news(impact,published_at DESC);
+CREATE TABLE IF NOT EXISTS macro_feed_health (
+ source_key TEXT PRIMARY KEY,source_name TEXT NOT NULL,tier TEXT NOT NULL,
+ last_attempt_at TEXT NOT NULL,last_success_at TEXT,last_error TEXT,new_count INTEGER NOT NULL DEFAULT 0
+);
+CREATE TABLE IF NOT EXISTS macro_ai_usage (date TEXT PRIMARY KEY,calls INTEGER NOT NULL DEFAULT 0);
+CREATE TABLE IF NOT EXISTS macro_engine_health (
+ id INTEGER PRIMARY KEY CHECK(id=1),checked_at TEXT,
+ source_success INTEGER,source_total INTEGER,new_count INTEGER,latest_error TEXT
+);
+CREATE TABLE IF NOT EXISTS macro_reactions (
+ news_id TEXT NOT NULL,symbol TEXT NOT NULL,horizon TEXT NOT NULL CHECK(horizon IN ('15m','1h','4h','24h')),
+ baseline_at TEXT NOT NULL,baseline_price REAL NOT NULL,
+ observed_at TEXT NOT NULL,observed_price REAL NOT NULL,
+ change_pct REAL NOT NULL,computed_at TEXT NOT NULL,method TEXT NOT NULL,
+ PRIMARY KEY(news_id,symbol,horizon)
+);
+CREATE INDEX IF NOT EXISTS idx_macro_react_news ON macro_reactions(news_id);
+CREATE TABLE IF NOT EXISTS macro_signal_context (
+ signal_id TEXT NOT NULL,news_id TEXT NOT NULL,relation TEXT NOT NULL,linked_at TEXT NOT NULL,
+ PRIMARY KEY(signal_id,news_id)
+);
+CREATE TABLE IF NOT EXISTS macro_alerts (
+ id TEXT PRIMARY KEY,news_id TEXT NOT NULL UNIQUE,created_at TEXT NOT NULL,
+ message TEXT NOT NULL,status TEXT NOT NULL DEFAULT 'pending',
+ leased_until TEXT,delivered_at TEXT
+);
+CREATE INDEX IF NOT EXISTS idx_macro_alert_status ON macro_alerts(status,created_at);
