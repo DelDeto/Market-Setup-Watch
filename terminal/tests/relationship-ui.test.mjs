@@ -27,7 +27,7 @@ test('public pair endpoints are read-only and served under same origin',()=>{
  assert.ok(!relationshipClientJs.includes('api/alerts/ack'));
 });
 test('client has source notices and accurate comparison options',()=>{
- assert.ok(html.includes('DXY is an indicative daily index'));
+ assert.ok(html.includes('indicative daily index derived from ECB FX references'));
  assert.ok(relationshipClientJs.includes('plotRelationship('));
  assert.ok(relationshipClientJs.includes('relKind('));
  assert.ok(relationshipClientJs.includes('window.analyzeRelationship=analyzeRelationship'));
