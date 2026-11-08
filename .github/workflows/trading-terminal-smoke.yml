@@ -47,7 +47,10 @@ jobs:
                       print('NETWORK ERROR',path,type(e).__name__,str(e))
                       if attempt==2: raise
                       time.sleep(5)
-          assert 'ATLAS' in get('/') and 'MARKET INTELLIGENCE' in get('/')
+          html=get('/')
+          assert 'ATLAS' in html and 'MARKET INTELLIGENCE' in html
+          assert 'id="timezoneSelect"' in html and 'value="VN"' in html and 'value="UTC"' in html
+          assert 'Asia/Ho_Chi_Minh' in html and 'atlas.display_time_zone' in html
           health=get('/api/health')
           assert health['status'] in ('not-initialized','stale','ok'),health
           dash=get('/api/dashboard')
