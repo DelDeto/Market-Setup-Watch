@@ -38,3 +38,20 @@ test('unfold iCal lines; reject spoofed external source URLs and impossible star
  assert.equal(rows[0].sourceUrl,'https://www.bls.gov/schedule/news_release/');
  assert.equal(rows[0].title,'Consumer Price Index -October');
 });
+
+
+test('iCal SUMMARY with language parameters and standard UID/URL are parsed',()=>{
+ const input=ics([[
+  'BEGIN:VEVENT','UID:jobs-2026',
+  'SUMMARY;LANGUAGE=en-US:Employment Situation - November 2026',
+  'DTSTART;TZID=America/New_York:20261204T083000',
+  'URL:https://www.bls.gov/schedule/news_release/empsit.htm',
+  'END:VEVENT'
+ ].join('\r\n')]);
+ const rows=parseBlsCalendar(input,now);
+ assert.equal(rows.length,1);
+ assert.equal(rows[0].kind,'JOBS');
+ assert.equal(rows[0].title,'Employment Situation - November 2026');
+ assert.equal(rows[0].uid,'jobs-2026');
+ assert.equal(rows[0].scheduledAt,'2026-12-04T13:30:00.000Z');
+});
