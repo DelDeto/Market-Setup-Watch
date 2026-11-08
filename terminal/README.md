@@ -185,3 +185,27 @@ The 2026-11-08 Market Setup Watch scanner computed a full market report but fail
 ### V3.6.2 — Searchable Pair Relationship asset dropdowns
 
 Both Asset A and Asset B controls are native `<select>` dropdowns (previously free-text inputs) with independent text-search filters. On first opening the tab, the browser populates both selectors from the same-origin `GET /api/market` live/cached MEXC USDT Futures instruments (more than 1,000), plus an explicit `DXY · ECB reference (1D)` option. `BTC`, `ETH`, `ZEC` and `DXY` remain as safe minimal fallback options when upstream data fails. User selections are preserved when filters change or when the live symbol catalog loads. Preset buttons continue to select BTC/ZEC, BTC/DXY, or ETH/BTC; the selected symbol is still validated by the existing read-only relationship API. Neither the trading scanner, D1 data, market calculations nor the time-zone selector changes. Independent filter inputs are intentionally displayed so 1,000+ native options remain searchable on mobile and desktop.
+
+
+## V4.0 Research Intelligence — staged read-only add-ons
+
+This build adds `GET /api/intelligence` (D1-backed market diagnostics) and
+`GET /api/intelligence/risk?equity=1000&entry=100&stop=98&riskPct=0.5&maxExposurePct=20&direction=LONG`.
+The new **V4 Intelligence** tab is read-only except for the user's own hypothetical inputs. All D1 source timestamps remain UTC while the existing website time-zone control is unchanged.
+
+**Implemented data-backed research diagnostics:**
+- 24h breadth/BTC+ETH market-regime proxy (scanner context only if <45 minutes old).
+- Cross-sectional 24h price + turnover anomaly radar.
+- MEXC snapshot funding extremes, explicitly **without** OI, order-flow, smart-money attribution or liquidation map.
+- Partial curated 24h sector leadership; unknown tokens are not assigned invented sectors.
+- Score bands for monitored signals, explicitly **not** calibrated probabilities.
+- Candle-observed TP1-first vs SL-first journal with ambiguity exclusions and insufficient-sample flags.
+- Hypothetical risk/position size calculator with stop-direction checks, 0–5% risk input and exposure cap; no fees, gap or liquidation modeling.
+- D1 snapshot/scanner/outcome/macro **freshness audit**, not proof that Telegram delivered or a trade filled.
+- Module capability audit labeling research proxies and integrations that still need data.
+
+**Already present, reused without duplication:** macro/news calendar and historical reactions; full Pair Relationship Lab with BTC/ZEC, BTC/DXY, correlation and beta; server-push market snapshots; D1 publication and candle outcome tracking; separate Cloudflare/GitHub scanner watchdogs.
+
+**Not shipped as completed V4/V5 capabilities:** order-book liquidation heatmap, verified OI/taker flows, full sector taxonomy, statistically calibrated win-probability engine, strategy OOS tournament, lead/lag prediction, generative AI Copilot, forecast-volatility model, self-adjusting strategy engine, actual account PnL. The API exposes these limitations rather than faking values.
+
+**Safety / deployment:** no order API, scanner logic, Telegram recipients, secrets, Cron, database schema or DO bindings are changed by this patch. Production deployment requires CI, controlled Worker upload with the existing bindings, and smoke checks on /api/intelligence, /api/health and the existing scanner/tracking/macro endpoints. No Worker deployment is implied by a GitHub commit/PR.
