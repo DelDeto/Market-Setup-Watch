@@ -791,7 +791,7 @@ def main():
             # A network timeout can occur AFTER Telegram accepted part of a
             # multi-destination send. Never claim verified publication or
             # fabricate delivered items. Still persist the scan report.
-            telegram_error = f"{type(exc).__name__}: {str(exc)[:160]}"
+            telegram_error = type(exc).__name__
             print("Telegram delivery uncertain; preserving scanner report:",
                   telegram_error)
     elif heartbeat_due:
@@ -799,7 +799,7 @@ def main():
         try:
             notification_sent = send_heartbeat(report)
         except Exception as exc:
-            telegram_error = f"{type(exc).__name__}: {str(exc)[:160]}"
+            telegram_error = type(exc).__name__
             print("Telegram heartbeat delivery uncertain; scanner continues:",
                   telegram_error)
     else:
