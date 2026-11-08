@@ -17,9 +17,11 @@ export function icalToUtc(value,zone='America/New_York'){
  if(mo<1||mo>12||d<1||d>31||h>23||mi>59||se>59)return null;
  const naive=Date.UTC(y,mo-1,d,h,mi,se);if(!Number.isFinite(naive))return null;
  if(m[7])return new Date(naive).toISOString();
- if(zone!=='America/New_York'&&zone!=='US/Eastern')return null;
- let corrected=naive-offsetMinutes(new Date(naive),zone)*60000;
- corrected=naive-offsetMinutes(new Date(corrected),zone)*60000;
+ // BLS live iCalendar uses TZID=US-Eastern (hyphen), while Intl uses IANA America/New_York.
+ if(!['America/New_York','US/Eastern','US-Eastern'].includes(zone))return null;
+ const resolved='America/New_York';
+ let corrected=naive-offsetMinutes(new Date(naive),resolved)*60000;
+ corrected=naive-offsetMinutes(new Date(corrected),resolved)*60000;
  return new Date(corrected).toISOString();
 }
 const TAGS=[
