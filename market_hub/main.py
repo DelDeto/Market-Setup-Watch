@@ -30,6 +30,7 @@ from .mexc_market import (
     get_contract_universe,
 )
 from .notifier import send_heartbeat, send_telegram
+from .delivery_guard import guarded_notification
 from .outcomes import (
     load_outcomes,
     register_candidates,
@@ -776,33 +777,16 @@ def main():
         encoding="utf-8",
     )
 
-    notification_sent = False
-    notification_kind = None
-
-    telegram_error = None
-    if should_notify:
-        notification_kind = "setup_change"
-        try:
-            notification_sent = send_telegram(
-                report,
-                chart_paths=chart_paths,
-            )
-        except Exception as exc:
-            # A network timeout can occur AFTER Telegram accepted part of a
-            # multi-destination send. Never claim verified publication or
-            # fabricate delivered items. Still persist the scan report.
-            telegram_error = type(exc).__name__
-            print("Telegram delivery uncertain; preserving scanner report:",
-                  telegram_error)
-    elif heartbeat_due:
-        notification_kind = "heartbeat"
-        try:
-            notification_sent = send_heartbeat(report)
-        except Exception as exc:
-            telegram_error = type(exc).__name__
-            print("Telegram heartbeat delivery uncertain; scanner continues:",
-                  telegram_error)
-    else:
+    notification_sent, notification_kind, telegram_error = guarded_notification(
+        should_notify=should_notify,
+        heartbeat_due=heartbeat_due,
+        setup_sender=lambda: send_telegram(report, chart_paths=chart_paths),
+        heartbeat_sender=lambda: send_heartbeat(report),
+    )
+    if telegram_error:
+        print("Telegram acknowledgement unconfirmed (scanner continues):",
+              telegram_error)
+    elif notification_kind is None:
         print(
             "Market Setup Watch: no new unsuppressed "
             "READY/NEAR/DEVELOPING setup change and heartbeat not due; "
