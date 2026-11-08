@@ -27,6 +27,8 @@ jobs:
           node --check terminal/watchdog.js
           node --check terminal/macro.js
           node --check terminal/macro_calendar.js
+          node --check terminal/intelligence.js
+          node --check terminal/intelligence-client.js
           node --check terminal/relationships.js
           node --check terminal/relationship-client.js
           node --test terminal/tests/*.test.mjs
@@ -39,7 +41,7 @@ jobs:
           python - <<'PY'
           from pathlib import Path
           src=Path('terminal/worker.js').read_text()
-          for route in ('/api/market','/api/chart','/api/dashboard','/api/research','/api/health','/api/ingest','/api/tracking','/api/outcomes','/api/watchdog','/api/watchdog/claim','/api/macro','/api/macro/alerts/claim','/api/macro/alerts/ack','/api/macro/calendar','/api/relationship'):
+          for route in ('/api/market','/api/chart','/api/dashboard','/api/research','/api/health','/api/ingest','/api/tracking','/api/outcomes','/api/watchdog','/api/watchdog/claim','/api/macro','/api/macro/alerts/claim','/api/macro/alerts/ack','/api/macro/calendar','/api/relationship','/api/intelligence','/api/intelligence/risk'):
               assert route in src, route
           assert "PUBLISH_TOKEN" in src and "unauthorized" in src
           assert "async scheduled" in src
