@@ -6670,7 +6670,7 @@
     "runner_hit": false,
     "runner_hit_at_utc": null,
     "protect_1r_hit": true,
-    "mfe_r": 2.956,
+    "mfe_r": 2.978,
     "mae_r": -0.846,
     "promotion_history": [
       {
@@ -6866,7 +6866,7 @@
     "runner_hit": false,
     "runner_hit_at_utc": null,
     "protect_1r_hit": true,
-    "mfe_r": 15.978,
+    "mfe_r": 16.97,
     "mae_r": 0.208,
     "promotion_history": [
       {
@@ -7229,7 +7229,7 @@
     "runner_hit": false,
     "runner_hit_at_utc": null,
     "protect_1r_hit": true,
-    "mfe_r": 2.217,
+    "mfe_r": 3.275,
     "mae_r": -0.243,
     "promotion_history": [
       {
@@ -7285,6 +7285,104 @@
         "at_utc": "2026-11-09T05:53:42.319847+00:00",
         "rank": 3,
         "score": 82.34
+      }
+    ]
+  },
+  {
+    "signal_id": "TAO_USDT|short|2026-11-10T07:24:28.147592+00:00",
+    "created_at_utc": "2026-11-10T07:24:28.147592+00:00",
+    "symbol": "TAO_USDT",
+    "direction": "short",
+    "rank": 1,
+    "score": 82.97,
+    "grade": "A",
+    "entry_lower": 222.9,
+    "entry_upper": 225.09,
+    "entry_source": "1H supply",
+    "stop_loss": 226.1505,
+    "tp1": 219.68400000000003,
+    "tp2": 215.37300000000005,
+    "runner_target": 190.39575,
+    "runner_move_pct": 15.0,
+    "position_plan": {
+      "base_risk_pct": 0.65,
+      "size_label": "FULL",
+      "risk_modifier": 1.0,
+      "recommended_risk_pct": 0.65,
+      "notional_equity_multiple": 0.676,
+      "tp1_close_fraction": 0.35,
+      "tp2_close_fraction": 0.35,
+      "runner_fraction": 0.3,
+      "target_total_r": 6.776,
+      "projected_account_profit_pct": 4.4
+    },
+    "status": "PENDING_ENTRY",
+    "outcome": null,
+    "entry_time_utc": null,
+    "closed_at_utc": null,
+    "tp1_hit": false,
+    "tp1_hit_at_utc": null,
+    "tp2_hit": false,
+    "tp2_hit_at_utc": null,
+    "runner_hit": false,
+    "runner_hit_at_utc": null,
+    "protect_1r_hit": false,
+    "mfe_r": null,
+    "mae_r": null,
+    "promotion_history": [
+      {
+        "at_utc": "2026-11-10T07:24:28.147592+00:00",
+        "rank": 1,
+        "score": 82.97
+      }
+    ]
+  },
+  {
+    "signal_id": "FILECOIN_USDT|short|2026-11-10T07:24:28.147592+00:00",
+    "created_at_utc": "2026-11-10T07:24:28.147592+00:00",
+    "symbol": "FILECOIN_USDT",
+    "direction": "short",
+    "rank": 2,
+    "score": 78.28,
+    "grade": "A",
+    "entry_lower": 0.7707,
+    "entry_upper": 0.7756,
+    "entry_source": "1H supply",
+    "stop_loss": 0.7855432142857143,
+    "tp1": 0.7483635714285715,
+    "tp2": 0.7235771428571429,
+    "runner_target": 0.6571775,
+    "runner_move_pct": 15.0,
+    "position_plan": {
+      "base_risk_pct": 0.65,
+      "size_label": "FULL",
+      "risk_modifier": 1.0,
+      "recommended_risk_pct": 0.55,
+      "notional_equity_multiple": 0.343,
+      "tp1_close_fraction": 0.35,
+      "tp2_close_fraction": 0.35,
+      "runner_fraction": 0.3,
+      "target_total_r": 4.907,
+      "projected_account_profit_pct": 2.7
+    },
+    "status": "PENDING_ENTRY",
+    "outcome": null,
+    "entry_time_utc": null,
+    "closed_at_utc": null,
+    "tp1_hit": false,
+    "tp1_hit_at_utc": null,
+    "tp2_hit": false,
+    "tp2_hit_at_utc": null,
+    "runner_hit": false,
+    "runner_hit_at_utc": null,
+    "protect_1r_hit": false,
+    "mfe_r": null,
+    "mae_r": null,
+    "promotion_history": [
+      {
+        "at_utc": "2026-11-10T07:24:28.147592+00:00",
+        "rank": 2,
+        "score": 78.28
       }
     ]
   }
