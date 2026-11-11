@@ -21873,7 +21873,7 @@
     "entry_time_utc": "2026-10-07T13:45:00+00:00",
     "closed_at_utc": null,
     "outcome": null,
-    "mfe_r": 11.372,
+    "mfe_r": 12.041,
     "mae_r": 0.0,
     "management": {
       "protect_at_r": 1.0,
@@ -97110,7 +97110,7 @@
     "entry_time_utc": "2026-10-24T17:15:00+00:00",
     "closed_at_utc": null,
     "outcome": null,
-    "mfe_r": 7.747,
+    "mfe_r": 7.991,
     "mae_r": 0.0,
     "management": {
       "protect_at_r": 1.0,
@@ -126620,7 +126620,7 @@
     "entry_time_utc": "2026-11-04T03:15:00+00:00",
     "closed_at_utc": null,
     "outcome": null,
-    "mfe_r": 0.755,
+    "mfe_r": 0.845,
     "mae_r": 0.475,
     "management": {
       "protect_at_r": 1.0,
@@ -141012,7 +141012,7 @@
     "entry_time_utc": "2026-11-08T23:45:00+00:00",
     "closed_at_utc": null,
     "outcome": null,
-    "mfe_r": 1.612,
+    "mfe_r": 1.618,
     "mae_r": 0.753,
     "management": {
       "protect_at_r": 1.0,
@@ -144962,9 +144962,9 @@
     "selector": {
       "target_r": 2.0,
       "tp1": 0.08338499999999999,
-      "status": "ACTIVE",
-      "outcome": null,
-      "closed_at_utc": null
+      "status": "CLOSED",
+      "outcome": "LOSS",
+      "closed_at_utc": "2026-11-11T23:00:00+00:00"
     },
     "position_plan": null,
     "stop_loss": 0.07674,
@@ -144982,12 +144982,12 @@
       "participation_aligned": false,
       "market_context_aligned": false
     },
-    "status": "ACTIVE",
+    "status": "CLOSED",
     "entry_time_utc": "2026-11-10T10:15:00+00:00",
-    "closed_at_utc": null,
-    "outcome": null,
+    "closed_at_utc": "2026-11-11T23:00:00+00:00",
+    "outcome": "LOSS",
     "mfe_r": 0.589,
-    "mae_r": 0.928,
+    "mae_r": 1.357,
     "management": {
       "protect_at_r": 1.0,
       "partial_at_r": 2.0,
@@ -144999,7 +144999,7 @@
       "partial_reached_at_utc": null,
       "trail_reached_at_utc": null,
       "raw_loss_after_protect": false,
-      "raw_realized_r": null
+      "raw_realized_r": -1.0
     },
     "checkpoints_r": {
       "1h": 0.183,
@@ -147555,11 +147555,11 @@
       "participation_aligned": true,
       "market_context_aligned": false
     },
-    "status": "ACTIVE",
+    "status": "CLOSED",
     "entry_time_utc": "2026-11-11T15:30:00+00:00",
-    "closed_at_utc": null,
-    "outcome": null,
-    "mfe_r": 2.21,
+    "closed_at_utc": "2026-11-11T23:00:00+00:00",
+    "outcome": "WIN",
+    "mfe_r": 3.114,
     "mae_r": 0.96,
     "management": {
       "protect_at_r": 1.0,
@@ -147572,7 +147572,7 @@
       "partial_reached_at_utc": "2026-11-11T15:30:00+00:00",
       "trail_reached_at_utc": "2026-11-11T15:30:00+00:00",
       "raw_loss_after_protect": false,
-      "raw_realized_r": null
+      "raw_realized_r": 2.511
     },
     "checkpoints_r": {
       "1h": -0.318,
@@ -148519,12 +148519,12 @@
       "participation_aligned": false,
       "market_context_aligned": false
     },
-    "status": "ACTIVE",
+    "status": "CLOSED",
     "entry_time_utc": "2026-11-11T10:15:00+00:00",
-    "closed_at_utc": null,
-    "outcome": null,
+    "closed_at_utc": "2026-11-11T23:00:00+00:00",
+    "outcome": "LOSS",
     "mfe_r": 3.209,
-    "mae_r": 0.963,
+    "mae_r": 1.252,
     "management": {
       "protect_at_r": 1.0,
       "partial_at_r": 2.0,
@@ -148535,8 +148535,8 @@
       "protect_reached_at_utc": "2026-11-11T12:30:00+00:00",
       "partial_reached_at_utc": "2026-11-11T15:45:00+00:00",
       "trail_reached_at_utc": "2026-11-11T15:45:00+00:00",
-      "raw_loss_after_protect": false,
-      "raw_realized_r": null
+      "raw_loss_after_protect": true,
+      "raw_realized_r": -1.0
     },
     "checkpoints_r": {
       "1h": 0.43,
@@ -149505,7 +149505,7 @@
     "closed_at_utc": null,
     "outcome": null,
     "mfe_r": 0.251,
-    "mae_r": 0.315,
+    "mae_r": 0.589,
     "management": {
       "protect_at_r": 1.0,
       "partial_at_r": 2.0,
@@ -149546,9 +149546,9 @@
     "selector": {
       "target_r": 2.0,
       "tp1": 244.95514285714282,
-      "status": "ACTIVE",
-      "outcome": null,
-      "closed_at_utc": null
+      "status": "CLOSED",
+      "outcome": "LOSS",
+      "closed_at_utc": "2026-11-11T23:15:00+00:00"
     },
     "position_plan": null,
     "stop_loss": 223.6024285714286,
@@ -149566,12 +149566,12 @@
       "participation_aligned": false,
       "market_context_aligned": false
     },
-    "status": "ACTIVE",
+    "status": "CLOSED",
     "entry_time_utc": "2026-11-11T19:00:00+00:00",
-    "closed_at_utc": null,
-    "outcome": null,
+    "closed_at_utc": "2026-11-11T23:15:00+00:00",
+    "outcome": "LOSS",
     "mfe_r": 0.554,
-    "mae_r": 0.655,
+    "mae_r": 1.142,
     "management": {
       "protect_at_r": 1.0,
       "partial_at_r": 2.0,
@@ -149583,7 +149583,7 @@
       "partial_reached_at_utc": null,
       "trail_reached_at_utc": null,
       "raw_loss_after_protect": false,
-      "raw_realized_r": null
+      "raw_realized_r": -1.0
     },
     "checkpoints_r": {
       "1h": 0.205,
@@ -149612,9 +149612,9 @@
     "selector": {
       "target_r": 2.0,
       "tp1": 28642.614285714284,
-      "status": "ACTIVE",
-      "outcome": null,
-      "closed_at_utc": null
+      "status": "CLOSED",
+      "outcome": "LOSS",
+      "closed_at_utc": "2026-11-11T23:00:00+00:00"
     },
     "position_plan": null,
     "stop_loss": 28092.692857142858,
@@ -149632,12 +149632,12 @@
       "participation_aligned": false,
       "market_context_aligned": false
     },
-    "status": "ACTIVE",
+    "status": "CLOSED",
     "entry_time_utc": "2026-11-11T21:45:00+00:00",
-    "closed_at_utc": null,
-    "outcome": null,
+    "closed_at_utc": "2026-11-11T23:00:00+00:00",
+    "outcome": "LOSS",
     "mfe_r": 0.48,
-    "mae_r": 0.818,
+    "mae_r": 1.473,
     "management": {
       "protect_at_r": 1.0,
       "partial_at_r": 2.0,
@@ -149649,7 +149649,7 @@
       "partial_reached_at_utc": null,
       "trail_reached_at_utc": null,
       "raw_loss_after_protect": false,
-      "raw_realized_r": null
+      "raw_realized_r": -1.0
     },
     "checkpoints_r": {
       "1h": -0.415,
@@ -149769,7 +149769,7 @@
     "closed_at_utc": null,
     "outcome": null,
     "mfe_r": 0.427,
-    "mae_r": 0.407,
+    "mae_r": 0.62,
     "management": {
       "protect_at_r": 1.0,
       "partial_at_r": 2.0,
@@ -149810,9 +149810,9 @@
     "selector": {
       "target_r": 2.0,
       "tp1": 160.59585714285714,
-      "status": "ACTIVE",
-      "outcome": null,
-      "closed_at_utc": null
+      "status": "CLOSED",
+      "outcome": "LOSS",
+      "closed_at_utc": "2026-11-11T23:00:00+00:00"
     },
     "position_plan": null,
     "stop_loss": 135.60457142857143,
@@ -149830,12 +149830,12 @@
       "participation_aligned": false,
       "market_context_aligned": false
     },
-    "status": "ACTIVE",
+    "status": "CLOSED",
     "entry_time_utc": "2026-11-11T16:15:00+00:00",
-    "closed_at_utc": null,
-    "outcome": null,
+    "closed_at_utc": "2026-11-11T23:00:00+00:00",
+    "outcome": "LOSS",
     "mfe_r": 0.511,
-    "mae_r": 0.786,
+    "mae_r": 1.086,
     "management": {
       "protect_at_r": 1.0,
       "partial_at_r": 2.0,
@@ -149847,7 +149847,7 @@
       "partial_reached_at_utc": null,
       "trail_reached_at_utc": null,
       "raw_loss_after_protect": false,
-      "raw_realized_r": null
+      "raw_realized_r": -1.0
     },
     "checkpoints_r": {
       "1h": 0.348,
@@ -150074,9 +150074,9 @@
     "selector": {
       "target_r": 2.0,
       "tp1": 39.289000000000016,
-      "status": "ACTIVE",
-      "outcome": null,
-      "closed_at_utc": null
+      "status": "CLOSED",
+      "outcome": "LOSS",
+      "closed_at_utc": "2026-11-11T23:00:00+00:00"
     },
     "position_plan": null,
     "stop_loss": 41.9155,
@@ -150094,12 +150094,12 @@
       "participation_aligned": false,
       "market_context_aligned": false
     },
-    "status": "ACTIVE",
+    "status": "CLOSED",
     "entry_time_utc": "2026-11-11T22:00:00+00:00",
-    "closed_at_utc": null,
-    "outcome": null,
+    "closed_at_utc": "2026-11-11T23:00:00+00:00",
+    "outcome": "LOSS",
     "mfe_r": 0.354,
-    "mae_r": 0.948,
+    "mae_r": 1.119,
     "management": {
       "protect_at_r": 1.0,
       "partial_at_r": 2.0,
@@ -150111,7 +150111,7 @@
       "partial_reached_at_utc": null,
       "trail_reached_at_utc": null,
       "raw_loss_after_protect": false,
-      "raw_realized_r": null
+      "raw_realized_r": -1.0
     },
     "checkpoints_r": {
       "1h": -0.731,
@@ -150165,7 +150165,7 @@
     "closed_at_utc": null,
     "outcome": null,
     "mfe_r": 0.503,
-    "mae_r": 0.514,
+    "mae_r": 0.777,
     "management": {
       "protect_at_r": 1.0,
       "partial_at_r": 2.0,
@@ -150338,9 +150338,9 @@
     "selector": {
       "target_r": 2.0,
       "tp1": 34.91357142857143,
-      "status": "ACTIVE",
-      "outcome": null,
-      "closed_at_utc": null
+      "status": "CLOSED",
+      "outcome": "LOSS",
+      "closed_at_utc": "2026-11-11T23:00:00+00:00"
     },
     "position_plan": null,
     "stop_loss": 29.208214285714284,
@@ -150358,12 +150358,12 @@
       "participation_aligned": false,
       "market_context_aligned": false
     },
-    "status": "ACTIVE",
+    "status": "CLOSED",
     "entry_time_utc": "2026-11-11T17:15:00+00:00",
-    "closed_at_utc": null,
-    "outcome": null,
+    "closed_at_utc": "2026-11-11T23:00:00+00:00",
+    "outcome": "LOSS",
     "mfe_r": 0.063,
-    "mae_r": 0.989,
+    "mae_r": 1.157,
     "management": {
       "protect_at_r": 1.0,
       "partial_at_r": 2.0,
@@ -150375,7 +150375,7 @@
       "partial_reached_at_utc": null,
       "trail_reached_at_utc": null,
       "raw_loss_after_protect": false,
-      "raw_realized_r": null
+      "raw_realized_r": -1.0
     },
     "checkpoints_r": {
       "1h": 0.016,
@@ -150495,7 +150495,7 @@
     "closed_at_utc": null,
     "outcome": null,
     "mfe_r": 0.276,
-    "mae_r": 0.682,
+    "mae_r": 0.946,
     "management": {
       "protect_at_r": 1.0,
       "partial_at_r": 2.0,
@@ -150577,7 +150577,7 @@
     },
     "checkpoints_r": {
       "1h": 0.1,
-      "4h": null,
+      "4h": -0.874,
       "24h": null
     },
     "correlation_suppressed": false,
@@ -150602,9 +150602,9 @@
     "selector": {
       "target_r": 2.0,
       "tp1": 425.59700000000004,
-      "status": "ACTIVE",
-      "outcome": null,
-      "closed_at_utc": null
+      "status": "CLOSED",
+      "outcome": "LOSS",
+      "closed_at_utc": "2026-11-11T23:00:00+00:00"
     },
     "position_plan": null,
     "stop_loss": 357.4865,
@@ -150622,12 +150622,12 @@
       "participation_aligned": false,
       "market_context_aligned": false
     },
-    "status": "ACTIVE",
+    "status": "CLOSED",
     "entry_time_utc": "2026-11-11T17:15:00+00:00",
-    "closed_at_utc": null,
-    "outcome": null,
+    "closed_at_utc": "2026-11-11T23:00:00+00:00",
+    "outcome": "LOSS",
     "mfe_r": 0.209,
-    "mae_r": 0.789,
+    "mae_r": 1.069,
     "management": {
       "protect_at_r": 1.0,
       "partial_at_r": 2.0,
@@ -150639,7 +150639,7 @@
       "partial_reached_at_utc": null,
       "trail_reached_at_utc": null,
       "raw_loss_after_protect": false,
-      "raw_realized_r": null
+      "raw_realized_r": -1.0
     },
     "checkpoints_r": {
       "1h": 0.17,
@@ -150692,7 +150692,7 @@
     "entry_time_utc": "2026-11-11T17:15:00+00:00",
     "closed_at_utc": null,
     "outcome": null,
-    "mfe_r": 0.651,
+    "mfe_r": 0.977,
     "mae_r": 0.223,
     "management": {
       "protect_at_r": 1.0,
@@ -150734,9 +150734,9 @@
     "selector": {
       "target_r": 2.0,
       "tp1": 82.63142857142856,
-      "status": "ACTIVE",
-      "outcome": null,
-      "closed_at_utc": null
+      "status": "CLOSED",
+      "outcome": "LOSS",
+      "closed_at_utc": "2026-11-11T23:00:00+00:00"
     },
     "position_plan": null,
     "stop_loss": 60.83428571428571,
@@ -150754,12 +150754,12 @@
       "participation_aligned": true,
       "market_context_aligned": false
     },
-    "status": "ACTIVE",
+    "status": "CLOSED",
     "entry_time_utc": "2026-11-11T19:00:00+00:00",
-    "closed_at_utc": null,
-    "outcome": null,
+    "closed_at_utc": "2026-11-11T23:00:00+00:00",
+    "outcome": "LOSS",
     "mfe_r": 0.117,
-    "mae_r": 0.785,
+    "mae_r": 1.01,
     "management": {
       "protect_at_r": 1.0,
       "partial_at_r": 2.0,
@@ -150771,7 +150771,7 @@
       "partial_reached_at_utc": null,
       "trail_reached_at_utc": null,
       "raw_loss_after_protect": false,
-      "raw_realized_r": null
+      "raw_realized_r": -1.0
     },
     "checkpoints_r": {
       "1h": -0.12,
@@ -150800,7 +150800,7 @@
     "selector": {
       "target_r": 2.0,
       "tp1": 990.921142857143,
-      "status": "PENDING_ENTRY",
+      "status": "ACTIVE",
       "outcome": null,
       "closed_at_utc": null
     },
@@ -150820,12 +150820,12 @@
       "participation_aligned": true,
       "market_context_aligned": false
     },
-    "status": "PENDING_ENTRY",
-    "entry_time_utc": null,
+    "status": "ACTIVE",
+    "entry_time_utc": "2026-11-11T22:45:00+00:00",
     "closed_at_utc": null,
     "outcome": null,
-    "mfe_r": null,
-    "mae_r": null,
+    "mfe_r": 0.704,
+    "mae_r": 0.049,
     "management": {
       "protect_at_r": 1.0,
       "partial_at_r": 2.0,
@@ -150840,7 +150840,7 @@
       "raw_realized_r": null
     },
     "checkpoints_r": {
-      "1h": null,
+      "1h": 0.514,
       "4h": null,
       "24h": null
     },
@@ -150953,5 +150953,71 @@
         }
       }
     ]
+  },
+  {
+    "signal_id": "APE_USDT|short|0.0955|0.0975|0.0984",
+    "created_at_utc": "2026-11-11T23:41:24.382089+00:00",
+    "symbol": "APE_USDT",
+    "direction": "short",
+    "bucket": "DEVELOPING",
+    "score": 69,
+    "quality_score": 69,
+    "execution_score": 45,
+    "entry_distance_atr": 0.5599999999999999,
+    "entry_lower": 0.0955,
+    "entry_upper": 0.0975,
+    "entry_source": "bearish FVG",
+    "entry_selection_score": 53.568,
+    "selector_score": 52.58,
+    "top_pick_rank": null,
+    "selector": {
+      "target_r": 2.0,
+      "tp1": 0.0927,
+      "status": "PENDING_ENTRY",
+      "outcome": null,
+      "closed_at_utc": null
+    },
+    "position_plan": null,
+    "stop_loss": 0.0984,
+    "tp1": 0.0937,
+    "first_target_rr": 1.473684210526315,
+    "features": {
+      "confirmed": false,
+      "displacement": true,
+      "structure": true,
+      "retest": false,
+      "sweep": false,
+      "mtf_aligned": true,
+      "zone_a_or_better": true,
+      "rr_1_5_plus": false,
+      "participation_aligned": false,
+      "market_context_aligned": true
+    },
+    "status": "PENDING_ENTRY",
+    "entry_time_utc": null,
+    "closed_at_utc": null,
+    "outcome": null,
+    "mfe_r": null,
+    "mae_r": null,
+    "management": {
+      "protect_at_r": 1.0,
+      "partial_at_r": 2.0,
+      "trail_at_r": 2.0,
+      "protect_reached": false,
+      "partial_reached": false,
+      "trail_reached": false,
+      "protect_reached_at_utc": null,
+      "partial_reached_at_utc": null,
+      "trail_reached_at_utc": null,
+      "raw_loss_after_protect": false,
+      "raw_realized_r": null
+    },
+    "checkpoints_r": {
+      "1h": null,
+      "4h": null,
+      "24h": null
+    },
+    "correlation_suppressed": false,
+    "top_pick_history": []
   }
 ]
