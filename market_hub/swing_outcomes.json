@@ -7426,7 +7426,7 @@
     "runner_hit_at_utc": null,
     "protect_1r_hit": false,
     "mfe_r": 0.329,
-    "mae_r": -0.049,
+    "mae_r": -0.285,
     "promotion_history": [
       {
         "at_utc": "2026-11-10T15:44:16.702679+00:00",
@@ -7524,7 +7524,7 @@
     "runner_hit_at_utc": null,
     "protect_1r_hit": true,
     "mfe_r": 1.024,
-    "mae_r": 0.213,
+    "mae_r": 0.083,
     "promotion_history": [
       {
         "at_utc": "2026-11-10T21:27:13.154618+00:00",
@@ -7572,13 +7572,62 @@
     "runner_hit": false,
     "runner_hit_at_utc": null,
     "protect_1r_hit": false,
-    "mfe_r": 0.577,
+    "mfe_r": 0.658,
     "mae_r": -0.324,
     "promotion_history": [
       {
         "at_utc": "2026-11-10T21:27:13.154618+00:00",
         "rank": 3,
         "score": 79.57
+      }
+    ]
+  },
+  {
+    "signal_id": "ZEC_USDT|short|2026-11-11T08:15:12.167557+00:00",
+    "created_at_utc": "2026-11-11T08:15:12.167557+00:00",
+    "symbol": "ZEC_USDT",
+    "direction": "short",
+    "rank": 1,
+    "score": 80.47,
+    "grade": "A",
+    "entry_lower": 1015.73,
+    "entry_upper": 1038.49,
+    "entry_source": "1H supply",
+    "stop_loss": 1072.9271428571428,
+    "tp1": 935.4757142857147,
+    "tp2": 843.8414285714293,
+    "runner_target": 718.9770000000001,
+    "runner_move_pct": 30.0,
+    "position_plan": {
+      "base_risk_pct": 0.65,
+      "size_label": "FULL",
+      "risk_modifier": 1.0,
+      "recommended_risk_pct": 0.65,
+      "notional_equity_multiple": 0.146,
+      "tp1_close_fraction": 0.35,
+      "tp2_close_fraction": 0.35,
+      "runner_fraction": 0.3,
+      "target_total_r": 4.118,
+      "projected_account_profit_pct": 2.68
+    },
+    "status": "PENDING_ENTRY",
+    "outcome": null,
+    "entry_time_utc": null,
+    "closed_at_utc": null,
+    "tp1_hit": false,
+    "tp1_hit_at_utc": null,
+    "tp2_hit": false,
+    "tp2_hit_at_utc": null,
+    "runner_hit": false,
+    "runner_hit_at_utc": null,
+    "protect_1r_hit": false,
+    "mfe_r": null,
+    "mae_r": null,
+    "promotion_history": [
+      {
+        "at_utc": "2026-11-11T08:15:12.167557+00:00",
+        "rank": 1,
+        "score": 80.47
       }
     ]
   }
