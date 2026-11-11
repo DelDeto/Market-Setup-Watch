@@ -7377,7 +7377,7 @@
     "runner_hit_at_utc": null,
     "protect_1r_hit": true,
     "mfe_r": 3.32,
-    "mae_r": -0.464,
+    "mae_r": -0.666,
     "promotion_history": [
       {
         "at_utc": "2026-11-10T07:24:28.147592+00:00",
@@ -7474,8 +7474,8 @@
     "runner_hit": false,
     "runner_hit_at_utc": null,
     "protect_1r_hit": true,
-    "mfe_r": 1.281,
-    "mae_r": -0.542,
+    "mfe_r": 1.922,
+    "mae_r": -0.775,
     "promotion_history": [
       {
         "at_utc": "2026-11-10T21:27:13.154618+00:00",
@@ -7524,7 +7524,7 @@
     "runner_hit_at_utc": null,
     "protect_1r_hit": true,
     "mfe_r": 1.024,
-    "mae_r": -0.433,
+    "mae_r": -0.844,
     "promotion_history": [
       {
         "at_utc": "2026-11-10T21:27:13.154618+00:00",
@@ -7610,6 +7610,55 @@
       "target_total_r": 4.118,
       "projected_account_profit_pct": 2.68
     },
+    "status": "ACTIVE",
+    "outcome": null,
+    "entry_time_utc": "2026-11-11T16:00:00+00:00",
+    "closed_at_utc": null,
+    "tp1_hit": false,
+    "tp1_hit_at_utc": null,
+    "tp2_hit": false,
+    "tp2_hit_at_utc": null,
+    "runner_hit": false,
+    "runner_hit_at_utc": null,
+    "protect_1r_hit": true,
+    "mfe_r": 1.219,
+    "mae_r": 0.07,
+    "promotion_history": [
+      {
+        "at_utc": "2026-11-11T08:15:12.167557+00:00",
+        "rank": 1,
+        "score": 80.47
+      }
+    ]
+  },
+  {
+    "signal_id": "ANTHROPIC_USDT|short|2026-11-11T22:57:00.858517+00:00",
+    "created_at_utc": "2026-11-11T22:57:00.858517+00:00",
+    "symbol": "ANTHROPIC_USDT",
+    "direction": "short",
+    "rank": 1,
+    "score": 84.87,
+    "grade": "A",
+    "entry_lower": 1382.73,
+    "entry_upper": 1419.94,
+    "entry_source": "1H supply",
+    "stop_loss": 1422.882142857143,
+    "tp1": 1358.2407142857141,
+    "tp2": 1315.1464285714283,
+    "runner_target": 1191.13475,
+    "runner_move_pct": 15.0,
+    "position_plan": {
+      "base_risk_pct": 0.65,
+      "size_label": "FULL",
+      "risk_modifier": 1.0,
+      "recommended_risk_pct": 0.65,
+      "notional_equity_multiple": 0.423,
+      "tp1_close_fraction": 0.35,
+      "tp2_close_fraction": 0.35,
+      "runner_fraction": 0.3,
+      "target_total_r": 5.027,
+      "projected_account_profit_pct": 3.27
+    },
     "status": "PENDING_ENTRY",
     "outcome": null,
     "entry_time_utc": null,
@@ -7625,9 +7674,107 @@
     "mae_r": null,
     "promotion_history": [
       {
-        "at_utc": "2026-11-11T08:15:12.167557+00:00",
+        "at_utc": "2026-11-11T22:57:00.858517+00:00",
         "rank": 1,
-        "score": 80.47
+        "score": 84.87
+      }
+    ]
+  },
+  {
+    "signal_id": "ETHFI_USDT|long|2026-11-11T22:57:00.858517+00:00",
+    "created_at_utc": "2026-11-11T22:57:00.858517+00:00",
+    "symbol": "ETHFI_USDT",
+    "direction": "long",
+    "rank": 2,
+    "score": 80.61,
+    "grade": "A",
+    "entry_lower": 0.6251,
+    "entry_upper": 0.6291,
+    "entry_source": "1H demand",
+    "stop_loss": 0.6236289285714286,
+    "tp1": 0.6340421428571428,
+    "tp2": 0.6409842857142856,
+    "runner_target": 0.721165,
+    "runner_move_pct": 15.0,
+    "position_plan": {
+      "base_risk_pct": 0.65,
+      "size_label": "TIGHT",
+      "risk_modifier": 0.6,
+      "recommended_risk_pct": 0.39,
+      "notional_equity_multiple": 0.704,
+      "tp1_close_fraction": 0.35,
+      "tp2_close_fraction": 0.35,
+      "runner_fraction": 0.3,
+      "target_total_r": 10.23,
+      "projected_account_profit_pct": 3.99
+    },
+    "status": "PENDING_ENTRY",
+    "outcome": null,
+    "entry_time_utc": null,
+    "closed_at_utc": null,
+    "tp1_hit": false,
+    "tp1_hit_at_utc": null,
+    "tp2_hit": false,
+    "tp2_hit_at_utc": null,
+    "runner_hit": false,
+    "runner_hit_at_utc": null,
+    "protect_1r_hit": false,
+    "mfe_r": null,
+    "mae_r": null,
+    "promotion_history": [
+      {
+        "at_utc": "2026-11-11T22:57:00.858517+00:00",
+        "rank": 2,
+        "score": 80.61
+      }
+    ]
+  },
+  {
+    "signal_id": "MSTRSTOCK_USDT|short|2026-11-11T22:57:00.858517+00:00",
+    "created_at_utc": "2026-11-11T22:57:00.858517+00:00",
+    "symbol": "MSTRSTOCK_USDT",
+    "direction": "short",
+    "rank": 3,
+    "score": 78.87,
+    "grade": "A",
+    "entry_lower": 121.58,
+    "entry_upper": 123.41,
+    "entry_source": "1H supply",
+    "stop_loss": 124.50225,
+    "tp1": 118.4805,
+    "tp2": 114.46600000000001,
+    "runner_target": 104.12075,
+    "runner_move_pct": 15.0,
+    "position_plan": {
+      "base_risk_pct": 0.65,
+      "size_label": "FULL",
+      "risk_modifier": 1.0,
+      "recommended_risk_pct": 0.3,
+      "notional_equity_multiple": 0.183,
+      "tp1_close_fraction": 0.35,
+      "tp2_close_fraction": 0.35,
+      "runner_fraction": 0.3,
+      "target_total_r": 4.846,
+      "projected_account_profit_pct": 1.45
+    },
+    "status": "PENDING_ENTRY",
+    "outcome": null,
+    "entry_time_utc": null,
+    "closed_at_utc": null,
+    "tp1_hit": false,
+    "tp1_hit_at_utc": null,
+    "tp2_hit": false,
+    "tp2_hit_at_utc": null,
+    "runner_hit": false,
+    "runner_hit_at_utc": null,
+    "protect_1r_hit": false,
+    "mfe_r": null,
+    "mae_r": null,
+    "promotion_history": [
+      {
+        "at_utc": "2026-11-11T22:57:00.858517+00:00",
+        "rank": 3,
+        "score": 78.87
       }
     ]
   }
