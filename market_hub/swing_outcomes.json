@@ -7376,7 +7376,7 @@
     "runner_hit": false,
     "runner_hit_at_utc": null,
     "protect_1r_hit": true,
-    "mfe_r": 3.619,
+    "mfe_r": 3.667,
     "mae_r": -0.666,
     "promotion_history": [
       {
@@ -7611,17 +7611,17 @@
       "projected_account_profit_pct": 2.68
     },
     "status": "ACTIVE",
-    "outcome": null,
+    "outcome": "WIN",
     "entry_time_utc": "2026-11-11T16:00:00+00:00",
     "closed_at_utc": null,
-    "tp1_hit": false,
-    "tp1_hit_at_utc": null,
+    "tp1_hit": true,
+    "tp1_hit_at_utc": "2026-11-12T18:00:00+00:00",
     "tp2_hit": false,
     "tp2_hit_at_utc": null,
     "runner_hit": false,
     "runner_hit_at_utc": null,
     "protect_1r_hit": true,
-    "mfe_r": 1.847,
+    "mfe_r": 2.098,
     "mae_r": 0.07,
     "promotion_history": [
       {
@@ -7871,7 +7871,7 @@
     "runner_hit": false,
     "runner_hit_at_utc": null,
     "protect_1r_hit": true,
-    "mfe_r": 5.613,
+    "mfe_r": 7.267,
     "mae_r": -0.82,
     "promotion_history": [
       {
@@ -7909,6 +7909,55 @@
       "target_total_r": 9.898,
       "projected_account_profit_pct": 6.43
     },
+    "status": "CLOSED",
+    "outcome": "WIN",
+    "entry_time_utc": "2026-11-12T17:00:00+00:00",
+    "closed_at_utc": "2026-11-12T18:00:00+00:00",
+    "tp1_hit": true,
+    "tp1_hit_at_utc": "2026-11-12T17:00:00+00:00",
+    "tp2_hit": false,
+    "tp2_hit_at_utc": null,
+    "runner_hit": false,
+    "runner_hit_at_utc": null,
+    "protect_1r_hit": true,
+    "mfe_r": 2.417,
+    "mae_r": -1.642,
+    "promotion_history": [
+      {
+        "at_utc": "2026-11-12T16:19:06.205007+00:00",
+        "rank": 1,
+        "score": 83.2
+      }
+    ]
+  },
+  {
+    "signal_id": "SPCXSTOCK_USDT|long|2026-11-12T20:45:46.621871+00:00",
+    "created_at_utc": "2026-11-12T20:45:46.621871+00:00",
+    "symbol": "SPCXSTOCK_USDT",
+    "direction": "long",
+    "rank": 1,
+    "score": 80.97,
+    "grade": "A",
+    "entry_lower": 138.64,
+    "entry_upper": 139.11,
+    "entry_source": "1H demand",
+    "stop_loss": 137.2825,
+    "tp1": 142.06,
+    "tp2": 145.245,
+    "runner_target": 159.70624999999998,
+    "runner_move_pct": 15.0,
+    "position_plan": {
+      "base_risk_pct": 0.65,
+      "size_label": "FULL",
+      "risk_modifier": 1.0,
+      "recommended_risk_pct": 0.65,
+      "notional_equity_multiple": 0.567,
+      "tp1_close_fraction": 0.35,
+      "tp2_close_fraction": 0.35,
+      "runner_fraction": 0.3,
+      "target_total_r": 6.024,
+      "projected_account_profit_pct": 3.92
+    },
     "status": "PENDING_ENTRY",
     "outcome": null,
     "entry_time_utc": null,
@@ -7924,9 +7973,9 @@
     "mae_r": null,
     "promotion_history": [
       {
-        "at_utc": "2026-11-12T16:19:06.205007+00:00",
+        "at_utc": "2026-11-12T20:45:46.621871+00:00",
         "rank": 1,
-        "score": 83.2
+        "score": 80.97
       }
     ]
   }
