@@ -1,66 +1,66 @@
 {
   "active": true,
-  "closed_samples": 1926,
-  "baseline_win_rate": 0.3598130841121495,
+  "closed_samples": 1944,
+  "baseline_win_rate": 0.36162551440329216,
   "feature_adjustments": {
     "confirmed": {
-      "samples": 738,
-      "win_rate": 0.3509485094850949,
-      "delta_vs_baseline": -0.008864574627054644,
+      "samples": 746,
+      "win_rate": 0.353887399463807,
+      "delta_vs_baseline": -0.0077381149394851745,
       "points": 0
     },
     "displacement": {
-      "samples": 1892,
-      "win_rate": 0.35887949260042284,
-      "delta_vs_baseline": -0.0009335915117266724,
+      "samples": 1910,
+      "win_rate": 0.3607329842931937,
+      "delta_vs_baseline": -0.0008925301100984329,
       "points": 0
     },
     "structure": {
-      "samples": 1923,
-      "win_rate": 0.35985439417576703,
-      "delta_vs_baseline": 4.131006361751677e-05,
+      "samples": 1941,
+      "win_rate": 0.3616692426584235,
+      "delta_vs_baseline": 4.372825513132561e-05,
       "points": 0
     },
     "retest": {
-      "samples": 1412,
-      "win_rate": 0.34985835694050993,
-      "delta_vs_baseline": -0.009954727171639588,
+      "samples": 1423,
+      "win_rate": 0.35137034434293746,
+      "delta_vs_baseline": -0.010255170060354701,
       "points": 0
     },
     "sweep": {
-      "samples": 855,
-      "win_rate": 0.3871345029239766,
-      "delta_vs_baseline": 0.027321418811827092,
+      "samples": 857,
+      "win_rate": 0.3862310385064177,
+      "delta_vs_baseline": 0.024605524103125553,
       "points": 0
     },
     "mtf_aligned": {
-      "samples": 1394,
-      "win_rate": 0.3651362984218077,
-      "delta_vs_baseline": 0.0053232143096582085,
+      "samples": 1406,
+      "win_rate": 0.3669985775248933,
+      "delta_vs_baseline": 0.005373063121601129,
       "points": 0
     },
     "zone_a_or_better": {
-      "samples": 1906,
-      "win_rate": 0.36253934942287513,
-      "delta_vs_baseline": 0.0027262653107256174,
+      "samples": 1924,
+      "win_rate": 0.36434511434511435,
+      "delta_vs_baseline": 0.0027195999418221928,
       "points": 0
     },
     "rr_1_5_plus": {
-      "samples": 1585,
-      "win_rate": 0.3331230283911672,
-      "delta_vs_baseline": -0.02669005572098232,
+      "samples": 1602,
+      "win_rate": 0.3352059925093633,
+      "delta_vs_baseline": -0.026419521893928877,
       "points": 0
     },
     "participation_aligned": {
-      "samples": 698,
-      "win_rate": 0.3982808022922636,
-      "delta_vs_baseline": 0.038467718180114074,
+      "samples": 708,
+      "win_rate": 0.3997175141242938,
+      "delta_vs_baseline": 0.038091999721001635,
       "points": 0
     },
     "market_context_aligned": {
-      "samples": 667,
-      "win_rate": 0.34632683658170915,
-      "delta_vs_baseline": -0.013486247530440365,
+      "samples": 669,
+      "win_rate": 0.34678624813153963,
+      "delta_vs_baseline": -0.014839266271752527,
       "points": 0
     }
   }
