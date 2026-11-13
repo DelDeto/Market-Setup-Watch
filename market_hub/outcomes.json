@@ -97110,7 +97110,7 @@
     "entry_time_utc": "2026-10-24T17:15:00+00:00",
     "closed_at_utc": null,
     "outcome": null,
-    "mfe_r": 8.794,
+    "mfe_r": 8.817,
     "mae_r": 0.0,
     "management": {
       "protect_at_r": 1.0,
@@ -157312,7 +157312,7 @@
     "entry_time_utc": "2026-11-13T07:45:00+00:00",
     "closed_at_utc": null,
     "outcome": null,
-    "mfe_r": 3.361,
+    "mfe_r": 3.499,
     "mae_r": 0.0,
     "management": {
       "protect_at_r": 1.0,
@@ -158821,7 +158821,7 @@
     "closed_at_utc": null,
     "outcome": null,
     "mfe_r": 0.55,
-    "mae_r": 0.603,
+    "mae_r": 0.974,
     "management": {
       "protect_at_r": 1.0,
       "partial_at_r": 2.0,
@@ -158887,7 +158887,7 @@
     "closed_at_utc": null,
     "outcome": null,
     "mfe_r": 1.199,
-    "mae_r": 0.205,
+    "mae_r": 0.242,
     "management": {
       "protect_at_r": 1.0,
       "partial_at_r": 2.0,
