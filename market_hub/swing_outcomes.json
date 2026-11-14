@@ -5752,19 +5752,19 @@
       "target_total_r": 3.692,
       "projected_account_profit_pct": 2.4
     },
-    "status": "ACTIVE",
+    "status": "CLOSED",
     "outcome": "WIN",
     "entry_time_utc": "2026-10-30T23:00:00+00:00",
-    "closed_at_utc": null,
+    "closed_at_utc": "2026-11-14T16:00:00+00:00",
     "tp1_hit": true,
     "tp1_hit_at_utc": "2026-11-05T15:00:00+00:00",
     "tp2_hit": true,
     "tp2_hit_at_utc": "2026-11-13T03:00:00+00:00",
-    "runner_hit": false,
-    "runner_hit_at_utc": null,
+    "runner_hit": true,
+    "runner_hit_at_utc": "2026-11-14T16:00:00+00:00",
     "protect_1r_hit": true,
-    "mfe_r": 4.954,
-    "mae_r": -0.174,
+    "mfe_r": 5.394,
+    "mae_r": 0.602,
     "promotion_history": [
       {
         "at_utc": "2026-10-30T07:17:59.992974+00:00",
@@ -6670,7 +6670,7 @@
     "runner_hit": false,
     "runner_hit_at_utc": null,
     "protect_1r_hit": true,
-    "mfe_r": 5.154,
+    "mfe_r": 6.407,
     "mae_r": -0.846,
     "promotion_history": [
       {
@@ -6974,12 +6974,12 @@
     "closed_at_utc": null,
     "tp1_hit": true,
     "tp1_hit_at_utc": "2026-11-10T15:00:00+00:00",
-    "tp2_hit": false,
-    "tp2_hit_at_utc": null,
+    "tp2_hit": true,
+    "tp2_hit_at_utc": "2026-11-14T18:00:00+00:00",
     "runner_hit": false,
     "runner_hit_at_utc": null,
     "protect_1r_hit": true,
-    "mfe_r": 3.132,
+    "mfe_r": 4.313,
     "mae_r": -0.013,
     "promotion_history": [
       {
@@ -7082,7 +7082,7 @@
     "runner_hit": false,
     "runner_hit_at_utc": null,
     "protect_1r_hit": true,
-    "mfe_r": 14.533,
+    "mfe_r": 16.946,
     "mae_r": -0.025,
     "promotion_history": [
       {
@@ -7185,7 +7185,7 @@
     "runner_hit": false,
     "runner_hit_at_utc": null,
     "protect_1r_hit": true,
-    "mfe_r": 6.232,
+    "mfe_r": 8.379,
     "mae_r": -0.966,
     "promotion_history": [
       {
@@ -7370,18 +7370,18 @@
       "target_total_r": 4.907,
       "projected_account_profit_pct": 2.7
     },
-    "status": "ACTIVE",
+    "status": "CLOSED",
     "outcome": "WIN",
     "entry_time_utc": "2026-11-10T08:00:00+00:00",
-    "closed_at_utc": null,
+    "closed_at_utc": "2026-11-14T15:00:00+00:00",
     "tp1_hit": true,
     "tp1_hit_at_utc": "2026-11-10T13:00:00+00:00",
     "tp2_hit": true,
     "tp2_hit_at_utc": "2026-11-13T03:00:00+00:00",
-    "runner_hit": false,
-    "runner_hit_at_utc": null,
+    "runner_hit": true,
+    "runner_hit_at_utc": "2026-11-14T15:00:00+00:00",
     "protect_1r_hit": true,
-    "mfe_r": 8.807,
+    "mfe_r": 9.638,
     "mae_r": -0.666,
     "promotion_history": [
       {
@@ -7479,7 +7479,7 @@
     "runner_hit": false,
     "runner_hit_at_utc": null,
     "protect_1r_hit": true,
-    "mfe_r": 6.858,
+    "mfe_r": 8.187,
     "mae_r": -0.775,
     "promotion_history": [
       {
@@ -7528,7 +7528,7 @@
     "runner_hit": false,
     "runner_hit_at_utc": null,
     "protect_1r_hit": true,
-    "mfe_r": 7.175,
+    "mfe_r": 8.183,
     "mae_r": -0.844,
     "promotion_history": [
       {
@@ -7626,7 +7626,7 @@
     "runner_hit": false,
     "runner_hit_at_utc": null,
     "protect_1r_hit": true,
-    "mfe_r": 3.393,
+    "mfe_r": 3.971,
     "mae_r": 0.07,
     "promotion_history": [
       {
@@ -8023,12 +8023,12 @@
     "closed_at_utc": null,
     "tp1_hit": true,
     "tp1_hit_at_utc": "2026-11-14T02:00:00+00:00",
-    "tp2_hit": false,
-    "tp2_hit_at_utc": null,
+    "tp2_hit": true,
+    "tp2_hit_at_utc": "2026-11-14T16:00:00+00:00",
     "runner_hit": false,
     "runner_hit_at_utc": null,
     "protect_1r_hit": true,
-    "mfe_r": 3.655,
+    "mfe_r": 5.481,
     "mae_r": -0.322,
     "promotion_history": [
       {
@@ -8329,6 +8329,104 @@
         "at_utc": "2026-11-14T09:05:36.257823+00:00",
         "rank": 1,
         "score": 80.44
+      }
+    ]
+  },
+  {
+    "signal_id": "VVV_USDT|short|2026-11-14T20:34:10.395085+00:00",
+    "created_at_utc": "2026-11-14T20:34:10.395085+00:00",
+    "symbol": "VVV_USDT",
+    "direction": "short",
+    "rank": 1,
+    "score": 91.14,
+    "grade": "A+",
+    "entry_lower": 17.747,
+    "entry_upper": 18.078,
+    "entry_source": "1H supply",
+    "stop_loss": 18.526482142857144,
+    "tp1": 16.684535714285715,
+    "tp2": 15.45657142857143,
+    "runner_target": 13.3734725,
+    "runner_move_pct": 25.34,
+    "position_plan": {
+      "base_risk_pct": 0.9,
+      "size_label": "FULL",
+      "risk_modifier": 1.0,
+      "recommended_risk_pct": 0.9,
+      "notional_equity_multiple": 0.263,
+      "tp1_close_fraction": 0.35,
+      "tp2_close_fraction": 0.35,
+      "runner_fraction": 0.3,
+      "target_total_r": 4.318,
+      "projected_account_profit_pct": 3.89
+    },
+    "status": "PENDING_ENTRY",
+    "outcome": null,
+    "entry_time_utc": null,
+    "closed_at_utc": null,
+    "tp1_hit": false,
+    "tp1_hit_at_utc": null,
+    "tp2_hit": false,
+    "tp2_hit_at_utc": null,
+    "runner_hit": false,
+    "runner_hit_at_utc": null,
+    "protect_1r_hit": false,
+    "mfe_r": null,
+    "mae_r": null,
+    "promotion_history": [
+      {
+        "at_utc": "2026-11-14T20:34:10.395085+00:00",
+        "rank": 1,
+        "score": 91.14
+      }
+    ]
+  },
+  {
+    "signal_id": "BCH_USDT|short|2026-11-14T20:34:10.395085+00:00",
+    "created_at_utc": "2026-11-14T20:34:10.395085+00:00",
+    "symbol": "BCH_USDT",
+    "direction": "short",
+    "rank": 2,
+    "score": 84.47,
+    "grade": "A",
+    "entry_lower": 211.7,
+    "entry_upper": 213.53,
+    "entry_source": "1H supply",
+    "stop_loss": 218.40971428571427,
+    "tp1": 201.02557142857148,
+    "tp2": 189.43614285714295,
+    "runner_target": 164.223826,
+    "runner_move_pct": 22.76,
+    "position_plan": {
+      "base_risk_pct": 0.65,
+      "size_label": "FULL",
+      "risk_modifier": 1.0,
+      "recommended_risk_pct": 0.55,
+      "notional_equity_multiple": 0.202,
+      "tp1_close_fraction": 0.35,
+      "tp2_close_fraction": 0.35,
+      "runner_fraction": 0.3,
+      "target_total_r": 4.605,
+      "projected_account_profit_pct": 2.53
+    },
+    "status": "PENDING_ENTRY",
+    "outcome": null,
+    "entry_time_utc": null,
+    "closed_at_utc": null,
+    "tp1_hit": false,
+    "tp1_hit_at_utc": null,
+    "tp2_hit": false,
+    "tp2_hit_at_utc": null,
+    "runner_hit": false,
+    "runner_hit_at_utc": null,
+    "protect_1r_hit": false,
+    "mfe_r": null,
+    "mae_r": null,
+    "promotion_history": [
+      {
+        "at_utc": "2026-11-14T20:34:10.395085+00:00",
+        "rank": 2,
+        "score": 84.47
       }
     ]
   }
