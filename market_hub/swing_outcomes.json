@@ -5763,7 +5763,7 @@
     "runner_hit": false,
     "runner_hit_at_utc": null,
     "protect_1r_hit": true,
-    "mfe_r": 4.445,
+    "mfe_r": 4.954,
     "mae_r": -0.174,
     "promotion_history": [
       {
@@ -6670,7 +6670,7 @@
     "runner_hit": false,
     "runner_hit_at_utc": null,
     "protect_1r_hit": true,
-    "mfe_r": 4.341,
+    "mfe_r": 5.154,
     "mae_r": -0.846,
     "promotion_history": [
       {
@@ -6979,7 +6979,7 @@
     "runner_hit": false,
     "runner_hit_at_utc": null,
     "protect_1r_hit": true,
-    "mfe_r": 2.595,
+    "mfe_r": 3.132,
     "mae_r": -0.013,
     "promotion_history": [
       {
@@ -7082,7 +7082,7 @@
     "runner_hit": false,
     "runner_hit_at_utc": null,
     "protect_1r_hit": true,
-    "mfe_r": 12.044,
+    "mfe_r": 14.533,
     "mae_r": -0.025,
     "promotion_history": [
       {
@@ -7180,12 +7180,12 @@
     "closed_at_utc": null,
     "tp1_hit": true,
     "tp1_hit_at_utc": "2026-11-13T03:00:00+00:00",
-    "tp2_hit": false,
-    "tp2_hit_at_utc": null,
+    "tp2_hit": true,
+    "tp2_hit_at_utc": "2026-11-14T13:00:00+00:00",
     "runner_hit": false,
     "runner_hit_at_utc": null,
     "protect_1r_hit": true,
-    "mfe_r": 2.991,
+    "mfe_r": 6.232,
     "mae_r": -0.966,
     "promotion_history": [
       {
@@ -7381,7 +7381,7 @@
     "runner_hit": false,
     "runner_hit_at_utc": null,
     "protect_1r_hit": true,
-    "mfe_r": 7.678,
+    "mfe_r": 8.807,
     "mae_r": -0.666,
     "promotion_history": [
       {
@@ -7479,7 +7479,7 @@
     "runner_hit": false,
     "runner_hit_at_utc": null,
     "protect_1r_hit": true,
-    "mfe_r": 5.37,
+    "mfe_r": 6.858,
     "mae_r": -0.775,
     "promotion_history": [
       {
@@ -7528,7 +7528,7 @@
     "runner_hit": false,
     "runner_hit_at_utc": null,
     "protect_1r_hit": true,
-    "mfe_r": 6.159,
+    "mfe_r": 7.175,
     "mae_r": -0.844,
     "promotion_history": [
       {
@@ -7626,7 +7626,7 @@
     "runner_hit": false,
     "runner_hit_at_utc": null,
     "protect_1r_hit": true,
-    "mfe_r": 3.205,
+    "mfe_r": 3.393,
     "mae_r": 0.07,
     "promotion_history": [
       {
@@ -8028,7 +8028,7 @@
     "runner_hit": false,
     "runner_hit_at_utc": null,
     "protect_1r_hit": true,
-    "mfe_r": 2.181,
+    "mfe_r": 3.655,
     "mae_r": -0.322,
     "promotion_history": [
       {
