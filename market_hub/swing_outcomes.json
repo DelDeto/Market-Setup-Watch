@@ -6671,7 +6671,7 @@
     "runner_hit_at_utc": null,
     "protect_1r_hit": true,
     "mfe_r": 7.659,
-    "mae_r": -0.209,
+    "mae_r": 0.67,
     "promotion_history": [
       {
         "at_utc": "2026-11-05T21:35:48.657722+00:00",
@@ -7675,7 +7675,7 @@
     "runner_hit": false,
     "runner_hit_at_utc": null,
     "protect_1r_hit": true,
-    "mfe_r": 4.879,
+    "mfe_r": 6.318,
     "mae_r": 0.405,
     "promotion_history": [
       {
@@ -8708,6 +8708,55 @@
       "target_total_r": 8.83,
       "projected_account_profit_pct": 4.86
     },
+    "status": "CLOSED",
+    "outcome": "WIN",
+    "entry_time_utc": "2026-11-16T21:00:00+00:00",
+    "closed_at_utc": "2026-11-16T22:00:00+00:00",
+    "tp1_hit": true,
+    "tp1_hit_at_utc": "2026-11-16T21:00:00+00:00",
+    "tp2_hit": false,
+    "tp2_hit_at_utc": null,
+    "runner_hit": false,
+    "runner_hit_at_utc": null,
+    "protect_1r_hit": true,
+    "mfe_r": 2.228,
+    "mae_r": -3.426,
+    "promotion_history": [
+      {
+        "at_utc": "2026-11-16T15:58:30.760224+00:00",
+        "rank": 2,
+        "score": 78.71
+      }
+    ]
+  },
+  {
+    "signal_id": "EWY_USDT|short|2026-11-17T00:09:03.528828+00:00",
+    "created_at_utc": "2026-11-17T00:09:03.528828+00:00",
+    "symbol": "EWY_USDT",
+    "direction": "short",
+    "rank": 1,
+    "score": 80.72,
+    "grade": "A",
+    "entry_lower": 138.15,
+    "entry_upper": 138.36,
+    "entry_source": "1H supply",
+    "stop_loss": 139.96785714285713,
+    "tp1": 134.82928571428573,
+    "tp2": 131.40357142857147,
+    "runner_target": 117.51674999999999,
+    "runner_move_pct": 15.0,
+    "position_plan": {
+      "base_risk_pct": 0.65,
+      "size_label": "FULL",
+      "risk_modifier": 1.0,
+      "recommended_risk_pct": 0.65,
+      "notional_equity_multiple": 0.525,
+      "tp1_close_fraction": 0.35,
+      "tp2_close_fraction": 0.35,
+      "runner_fraction": 0.3,
+      "target_total_r": 5.732,
+      "projected_account_profit_pct": 3.73
+    },
     "status": "PENDING_ENTRY",
     "outcome": null,
     "entry_time_utc": null,
@@ -8723,9 +8772,58 @@
     "mae_r": null,
     "promotion_history": [
       {
-        "at_utc": "2026-11-16T15:58:30.760224+00:00",
+        "at_utc": "2026-11-17T00:09:03.528828+00:00",
+        "rank": 1,
+        "score": 80.72
+      }
+    ]
+  },
+  {
+    "signal_id": "SKHYNIXSTOCK_USDT|short|2026-11-17T00:09:03.528828+00:00",
+    "created_at_utc": "2026-11-17T00:09:03.528828+00:00",
+    "symbol": "SKHYNIXSTOCK_USDT",
+    "direction": "short",
+    "rank": 2,
+    "score": 78.69,
+    "grade": "A",
+    "entry_lower": 834.08,
+    "entry_upper": 835.01,
+    "entry_source": "1H supply",
+    "stop_loss": 846.7343928571429,
+    "tp1": 810.1662142857144,
+    "tp2": 785.7874285714288,
+    "runner_target": 709.36325,
+    "runner_move_pct": 15.0,
+    "position_plan": {
+      "base_risk_pct": 0.65,
+      "size_label": "FULL",
+      "risk_modifier": 1.0,
+      "recommended_risk_pct": 0.55,
+      "notional_equity_multiple": 0.376,
+      "tp1_close_fraction": 0.35,
+      "tp2_close_fraction": 0.35,
+      "runner_fraction": 0.3,
+      "target_total_r": 5.181,
+      "projected_account_profit_pct": 2.85
+    },
+    "status": "PENDING_ENTRY",
+    "outcome": null,
+    "entry_time_utc": null,
+    "closed_at_utc": null,
+    "tp1_hit": false,
+    "tp1_hit_at_utc": null,
+    "tp2_hit": false,
+    "tp2_hit_at_utc": null,
+    "runner_hit": false,
+    "runner_hit_at_utc": null,
+    "protect_1r_hit": false,
+    "mfe_r": null,
+    "mae_r": null,
+    "promotion_history": [
+      {
+        "at_utc": "2026-11-17T00:09:03.528828+00:00",
         "rank": 2,
-        "score": 78.71
+        "score": 78.69
       }
     ]
   }
