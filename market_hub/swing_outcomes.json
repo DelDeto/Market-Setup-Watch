@@ -6671,7 +6671,7 @@
     "runner_hit_at_utc": null,
     "protect_1r_hit": true,
     "mfe_r": 7.659,
-    "mae_r": 0.934,
+    "mae_r": 1.396,
     "promotion_history": [
       {
         "at_utc": "2026-11-05T21:35:48.657722+00:00",
@@ -8474,7 +8474,7 @@
     "runner_hit": false,
     "runner_hit_at_utc": null,
     "protect_1r_hit": true,
-    "mfe_r": 8.334,
+    "mfe_r": 8.626,
     "mae_r": -0.73,
     "promotion_history": [
       {
@@ -8964,7 +8964,7 @@
     "runner_hit": false,
     "runner_hit_at_utc": null,
     "protect_1r_hit": true,
-    "mfe_r": 5.039,
+    "mfe_r": 5.489,
     "mae_r": -0.04,
     "promotion_history": [
       {
@@ -9020,6 +9020,55 @@
         "at_utc": "2026-11-18T16:30:09.427610+00:00",
         "rank": 1,
         "score": 87.34
+      }
+    ]
+  },
+  {
+    "signal_id": "USOIL_USDT|short|2026-11-18T23:03:53.757452+00:00",
+    "created_at_utc": "2026-11-18T23:03:53.757452+00:00",
+    "symbol": "USOIL_USDT",
+    "direction": "short",
+    "rank": 1,
+    "score": 79.09,
+    "grade": "A",
+    "entry_lower": 83.22,
+    "entry_upper": 83.76,
+    "entry_source": "1H supply",
+    "stop_loss": 83.86596428571428,
+    "tp1": 82.73807142857146,
+    "tp2": 81.98614285714291,
+    "runner_target": 70.96650000000001,
+    "runner_move_pct": 15.0,
+    "position_plan": {
+      "base_risk_pct": 0.65,
+      "size_label": "TIGHT",
+      "risk_modifier": 0.6,
+      "recommended_risk_pct": 0.39,
+      "notional_equity_multiple": 0.867,
+      "tp1_close_fraction": 0.35,
+      "tp2_close_fraction": 0.35,
+      "runner_fraction": 0.3,
+      "target_total_r": 12.093,
+      "projected_account_profit_pct": 4.72
+    },
+    "status": "PENDING_ENTRY",
+    "outcome": null,
+    "entry_time_utc": null,
+    "closed_at_utc": null,
+    "tp1_hit": false,
+    "tp1_hit_at_utc": null,
+    "tp2_hit": false,
+    "tp2_hit_at_utc": null,
+    "runner_hit": false,
+    "runner_hit_at_utc": null,
+    "protect_1r_hit": false,
+    "mfe_r": null,
+    "mae_r": null,
+    "promotion_history": [
+      {
+        "at_utc": "2026-11-18T23:03:53.757452+00:00",
+        "rank": 1,
+        "score": 79.09
       }
     ]
   }
