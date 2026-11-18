@@ -8474,7 +8474,7 @@
     "runner_hit": false,
     "runner_hit_at_utc": null,
     "protect_1r_hit": true,
-    "mfe_r": 6.358,
+    "mfe_r": 6.443,
     "mae_r": -0.73,
     "promotion_history": [
       {
@@ -8659,10 +8659,10 @@
       "target_total_r": 7.95,
       "projected_account_profit_pct": 4.37
     },
-    "status": "PENDING_ENTRY",
-    "outcome": null,
+    "status": "EXPIRED",
+    "outcome": "EXPIRED",
     "entry_time_utc": null,
-    "closed_at_utc": null,
+    "closed_at_utc": "2026-11-18T07:16:14.873330+00:00",
     "tp1_hit": false,
     "tp1_hit_at_utc": null,
     "tp2_hit": false,
@@ -8922,6 +8922,55 @@
         "at_utc": "2026-11-17T23:59:10.662490+00:00",
         "rank": 1,
         "score": 86.58
+      }
+    ]
+  },
+  {
+    "signal_id": "KORU_USDT|short|2026-11-18T07:08:51.422539+00:00",
+    "created_at_utc": "2026-11-18T07:08:51.422539+00:00",
+    "symbol": "KORU_USDT",
+    "direction": "short",
+    "rank": 1,
+    "score": 79.47,
+    "grade": "A",
+    "entry_lower": 7.02,
+    "entry_upper": 7.19,
+    "entry_source": "1H supply",
+    "stop_loss": 7.2294285714285715,
+    "tp1": 6.856142857142858,
+    "tp2": 6.607285714285716,
+    "runner_target": 6.03925,
+    "runner_move_pct": 15.0,
+    "position_plan": {
+      "base_risk_pct": 0.65,
+      "size_label": "FULL",
+      "risk_modifier": 1.0,
+      "recommended_risk_pct": 0.65,
+      "notional_equity_multiple": 0.371,
+      "tp1_close_fraction": 0.35,
+      "tp2_close_fraction": 0.35,
+      "runner_fraction": 0.3,
+      "target_total_r": 4.67,
+      "projected_account_profit_pct": 3.04
+    },
+    "status": "PENDING_ENTRY",
+    "outcome": null,
+    "entry_time_utc": null,
+    "closed_at_utc": null,
+    "tp1_hit": false,
+    "tp1_hit_at_utc": null,
+    "tp2_hit": false,
+    "tp2_hit_at_utc": null,
+    "runner_hit": false,
+    "runner_hit_at_utc": null,
+    "protect_1r_hit": false,
+    "mfe_r": null,
+    "mae_r": null,
+    "promotion_history": [
+      {
+        "at_utc": "2026-11-18T07:08:51.422539+00:00",
+        "rank": 1,
+        "score": 79.47
       }
     ]
   }
