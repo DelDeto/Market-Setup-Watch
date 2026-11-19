@@ -9056,10 +9056,10 @@
       "target_total_r": 12.093,
       "projected_account_profit_pct": 4.72
     },
-    "status": "ACTIVE",
+    "status": "CLOSED",
     "outcome": "WIN",
     "entry_time_utc": "2026-11-19T01:00:00+00:00",
-    "closed_at_utc": null,
+    "closed_at_utc": "2026-11-19T14:00:00+00:00",
     "tp1_hit": true,
     "tp1_hit_at_utc": "2026-11-19T01:00:00+00:00",
     "tp2_hit": true,
@@ -9068,7 +9068,7 @@
     "runner_hit_at_utc": null,
     "protect_1r_hit": true,
     "mfe_r": 4.469,
-    "mae_r": -0.106,
+    "mae_r": -1.49,
     "promotion_history": [
       {
         "at_utc": "2026-11-18T23:03:53.757452+00:00",
@@ -9111,12 +9111,12 @@
     "closed_at_utc": null,
     "tp1_hit": true,
     "tp1_hit_at_utc": "2026-11-19T05:00:00+00:00",
-    "tp2_hit": false,
-    "tp2_hit_at_utc": null,
+    "tp2_hit": true,
+    "tp2_hit_at_utc": "2026-11-19T15:00:00+00:00",
     "runner_hit": false,
     "runner_hit_at_utc": null,
     "protect_1r_hit": true,
-    "mfe_r": 3.308,
+    "mfe_r": 7.677,
     "mae_r": 0.489,
     "promotion_history": [
       {
@@ -9172,6 +9172,104 @@
         "at_utc": "2026-11-19T12:56:42.653835+00:00",
         "rank": 1,
         "score": 81.35
+      }
+    ]
+  },
+  {
+    "signal_id": "VELVET_USDT|long|2026-11-19T21:25:43.903556+00:00",
+    "created_at_utc": "2026-11-19T21:25:43.903556+00:00",
+    "symbol": "VELVET_USDT",
+    "direction": "long",
+    "rank": 1,
+    "score": 82.33,
+    "grade": "A",
+    "entry_lower": 0.06614,
+    "entry_upper": 0.07,
+    "entry_source": "1H demand",
+    "stop_loss": 0.06524664285714286,
+    "tp1": 0.07371671428571429,
+    "tp2": 0.07936342857142857,
+    "runner_target": 0.08265,
+    "runner_move_pct": 21.42,
+    "position_plan": {
+      "base_risk_pct": 0.65,
+      "size_label": "FULL",
+      "risk_modifier": 1.0,
+      "recommended_risk_pct": 0.65,
+      "notional_equity_multiple": 0.157,
+      "tp1_close_fraction": 0.35,
+      "tp2_close_fraction": 0.35,
+      "runner_fraction": 0.3,
+      "target_total_r": 3.649,
+      "projected_account_profit_pct": 2.37
+    },
+    "status": "PENDING_ENTRY",
+    "outcome": null,
+    "entry_time_utc": null,
+    "closed_at_utc": null,
+    "tp1_hit": false,
+    "tp1_hit_at_utc": null,
+    "tp2_hit": false,
+    "tp2_hit_at_utc": null,
+    "runner_hit": false,
+    "runner_hit_at_utc": null,
+    "protect_1r_hit": false,
+    "mfe_r": null,
+    "mae_r": null,
+    "promotion_history": [
+      {
+        "at_utc": "2026-11-19T21:25:43.903556+00:00",
+        "rank": 1,
+        "score": 82.33
+      }
+    ]
+  },
+  {
+    "signal_id": "AVAX_USDT|short|2026-11-19T21:25:43.903556+00:00",
+    "created_at_utc": "2026-11-19T21:25:43.903556+00:00",
+    "symbol": "AVAX_USDT",
+    "direction": "short",
+    "rank": 2,
+    "score": 79.37,
+    "grade": "A",
+    "entry_lower": 7.073,
+    "entry_upper": 7.155,
+    "entry_source": "1H supply",
+    "stop_loss": 7.168017857142857,
+    "tp1": 7.005964285714288,
+    "tp2": 6.897928571428576,
+    "runner_target": 6.046900000000001,
+    "runner_move_pct": 15.0,
+    "position_plan": {
+      "base_risk_pct": 0.65,
+      "size_label": "FULL",
+      "risk_modifier": 1.0,
+      "recommended_risk_pct": 0.55,
+      "notional_equity_multiple": 0.725,
+      "tp1_close_fraction": 0.35,
+      "tp2_close_fraction": 0.35,
+      "runner_fraction": 0.3,
+      "target_total_r": 8.026,
+      "projected_account_profit_pct": 4.41
+    },
+    "status": "PENDING_ENTRY",
+    "outcome": null,
+    "entry_time_utc": null,
+    "closed_at_utc": null,
+    "tp1_hit": false,
+    "tp1_hit_at_utc": null,
+    "tp2_hit": false,
+    "tp2_hit_at_utc": null,
+    "runner_hit": false,
+    "runner_hit_at_utc": null,
+    "protect_1r_hit": false,
+    "mfe_r": null,
+    "mae_r": null,
+    "promotion_history": [
+      {
+        "at_utc": "2026-11-19T21:25:43.903556+00:00",
+        "rank": 2,
+        "score": 79.37
       }
     ]
   }
