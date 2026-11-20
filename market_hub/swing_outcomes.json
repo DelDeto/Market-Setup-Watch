@@ -8420,17 +8420,17 @@
       "projected_account_profit_pct": 2.53
     },
     "status": "ACTIVE",
-    "outcome": null,
+    "outcome": "WIN",
     "entry_time_utc": "2026-11-15T13:00:00+00:00",
     "closed_at_utc": null,
-    "tp1_hit": false,
-    "tp1_hit_at_utc": null,
+    "tp1_hit": true,
+    "tp1_hit_at_utc": "2026-11-20T09:00:00+00:00",
     "tp2_hit": false,
     "tp2_hit_at_utc": null,
     "runner_hit": false,
     "runner_hit_at_utc": null,
     "protect_1r_hit": true,
-    "mfe_r": 1.711,
+    "mfe_r": 2.06,
     "mae_r": -0.179,
     "promotion_history": [
       {
@@ -8479,7 +8479,7 @@
     "runner_hit": false,
     "runner_hit_at_utc": null,
     "protect_1r_hit": true,
-    "mfe_r": 9.196,
+    "mfe_r": 10.08,
     "mae_r": -0.73,
     "promotion_history": [
       {
@@ -9121,7 +9121,7 @@
     "runner_hit": false,
     "runner_hit_at_utc": null,
     "protect_1r_hit": true,
-    "mfe_r": 16.395,
+    "mfe_r": 19.955,
     "mae_r": 0.489,
     "promotion_history": [
       {
@@ -9208,10 +9208,10 @@
       "target_total_r": 3.649,
       "projected_account_profit_pct": 2.37
     },
-    "status": "ACTIVE",
-    "outcome": null,
+    "status": "CLOSED",
+    "outcome": "BE",
     "entry_time_utc": "2026-11-19T22:00:00+00:00",
-    "closed_at_utc": null,
+    "closed_at_utc": "2026-11-20T02:00:00+00:00",
     "tp1_hit": false,
     "tp1_hit_at_utc": null,
     "tp2_hit": false,
@@ -9220,7 +9220,7 @@
     "runner_hit_at_utc": null,
     "protect_1r_hit": true,
     "mfe_r": 1.707,
-    "mae_r": -0.882,
+    "mae_r": -1.07,
     "promotion_history": [
       {
         "at_utc": "2026-11-19T21:25:43.903556+00:00",
@@ -9324,6 +9324,60 @@
         "at_utc": "2026-11-20T02:34:04.772352+00:00",
         "rank": 1,
         "score": 85.79
+      },
+      {
+        "at_utc": "2026-11-20T10:26:04.901246+00:00",
+        "rank": 1,
+        "score": 82.93
+      }
+    ]
+  },
+  {
+    "signal_id": "SAMSUNGSTOCK_USDT|short|2026-11-20T10:26:04.901246+00:00",
+    "created_at_utc": "2026-11-20T10:26:04.901246+00:00",
+    "symbol": "SAMSUNGSTOCK_USDT",
+    "direction": "short",
+    "rank": 2,
+    "score": 79.26,
+    "grade": "A",
+    "entry_lower": 137.01,
+    "entry_upper": 138.11,
+    "entry_source": "1H supply",
+    "stop_loss": 142.40467857142858,
+    "tp1": 127.87064285714285,
+    "tp2": 118.1812857142857,
+    "runner_target": 116.926,
+    "runner_move_pct": 15.0,
+    "position_plan": {
+      "base_risk_pct": 0.65,
+      "size_label": "FULL",
+      "risk_modifier": 1.0,
+      "recommended_risk_pct": 0.55,
+      "notional_equity_multiple": 0.156,
+      "tp1_close_fraction": 0.35,
+      "tp2_close_fraction": 0.35,
+      "runner_fraction": 0.3,
+      "target_total_r": 3.378,
+      "projected_account_profit_pct": 1.86
+    },
+    "status": "PENDING_ENTRY",
+    "outcome": null,
+    "entry_time_utc": null,
+    "closed_at_utc": null,
+    "tp1_hit": false,
+    "tp1_hit_at_utc": null,
+    "tp2_hit": false,
+    "tp2_hit_at_utc": null,
+    "runner_hit": false,
+    "runner_hit_at_utc": null,
+    "protect_1r_hit": false,
+    "mfe_r": null,
+    "mae_r": null,
+    "promotion_history": [
+      {
+        "at_utc": "2026-11-20T10:26:04.901246+00:00",
+        "rank": 2,
+        "score": 79.26
       }
     ]
   }
