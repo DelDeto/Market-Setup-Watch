@@ -163847,7 +163847,7 @@
     "closed_at_utc": null,
     "outcome": null,
     "mfe_r": 0.31,
-    "mae_r": 0.663,
+    "mae_r": 0.908,
     "management": {
       "protect_at_r": 1.0,
       "partial_at_r": 2.0,
@@ -170818,7 +170818,7 @@
     "entry_time_utc": "2026-11-19T13:00:00+00:00",
     "closed_at_utc": null,
     "outcome": null,
-    "mfe_r": 1.374,
+    "mfe_r": 1.407,
     "mae_r": 0.285,
     "management": {
       "protect_at_r": 1.0,
