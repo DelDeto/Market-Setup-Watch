@@ -9306,10 +9306,10 @@
       "target_total_r": 3.1,
       "projected_account_profit_pct": 2.02
     },
-    "status": "PENDING_ENTRY",
-    "outcome": null,
+    "status": "EXPIRED",
+    "outcome": "EXPIRED",
     "entry_time_utc": null,
-    "closed_at_utc": null,
+    "closed_at_utc": "2026-11-22T08:20:10.674689+00:00",
     "tp1_hit": false,
     "tp1_hit_at_utc": null,
     "tp2_hit": false,
@@ -9421,7 +9421,7 @@
     "runner_hit_at_utc": null,
     "protect_1r_hit": true,
     "mfe_r": 3.265,
-    "mae_r": 0.078,
+    "mae_r": 0.023,
     "promotion_history": [
       {
         "at_utc": "2026-11-21T00:22:01.350103+00:00",
