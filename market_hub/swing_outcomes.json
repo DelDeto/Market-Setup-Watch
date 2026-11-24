@@ -9752,10 +9752,10 @@
       "target_total_r": 3.637,
       "projected_account_profit_pct": 2.0
     },
-    "status": "ACTIVE",
-    "outcome": null,
+    "status": "CLOSED",
+    "outcome": "BE",
     "entry_time_utc": "2026-11-23T23:00:00+00:00",
-    "closed_at_utc": null,
+    "closed_at_utc": "2026-11-24T10:00:00+00:00",
     "tp1_hit": false,
     "tp1_hit_at_utc": null,
     "tp2_hit": false,
@@ -9764,7 +9764,7 @@
     "runner_hit_at_utc": null,
     "protect_1r_hit": true,
     "mfe_r": 1.19,
-    "mae_r": 0.088,
+    "mae_r": -1.059,
     "promotion_history": [
       {
         "at_utc": "2026-11-23T22:45:07.854360+00:00",
@@ -9813,7 +9813,7 @@
     "runner_hit_at_utc": null,
     "protect_1r_hit": true,
     "mfe_r": 3.451,
-    "mae_r": -0.235,
+    "mae_r": -0.503,
     "promotion_history": [
       {
         "at_utc": "2026-11-23T22:45:07.854360+00:00",
